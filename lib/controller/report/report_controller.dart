@@ -83,7 +83,6 @@ class ReportController extends GetxController {
   void onInit() {
     super.onInit();
     getSharedPrefData();
-    //bindControllers();
   }
 
   void bindControllers() {
