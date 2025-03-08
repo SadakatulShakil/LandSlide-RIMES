@@ -54,8 +54,8 @@ class DashboardPage extends StatelessWidget {
               SizedBox(height: 10),
               _buildLandslideBarChart(),
               SizedBox(height: 10),
-              _buildLandslidePieChart(),
-              SizedBox(height: 30),
+              _buildLandslideLineChart(),
+              SizedBox(height: 45),
             ],
           ),
         ),
@@ -69,14 +69,15 @@ class DashboardPage extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
-        side: const BorderSide(color: Colors.green, width: 1.0),
+        //side: const BorderSide( width: 1.0),
       ),
-      color: Colors.green.shade50,
+      //color: Colors.green.shade50,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            //Text('Weather forecast', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -84,14 +85,14 @@ class DashboardPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Monday',
+                      'Sunday',
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     Text(
-                      '12th March 2025',
+                      '9th March 2025',
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
@@ -169,29 +170,57 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  // Landslide Bar Chart
   Widget _buildLandslideBarChart() {
     return Card(
-      elevation: 5,
+      elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Landslide Frequency', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Container(
-              height: 200,
+              height: 150,
               child: BarChart(
                 BarChartData(
                   borderData: FlBorderData(show: false),
-                  gridData: FlGridData(show: false),
-                  titlesData: FlTitlesData(show: false),
+                  gridData: FlGridData(show: true, drawHorizontalLine: true),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 5,
+                        getTitlesWidget: (value, meta) {
+                          return Text('${value.toInt()}', style: TextStyle(fontSize: 12));
+                        },
+                      ),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          switch (value.toInt()) {
+                            case 0:
+                              return Text('Jan');
+                            case 1:
+                              return Text('Feb');
+                            case 2:
+                              return Text('Mar');
+                            case 3:
+                              return Text('Apr');
+                            default:
+                              return Text('');
+                          }
+                        },
+                      ),
+                    ),
+                  ),
                   barGroups: [
                     BarChartGroupData(
                       x: 0,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 5, width: 20),
+                        BarChartRodData(fromY: 0, toY: 11, width: 20),
                       ],
                     ),
                     BarChartGroupData(
@@ -206,6 +235,12 @@ class DashboardPage extends StatelessWidget {
                         BarChartRodData(fromY: 0, toY: 15, width: 20),
                       ],
                     ),
+                    BarChartGroupData(
+                      x: 3,
+                      barRods: [
+                        BarChartRodData(fromY: 0, toY: 12, width: 20),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -216,24 +251,65 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  // Landslide Pie Chart
-  Widget _buildLandslidePieChart() {
+  Widget _buildLandslideLineChart() {
     return Card(
-      elevation: 5,
+      elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Landslide Types Distribution', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('Landslide Frequency Over Time', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Container(
-              height: 200,
-              child: PieChart(
-                PieChartData(
-                  sections: pieChartData,
-                  borderData: FlBorderData(show: false),
-                  centerSpaceRadius: 30,
+              height: 150,
+              child: LineChart(
+                LineChartData(
+                  gridData: FlGridData(show: true, drawHorizontalLine: true),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 5,
+                        getTitlesWidget: (value, meta) {
+                          return Text('${value.toInt()}', style: TextStyle(fontSize: 12));
+                        },
+                      ),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          switch (value.toInt()) {
+                            case 0:
+                              return Text('Jan');
+                            case 1:
+                              return Text('Feb');
+                            case 2:
+                              return Text('Mar');
+                            case 3:
+                              return Text('Apr');
+                            default:
+                              return Text('');
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: [
+                        FlSpot(0, 11),
+                        FlSpot(1, 10),
+                        FlSpot(2, 15),
+                        FlSpot(3, 12),
+                      ],
+                      isCurved: true,
+                      barWidth: 3,
+                      color: Colors.blue,
+                      dotData: FlDotData(show: true),
+                    ),
+                  ],
                 ),
               ),
             ),
