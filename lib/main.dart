@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lanslide_report/page/Mobile.dart';
+import 'package:lanslide_report/page/mobile.dart';
 import 'package:lanslide_report/page/dashboard.dart';
 import 'package:lanslide_report/page/report_form_page.dart';
+import 'package:lanslide_report/services/LocalizationString.dart';
 import 'package:lanslide_report/services/location_service.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
 
@@ -29,6 +30,8 @@ class MyApp extends StatelessWidget {
       title: 'Inventory Report',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: Mobile(),
+      translations: LocalizationString(),
+      locale: const Locale('bn', 'BD'),
     );
   }
 }

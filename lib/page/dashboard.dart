@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:lanslide_report/page/profile.dart';
 import 'package:lanslide_report/page/report_form_page.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -43,7 +44,17 @@ class DashboardPage extends StatelessWidget {
         label: Text('Report Landslide'),
         icon: Icon(Icons.add),
       ),
-      appBar: AppBar(title: Text('Dashboard')),
+      appBar: AppBar(
+          title: Text("dashboard".tr),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle_rounded),
+              onPressed: () {
+                Get.to(() => Profile(), transition: Transition.rightToLeft);
+              },
+            ),
+          ]
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
