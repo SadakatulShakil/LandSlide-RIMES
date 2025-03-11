@@ -5,6 +5,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:lanslide_report/page/profile.dart';
 import 'package:lanslide_report/page/report_form_page.dart';
 
+import '../services/AppDrawer.dart';
+
 class DashboardPage extends StatelessWidget {
   // Sample pie chart data for landslide types
   final pieChartData = [
@@ -37,21 +39,27 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Get.to(() => ReportFormPage(), transition: Transition.rightToLeft);
-        },
-        label: Text('Report Landslide'),
-        icon: Icon(Icons.add),
-      ),
+      drawer: AppDrawer(),
       appBar: AppBar(
-          title: Text("dashboard".tr),
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          title: Text("dashboard".tr, style: TextStyle(fontWeight: FontWeight.w700)),
           actions: [
             IconButton(
               icon: Icon(Icons.account_circle_rounded),
               onPressed: () {
                 Get.to(() => Profile(), transition: Transition.rightToLeft);
               },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.teal.shade50,
+                  child: Builder(
+                    builder: (context) => IconButton(onPressed: (){ Scaffold.of(context).openDrawer(); }, icon: Icon(Icons.menu), iconSize: 20),
+                  )
+              ),
             ),
           ]
       ),

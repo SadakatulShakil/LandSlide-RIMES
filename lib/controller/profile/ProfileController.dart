@@ -14,6 +14,7 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
   final userService = UserPrefService(); //User service for replacement of Shared pref
 
   Future logout() async{
+    await userService.clearUserData();
     Get.offAll(Mobile(), transition: Transition.upToDown);
     // var response = await http.post(ApiURL.fcm, headers: { HttpHeaders.authorizationHeader: '${userService.userToken}' } );
     // dynamic decode = jsonDecode(response.body) ;

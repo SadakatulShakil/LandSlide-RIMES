@@ -42,8 +42,10 @@ dependencies:
   fl_chart: ^0.70.2
   http: ^1.2.2
   location: ^6.0.2
+  geolocator: ^13.0.1
   shared_preferences: ^2.3.2
   image_picker: ^1.1.2
+  webview_flutter: ^4.9.0
 
 dev_dependencies:
   floor_generator: ^1.4.0

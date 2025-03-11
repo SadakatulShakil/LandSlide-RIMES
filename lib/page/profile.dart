@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lanslide_report/page/webview_view.dart';
 
 import '../controller/profile/ProfileController.dart';
+import '../controller/webview/webview_binding.dart';
+import '../services/api_service.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -19,8 +22,7 @@ class _ProfileState extends State<Profile> {
 
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
-        title: Text("profile".tr, style: TextStyle(fontWeight: FontWeight.w700)),
+        title: Text("profile_title".tr, style: TextStyle(fontWeight: FontWeight.w700)),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -92,7 +94,7 @@ class _ProfileState extends State<Profile> {
                             controller: controller.tabController,
                             tabs: [
                               Tab(text: "profile_info".tr),
-                              Tab(text: "profile_language".tr),
+                              Tab(text: "settings".tr),
                               Tab(text: "profile_logout".tr),
                             ]
                           ),
@@ -112,6 +114,7 @@ class _ProfileState extends State<Profile> {
                 child: TabBarView(
                   controller: controller.tabController,
                   children: [
+                    /// TabBar View 1
                     // Profile View
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,7 +199,7 @@ class _ProfileState extends State<Profile> {
 
                       ],
                     ),
-
+                    /// TabBar View 2
                     // Language
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,10 +225,57 @@ class _ProfileState extends State<Profile> {
                             ],
                           ),
                         ),
-
+                        SizedBox(height: 10),
+                        Container(
+                          color: Colors.black12,
+                          child: ListTile(
+                            leading: Icon(Icons.phonelink_lock, size: 45),
+                            title: Text("change_password".tr),
+                            trailing: Icon(Icons.arrow_forward_outlined),
+                            onTap: () {
+                              Get.toNamed('change-password');
+                            },
+                          ),
+                        ),
+                        Divider(),
+                        GestureDetector(
+                          onTap: () {
+                            var item = {
+                              "title": "help_center".tr,
+                              "url": ApiURL.sidebar_contact_us
+                            };
+                            Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
+                          },
+                          child: Container(
+                            color: Colors.black12,
+                            child: ListTile(
+                              leading: Icon(Icons.phone_android_sharp, size: 45),
+                              title: Text("help_center".tr),
+                              trailing: Icon(Icons.arrow_forward_outlined),
+                            ),
+                          ),
+                        ),
+                        Divider(),
+                        GestureDetector(
+                          onTap: () {
+                            var item = {
+                              "title": "faq".tr,
+                              "url": ApiURL.sidebar_faq
+                            };
+                            Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
+                          },
+                          child: Container(
+                            color: Colors.black12,
+                            child: ListTile(
+                              leading: Icon(Icons.feed_outlined, size: 45),
+                              title: Text("faq".tr),
+                              trailing: Icon(Icons.arrow_forward_outlined),
+                            ),
+                          ),
+                        )
                       ],
                     ),
-
+                    /// TabBar View 3
                     // Logout
                     Column(
                       children: [
