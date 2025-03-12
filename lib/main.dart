@@ -41,8 +41,8 @@ class MyApp extends StatelessWidget {
       home: Obx(() {
         return mobileController.isChecking.value
             ? Scaffold(
-          body: Center(
-              child: Image.asset('assets/logo/bmd_logo.png', height: 96)),
+              body: Center(
+                child: Image.asset('assets/logo/bmd_logo.png', height: 96)),
         )
             : Mobile();
       }),

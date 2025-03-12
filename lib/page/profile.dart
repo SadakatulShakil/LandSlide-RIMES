@@ -65,7 +65,7 @@ class _ProfileState extends State<Profile> {
 
             SizedBox(height: 16),
 
-            // Tabbar
+            /// TabBar
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -204,75 +204,69 @@ class _ProfileState extends State<Profile> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("profile_language_select".tr),
-                        SizedBox(height: 10),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: ToggleButtons(
-                            isSelected: controller.selectedLanguage,
-                            onPressed: (int index) { setState(() {
-                              controller.changeLanguage(index);
-                            }); },
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 30),
-                                child: Text('English'),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 30),
-                                child: Text('বাংলা'),
-                              ),
-                            ],
-                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text("profile_language_select".tr, style: TextStyle(fontSize: 16),),
                         ),
                         SizedBox(height: 10),
-                        Container(
-                          color: Colors.black12,
-                          child: ListTile(
-                            leading: Icon(Icons.phonelink_lock, size: 45),
-                            title: Text("change_password".tr),
-                            trailing: Icon(Icons.arrow_forward_outlined),
-                            onTap: () {
-                              Get.toNamed('change-password');
-                            },
-                          ),
-                        ),
-                        Divider(),
-                        GestureDetector(
-                          onTap: () {
-                            var item = {
-                              "title": "help_center".tr,
-                              "url": ApiURL.sidebar_contact_us
-                            };
-                            Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
-                          },
+                        // Language Toggle Buttons
+                        Padding(
+                          padding: const EdgeInsets.only(left: 3.0),
                           child: Container(
-                            color: Colors.black12,
-                            child: ListTile(
-                              leading: Icon(Icons.phone_android_sharp, size: 45),
-                              title: Text("help_center".tr),
-                              trailing: Icon(Icons.arrow_forward_outlined),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 5,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: ToggleButtons(
+                              borderRadius: BorderRadius.circular(10),
+                              fillColor: Colors.purple.shade100,
+                              selectedColor: Colors.black,
+                              color: Colors.black54,
+                              textStyle: TextStyle(fontSize: 16),
+                              isSelected: controller.selectedLanguage,
+                              onPressed: (int index) { setState(() {
+                                controller.changeLanguage(index);
+                              }); },
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 10),
+                                  child: Text('English'),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 10),
+                                  child: Text('বাংলা'),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        Divider(),
-                        GestureDetector(
-                          onTap: () {
-                            var item = {
-                              "title": "faq".tr,
-                              "url": ApiURL.sidebar_faq
-                            };
-                            Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
-                          },
-                          child: Container(
-                            color: Colors.black12,
-                            child: ListTile(
-                              leading: Icon(Icons.feed_outlined, size: 45),
-                              title: Text("faq".tr),
-                              trailing: Icon(Icons.arrow_forward_outlined),
-                            ),
-                          ),
-                        )
+                        SizedBox(height: 10),
+                        _buildOptionTile(Icons.lock, 'change_password'.tr, () {
+                          print('Password Change Clicked');
+                        }),
+                        _buildOptionTile(Icons.phone_android, 'help_center'.tr, () {
+                          var item = {
+                            "title": "help_center".tr,
+                            "url": ApiURL.sidebar_contact_us
+                          };
+                          Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
+                        }),
+                        _buildOptionTile(Icons.article, 'faq'.tr, () {
+                          var item = {
+                            "title": "faq".tr,
+                            "url": ApiURL.sidebar_faq
+                          };
+                          Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
+                        }),
                       ],
                     ),
                     /// TabBar View 3
@@ -304,4 +298,23 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+  // Custom ListTile Widget
+  Widget _buildOptionTile(IconData icon, String text, VoidCallback onTap) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 3,
+      child: ListTile(
+        leading: Icon(icon, size: 30, color: Colors.black54),
+        title: Text(
+          text,
+          style: TextStyle(fontSize: 16),
+        ),
+        trailing: Icon(Icons.arrow_forward_ios, color: Colors.black54),
+        tileColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        onTap: onTap,
+      ),
+    );
+  }
+
 }

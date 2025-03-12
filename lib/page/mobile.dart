@@ -47,7 +47,7 @@ class _MobileState extends State<Mobile> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 30, top: 0, right: 30, bottom: 0),
                   child: ElevatedButton(
-                    onPressed: controller.loginClick,
+                    onPressed: controller.gotoOTP,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF004A03),
                       padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),

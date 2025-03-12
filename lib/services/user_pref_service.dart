@@ -1,4 +1,7 @@
+import 'package:lanslide_report/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class UserPrefService {
   // Singleton instance
@@ -7,6 +10,7 @@ class UserPrefService {
   UserPrefService._internal();
 
   static const String _keyUserToken = 'TOKEN';
+  static const String _keyUserRefresh = 'REFRESH';
   static const String _keyUserId = 'ID';
   static const String _keyUserEmail = 'EMAIL';
   static const String _keyUserName = 'NAME';
@@ -27,9 +31,51 @@ class UserPrefService {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  // Refresh access token
+  Future<bool> refreshAccessToken() async {
+    final refreshToken = _prefs?.getString(_keyUserRefresh);
+    if (refreshToken == null) {
+      print("No refresh token found, user needs to log in again.");
+      return false;
+    }
+
+    try {
+      var params = jsonEncode({
+        "refresh": refreshToken,
+        "device": "api"
+      });
+      var response = await http.post(ApiURL.refreshToken,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: params);
+
+      if (response.statusCode == 200) {
+        dynamic decode = jsonDecode(response.body) ;
+        String newAccessToken = decode['result']['token'];
+        String newRefreshToken = decode['result']['token'] ?? refreshToken;
+
+        // Save the new tokens
+        await _prefs?.setString(_keyUserToken, newAccessToken);
+        await _prefs?.setString(_keyUserRefresh, newRefreshToken);
+
+        print("Token refreshed successfully.");
+        return true;
+      } else {
+        print("Failed to refresh token: ${response.body}");
+        await clearUserData();
+        return false;
+      }
+    } catch (e) {
+      print("Error refreshing token: $e");
+      return false;
+    }
+  }
+
   // Save user data
   Future<void> saveUserData(
       String token,
+      String refresh,
       String id,
       String name,
       String email,
@@ -38,6 +84,7 @@ class UserPrefService {
       String photo
       ) async {
     await _prefs?.setString(_keyUserToken, token);
+    await _prefs?.setString(_keyUserRefresh, refresh);
     await _prefs?.setString(_keyUserId, id);
     await _prefs?.setString(_keyUserName, name);
     await _prefs?.setString(_keyUserEmail, email);

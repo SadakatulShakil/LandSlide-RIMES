@@ -1,9 +1,13 @@
 
 class ApiURL {
-  static String base_url = "https://bamisapp.bdservers.site/";
-  static String base_url_api = "https://bamisapp.bdservers.site/api/";
-  static String base_url_image = "https://bamisapp.bdservers.site/";
+  static String base_url = "https://landslide.bdservers.site/";
+  static String base_url_api = "https://landslide.bdservers.site/api/";
+  static String base_url_image = "https://landslide.bdservers.site/";
 
+  static Uri login = Uri.parse('${base_url_api}auth/login');
+  static Uri mobile = Uri.parse('${base_url_api}auth/mobile');
+  static Uri refreshToken = Uri.parse('${base_url_api}auth/refresh');
+  static Uri otpcheck = Uri.parse('${base_url_api}auth/otpcheck');
   // Weather
   static Uri locations = Uri.parse('${base_url_api}weather/locations');
   static String dailyforecast = '${base_url_api}weather/dailyforecast';
