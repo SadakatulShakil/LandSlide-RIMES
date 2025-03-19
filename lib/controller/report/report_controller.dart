@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../database_helper/database.dart';
 import '../../services/user_pref_service.dart';
@@ -11,17 +13,19 @@ import 'package:http/http.dart' as http;
 class ReportController extends GetxController {
   final userPrefService = UserPrefService();
   final ImagePicker _picker = ImagePicker();
-
+  var isLoading = false.obs;
   var currentStep = 0.obs;
 
+  var id = ''.obs;
   var address = ''.obs;
   var district = ''.obs;
   var upazila = ''.obs;
   var latitude = ''.obs;
   var longitude = ''.obs;
+  var latAndLon = ''.obs;
 
   // Basic Info Manually Entered
-  var imagePath = ''.obs;
+  var imagePaths = <String>[].obs;
   var date = ''.obs;
   var time = ''.obs;
   var historicalInfo = ''.obs;
@@ -66,9 +70,11 @@ class ReportController extends GetxController {
   final TextEditingController districtController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController historicalInfoController = TextEditingController();
+  final TextEditingController idController = TextEditingController();
   final TextEditingController upazilaController = TextEditingController();
   final TextEditingController latController = TextEditingController();
   final TextEditingController lonController = TextEditingController();
+  late TextEditingController latAndLonController = TextEditingController();
   final TextEditingController causeOfLandSlide = TextEditingController();
   final TextEditingController waterTableLevel = TextEditingController();
   final TextEditingController damageToRoad = TextEditingController();
@@ -83,13 +89,16 @@ class ReportController extends GetxController {
   void onInit() {
     super.onInit();
     getSharedPrefData();
+    getCurrentLocation();
   }
 
   void bindControllers() {
+    idController.text = id.value;
     districtController.text = district.value;
     upazilaController.text = upazila.value;
     latController.text = latitude.value;
     lonController.text = longitude.value;
+    latAndLonController.text = latAndLon.value;
     causeOfLandSlide.text = cause_land_slide.value;
     waterTableLevel.text = water_table_level.value;
     areaDisplacedMass.text = area_displaced_mass.value;
@@ -100,21 +109,57 @@ class ReportController extends GetxController {
   }
 
   Future getSharedPrefData() async {
+    id.value = userPrefService.userId ?? '';
     district.value = userPrefService.locationDistrict ?? '';
     upazila.value = userPrefService.locationUpazila ?? '';
     longitude.value = userPrefService.lon ?? '';
     latitude.value = userPrefService.lat ?? '';
     address.value = userPrefService.locationName ?? '';
+    //latAndLon.value = 'Lat: ${latitude.value}, Lon: ${longitude.value}';
+
+    print('New Location3: ${latAndLon.value}');
 
     bindControllers();
   }
 
-  Future<void> pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      imagePath.value = pickedFile.path;
+  Future updateLocation(LatLng newLocation) async{
+    // Update the observable values
+    isLoading.value = true;
+    latitude.value = newLocation.latitude.toStringAsFixed(5);
+    longitude.value = newLocation.longitude.toStringAsFixed(5);
+    latAndLon.value = 'Lat: ${latitude.value}, Lon: ${longitude.value}';
+    print('New Location: ${latAndLon.value}');
+    // Update the text controllers
+    latAndLonController.text = latAndLon.value;
+    print('New Location2: ${latAndLonController.text}');
+
+    // Save to preferences
+    userPrefService.saveLocationData(
+      latitude.value,
+      longitude.value,
+      userPrefService.userId ?? '',
+      userPrefService.userName ?? '',
+      userPrefService.locationUpazila ?? '',
+      userPrefService.locationDistrict ?? '',
+    );
+    isLoading.value = false;
+    // This alone won't update Obx widgets, they rely on .obs changes which we've done above
+  }
+
+  Future<void> getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      latitude.value = position.latitude.toStringAsFixed(5);
+      longitude.value = position.longitude.toStringAsFixed(5);
+      latAndLon.value = "Lat: ${position.latitude}, Lon: ${position.longitude}";
+      latAndLonController.text = latAndLon.value;
+    } catch (e) {
+      Get.snackbar("Error", "Failed to get location");
     }
   }
+
 
   Future<void> saveOffline(LandslideReportDao dao) async {
     final report = LandslideReport(
@@ -131,7 +176,7 @@ class ReportController extends GetxController {
       injured: injured.value,
       displaced: displaced.value,
       deaths: deaths.value,
-      imagePath: imagePath.value,
+      imagePaths: jsonEncode(imagePaths),
       landslideSetting: landslideSetting.value,
       classification: classification.value,
       materialType: materialType.value,
@@ -185,7 +230,7 @@ class ReportController extends GetxController {
         'injured': injured.value,
         'displaced': displaced.value,
         'deaths': deaths.value,
-        'imagePath': imagePath.value,
+        'imagePaths': imagePaths,
         'landslideSetting': landslideSetting.value,
         'classification': classification.value,
         'materialType': materialType.value,
@@ -249,7 +294,7 @@ class ReportController extends GetxController {
     cause_land_slide.value = '';
     state_land_slide.value = '';
     water_table_level.value = '';
-    imagePath.value = '';
+    imagePaths.value = [];
     landslideSetting.value = '';
     classification.value = '';
     materialType.value = '';

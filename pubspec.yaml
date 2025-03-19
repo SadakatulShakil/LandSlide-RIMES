@@ -46,6 +46,7 @@ dependencies:
   shared_preferences: ^2.3.2
   image_picker: ^1.1.2
   webview_flutter: ^4.9.0
+  google_maps_flutter: ^2.10.1
 
 dev_dependencies:
   floor_generator: ^1.4.0

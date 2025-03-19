@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `landslide_reports` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `district` TEXT NOT NULL, `upazila` TEXT NOT NULL, `latitude` TEXT NOT NULL, `longitude` TEXT NOT NULL, `causeOfLandSlide` TEXT NOT NULL, `stateOfLandSlide` TEXT NOT NULL, `waterTableLevel` TEXT NOT NULL, `areaDisplacedMass` TEXT NOT NULL, `numberOfHouseholds` TEXT NOT NULL, `incomeLevel` TEXT NOT NULL, `injured` TEXT NOT NULL, `displaced` TEXT NOT NULL, `deaths` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `landslideSetting` TEXT NOT NULL, `classification` TEXT NOT NULL, `materialType` TEXT NOT NULL, `failureType` TEXT NOT NULL, `distributionStyle` TEXT NOT NULL, `landCoverType` TEXT NOT NULL, `landUseType` TEXT NOT NULL, `slopeAngle` TEXT NOT NULL, `rainfallData` TEXT NOT NULL, `soilMoistureContent` TEXT NOT NULL, `impactInfrastructure` INTEGER NOT NULL, `damageRoads` INTEGER NOT NULL, `damageBuildings` INTEGER NOT NULL, `damageCriticalInfrastructure` INTEGER NOT NULL, `damageUtilities` INTEGER NOT NULL, `damageBridges` INTEGER NOT NULL, `damImpact` INTEGER NOT NULL, `soilImpact` TEXT NOT NULL, `vegetationImpact` TEXT NOT NULL, `waterwayImpact` TEXT NOT NULL, `economicImpact` TEXT NOT NULL, `distance1` TEXT NOT NULL, `distance2` TEXT NOT NULL, `isSynced` INTEGER NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `landslide_reports` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `district` TEXT NOT NULL, `upazila` TEXT NOT NULL, `latitude` TEXT NOT NULL, `longitude` TEXT NOT NULL, `causeOfLandSlide` TEXT NOT NULL, `stateOfLandSlide` TEXT NOT NULL, `waterTableLevel` TEXT NOT NULL, `areaDisplacedMass` TEXT NOT NULL, `numberOfHouseholds` TEXT NOT NULL, `incomeLevel` TEXT NOT NULL, `injured` TEXT NOT NULL, `displaced` TEXT NOT NULL, `deaths` TEXT NOT NULL, `imagePaths` TEXT NOT NULL, `landslideSetting` TEXT NOT NULL, `classification` TEXT NOT NULL, `materialType` TEXT NOT NULL, `failureType` TEXT NOT NULL, `distributionStyle` TEXT NOT NULL, `landCoverType` TEXT NOT NULL, `landUseType` TEXT NOT NULL, `slopeAngle` TEXT NOT NULL, `rainfallData` TEXT NOT NULL, `soilMoistureContent` TEXT NOT NULL, `impactInfrastructure` INTEGER NOT NULL, `damageRoads` INTEGER NOT NULL, `damageBuildings` INTEGER NOT NULL, `damageCriticalInfrastructure` INTEGER NOT NULL, `damageUtilities` INTEGER NOT NULL, `damageBridges` INTEGER NOT NULL, `damImpact` INTEGER NOT NULL, `soilImpact` TEXT NOT NULL, `vegetationImpact` TEXT NOT NULL, `waterwayImpact` TEXT NOT NULL, `economicImpact` TEXT NOT NULL, `distance1` TEXT NOT NULL, `distance2` TEXT NOT NULL, `isSynced` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -134,7 +134,7 @@ class _$LandslideReportDao extends LandslideReportDao {
                   'injured': item.injured,
                   'displaced': item.displaced,
                   'deaths': item.deaths,
-                  'imagePath': item.imagePath,
+                  'imagePaths': item.imagePaths,
                   'landslideSetting': item.landslideSetting,
                   'classification': item.classification,
                   'materialType': item.materialType,
@@ -189,7 +189,7 @@ class _$LandslideReportDao extends LandslideReportDao {
             injured: row['injured'] as String,
             displaced: row['displaced'] as String,
             deaths: row['deaths'] as String,
-            imagePath: row['imagePath'] as String,
+            imagePaths: row['imagePaths'] as String,
             landslideSetting: row['landslideSetting'] as String,
             classification: row['classification'] as String,
             materialType: row['materialType'] as String,

@@ -1,5 +1,6 @@
 import 'package:floor/floor.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
 part 'database.g.dart'; // Generated code
@@ -21,7 +22,7 @@ class LandslideReport {
   final String injured;
   final String displaced;
   final String deaths;
-  final String imagePath;
+  final String imagePaths; // Now stores multiple image paths as JSON
   final String landslideSetting;
   final String classification;
   final String materialType;
@@ -62,7 +63,7 @@ class LandslideReport {
     required this.injured,
     required this.displaced,
     required this.deaths,
-    required this.imagePath,
+    required this.imagePaths, // Updated field
     required this.landslideSetting,
     required this.classification,
     required this.materialType,
@@ -88,6 +89,11 @@ class LandslideReport {
     required this.distance2,
     this.isSynced = false,
   });
+
+  // Convert JSON string to List<String>
+  List<String> getImagePaths() {
+    return jsonDecode(imagePaths).cast<String>();
+  }
 }
 
 @dao
