@@ -218,6 +218,53 @@ class _$LandslideReportDao extends LandslideReportDao {
   }
 
   @override
+  Future<List<LandslideReport>> getSyncedReports() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM landslide_reports WHERE isSynced = 1',
+        mapper: (Map<String, Object?> row) => LandslideReport(
+            id: row['id'] as int?,
+            district: row['district'] as String,
+            upazila: row['upazila'] as String,
+            latitude: row['latitude'] as String,
+            longitude: row['longitude'] as String,
+            causeOfLandSlide: row['causeOfLandSlide'] as String,
+            stateOfLandSlide: row['stateOfLandSlide'] as String,
+            waterTableLevel: row['waterTableLevel'] as String,
+            areaDisplacedMass: row['areaDisplacedMass'] as String,
+            numberOfHouseholds: row['numberOfHouseholds'] as String,
+            incomeLevel: row['incomeLevel'] as String,
+            injured: row['injured'] as String,
+            displaced: row['displaced'] as String,
+            deaths: row['deaths'] as String,
+            imagePaths: row['imagePaths'] as String,
+            landslideSetting: row['landslideSetting'] as String,
+            classification: row['classification'] as String,
+            materialType: row['materialType'] as String,
+            failureType: row['failureType'] as String,
+            distributionStyle: row['distributionStyle'] as String,
+            landCoverType: row['landCoverType'] as String,
+            landUseType: row['landUseType'] as String,
+            slopeAngle: row['slopeAngle'] as String,
+            rainfallData: row['rainfallData'] as String,
+            soilMoistureContent: row['soilMoistureContent'] as String,
+            impactInfrastructure: (row['impactInfrastructure'] as int) != 0,
+            damageRoads: (row['damageRoads'] as int) != 0,
+            damageBuildings: (row['damageBuildings'] as int) != 0,
+            damageCriticalInfrastructure:
+                (row['damageCriticalInfrastructure'] as int) != 0,
+            damageUtilities: (row['damageUtilities'] as int) != 0,
+            damageBridges: (row['damageBridges'] as int) != 0,
+            damImpact: (row['damImpact'] as int) != 0,
+            soilImpact: row['soilImpact'] as String,
+            vegetationImpact: row['vegetationImpact'] as String,
+            waterwayImpact: row['waterwayImpact'] as String,
+            economicImpact: row['economicImpact'] as String,
+            distance1: row['distance1'] as String,
+            distance2: row['distance2'] as String,
+            isSynced: (row['isSynced'] as int) != 0));
+  }
+
+  @override
   Future<void> markAsSynced(int id) async {
     await _queryAdapter.queryNoReturn(
         'UPDATE landslide_reports SET isSynced = 1 WHERE id = ?1',
