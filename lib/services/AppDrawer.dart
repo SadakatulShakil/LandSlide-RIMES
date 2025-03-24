@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:lanslide_report/page/report_data_list.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
 
 import '../Utills/AppColors.dart';
@@ -47,9 +48,16 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
 
           ListTile(
+            leading: Icon(Icons.storage),
+            title: Text("Report Data".tr),
+            onTap: () {
+              Get.to(()=> ReportDataList(), transition: Transition.rightToLeft);
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.video_file_outlined),
             title: Text("dashboard_sidebar_important_video".tr),
-            onTap: () {  },
+            onTap: () { },
           ),
           GestureDetector(
             onTap: () {

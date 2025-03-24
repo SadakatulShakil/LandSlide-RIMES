@@ -45,12 +45,12 @@ class DashboardPage extends StatelessWidget {
           automaticallyImplyLeading: false,
           title: Text("dashboard".tr, style: TextStyle(fontWeight: FontWeight.w700)),
           actions: [
-            IconButton(
-              icon: Icon(Icons.account_circle_rounded),
-              onPressed: () {
-                Get.to(() => Profile(), transition: Transition.rightToLeft);
-              },
-            ),
+            // IconButton(
+            //   icon: Icon(Icons.account_circle_rounded),
+            //   onPressed: () {
+            //     Get.to(() => Profile(), transition: Transition.rightToLeft);
+            //   },
+            // ),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: CircleAvatar(

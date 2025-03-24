@@ -211,7 +211,10 @@ class ReportController extends GetxController {
     try {
       var token = userPrefService.userToken ?? '';
 
-      var url = "http://192.168.0.68:8000/reports/";
+      var url = "http://192.168.0.76:8000/reports/";
+
+      // Format imagePaths as a JSON string, or empty if no images
+      var formattedImagePaths = imagePaths.isEmpty ? '' : jsonEncode(imagePaths);
 
       var reportData = {
         'landslideId': 'LS2468',
@@ -230,7 +233,7 @@ class ReportController extends GetxController {
         'injured': injured.value,
         'displaced': displaced.value,
         'deaths': deaths.value,
-        'imagePaths': imagePaths,
+        'imagePaths': formattedImagePaths,  // This will either be an empty string or a valid JSON array string
         'landslideSetting': landslideSetting.value,
         'classification': classification.value,
         'materialType': materialType.value,
@@ -284,6 +287,7 @@ class ReportController extends GetxController {
           backgroundColor: Colors.red, snackPosition: SnackPosition.BOTTOM);
     }
   }
+
 
   void resetForm() {
     district.value = '';

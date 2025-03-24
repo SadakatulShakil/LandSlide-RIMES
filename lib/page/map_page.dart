@@ -238,12 +238,12 @@ class _MapPageState extends State<MapPage> {
       // Show distance between markers if a new location is selected
       bottomNavigationBar: selectedLocation != initialLocation
           ? Container(
-        height: 40,
-        color: Colors.black87,
-        child: Center(
-          child: Text(
-            'Distance: ${_formatDistance(_calculateDistance())}',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            height: 40,
+            color: Colors.black87,
+            child: Center(
+              child: Text(
+              'Distance: ${_formatDistance(_calculateDistance())}',
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       )
