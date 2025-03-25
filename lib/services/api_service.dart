@@ -24,4 +24,7 @@ class ApiURL {
   // FCM
   static Uri fcm = Uri.parse('${base_url_api}auth/fcm');
 
+  // Profile
+  static Uri profile = Uri.parse('${base_url_api}profile');
+
 }

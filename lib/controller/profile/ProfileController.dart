@@ -35,8 +35,8 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
   late var mobile = "".obs;
   late var email = "".obs;
   late var address = "".obs;
-  var photo = "assets/images/profile.png".obs;
-  // late var photo = "${ApiURL.base_url_image}assets/auth/profile.jpg".obs;
+  late var type = "".obs;
+  late var photo = "${ApiURL.base_url_image}assets/auth/profile.jpg".obs;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -53,7 +53,14 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
     mobile.value = userService.userMobile ?? '';
     email.value = userService.userEmail ?? '';
     address.value = userService.userAddress ?? '';
-    //photo.value = ApiURL.base_url_image + (userService.userPhoto ?? '');
+    type.value = userService.userType ?? '';
+
+    if (userService.userPhoto != null && userService.userPhoto!.contains('/assets/auth/')) {
+      photo.value = ApiURL.base_url_image + userService.userPhoto!;
+    } else {
+      photo.value = ApiURL.base_url_image + '/assets/auth/${userService.userPhoto!}';
+    }
+
 
 
     nameController.text = name.value;
@@ -68,30 +75,69 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
   }
 
   Future updateProfile() async {
-    // var params = jsonEncode({
-    //   "id": "${id.value}",
-    //   "fullname": "${nameController.text}",
-    //   "email": "${emailController.text}",
-    //   "address": "${addressController.text}"
-    // });
-    // var response = await http.put(ApiURL.profile, body: params);
-    // dynamic decode = jsonDecode(response.body) ;
-    //
-    // if(response.statusCode == 200) {
-    //
-    //   await userService.updateUserData(
-    //       nameController.text,
-    //       emailController.text,
-    //       addressController.text
-    //   );
-    // }
-    //
-    // return Get.defaultDialog(
-    //     title: "Alert",
-    //     middleText: decode['message'],
-    //     textCancel: 'Ok'
-    // );
+    String? token = userService.userToken; // Get current access token
+
+    var params = jsonEncode({
+      "id": "${id.value}",
+      "fullname": "${nameController.text}",
+      "email": "${emailController.text}",
+      "address": "${addressController.text}",
+      "type": "${userService.userType}"
+    });
+
+    try {
+      var response = await http.put(
+        ApiURL.profile,
+        body: params,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "$token", // Add token to the header
+        },
+      );
+
+      dynamic decode = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        await userService.updateUserData(
+          nameController.text,
+          emailController.text,
+          addressController.text,
+          type.value,
+        );
+
+        return Get.defaultDialog(
+          title: "Success",
+          middleText: decode['message'],
+          textCancel: 'Ok',
+        );
+      } else if (response.statusCode == 401 && decode['code'] == 'token_expired') {
+        // Handle token expiration — try refreshing
+        bool refreshed = await userService.refreshAccessToken();
+        if (refreshed) {
+          return updateProfile(); // Retry after refreshing the token
+        } else {
+          return Get.defaultDialog(
+            title: "Session Expired",
+            middleText: "Please log in again.",
+            textCancel: 'Ok',
+          );
+        }
+      } else {
+        return Get.defaultDialog(
+          title: "Error",
+          middleText: decode['message'],
+          textCancel: 'Ok',
+        );
+      }
+    } catch (e) {
+      return Get.defaultDialog(
+        title: "Error",
+        middleText: "Something went wrong!",
+        textCancel: 'Ok',
+      );
+    }
   }
+
 
   List<bool> selectedLanguage = [false, true].obs;
   Future changeLanguage(int index) async {

@@ -82,6 +82,7 @@ class OtpController extends GetxController {
         decode['result']['email'] == null ? '' : decode['result']['email'],
         decode['result']['mobile'],
         decode['result']['address'] == null ? '' : decode['result']['address'],
+        decode['result']['type'],
         decode['result']['photo']
     );
 

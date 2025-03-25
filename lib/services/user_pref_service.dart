@@ -16,6 +16,7 @@ class UserPrefService {
   static const String _keyUserName = 'NAME';
   static const String _keyUserMobile = 'MOBILE';
   static const String _keyUserAddress = 'ADDRESS';
+  static const String _keyUserType = 'TYPE';
   static const String _keyUserPhoto = 'PHOTO';
   static const String _keyFcmToken = 'FCM';
   static const String _keyLat = 'LAT';
@@ -81,6 +82,7 @@ class UserPrefService {
       String email,
       String mobile,
       String address,
+      String type,
       String photo
       ) async {
     await _prefs?.setString(_keyUserToken, token);
@@ -90,6 +92,7 @@ class UserPrefService {
     await _prefs?.setString(_keyUserEmail, email);
     await _prefs?.setString(_keyUserMobile, mobile);
     await _prefs?.setString(_keyUserAddress, address);
+    await _prefs?.setString(_keyUserType, type);
     await _prefs?.setString(_keyUserPhoto, photo);
   }
 
@@ -121,15 +124,20 @@ class UserPrefService {
       String name,
       String email,
       String address,
+      String type,
       ) async {
     await _prefs?.setString(_keyUserName, name);
     await _prefs?.setString(_keyUserEmail, email);
     await _prefs?.setString(_keyUserAddress, address);
+    await _prefs?.setString(_keyUserType, type);
   }
 
 
   // Get user Token
   String? get userToken => _prefs?.getString(_keyUserToken);
+
+  // Get user refresh
+  String? get refreshToken => _prefs?.getString(_keyUserRefresh);
 
   // Get user id
   String? get userId => _prefs?.getString(_keyUserId);
@@ -145,6 +153,9 @@ class UserPrefService {
 
   // Get user address
   String? get userAddress => _prefs?.getString(_keyUserAddress);
+
+  // Get user type
+  String? get userType => _prefs?.getString(_keyUserType);
 
   // Get user photo
   String? get userPhoto => _prefs?.getString(_keyUserPhoto);
@@ -179,6 +190,7 @@ class UserPrefService {
     await _prefs?.remove(_keyUserEmail);
     await _prefs?.remove(_keyUserMobile);
     await _prefs?.remove(_keyUserAddress);
+    await _prefs?.remove(_keyUserType);
     await _prefs?.remove(_keyUserPhoto);
   }
 }

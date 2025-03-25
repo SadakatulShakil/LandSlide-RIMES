@@ -40,7 +40,7 @@ class _ProfileState extends State<Profile> {
                       Obx(
                         ()=> CircleAvatar(
                           radius: 64,
-                          backgroundImage: AssetImage(controller.photo.value),
+                          backgroundImage: NetworkImage(controller.photo.value),
                           //backgroundImage: NetworkImage(controller.photo.value),
                         )
                       ),
