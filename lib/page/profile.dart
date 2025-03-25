@@ -41,7 +41,6 @@ class _ProfileState extends State<Profile> {
                         ()=> CircleAvatar(
                           radius: 64,
                           backgroundImage: NetworkImage(controller.photo.value),
-                          //backgroundImage: NetworkImage(controller.photo.value),
                         )
                       ),
                       Positioned(
@@ -58,7 +57,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   SizedBox(height: 16),
                   Obx(()=> Text(controller.mobile.value)),
-                  Obx(()=> Text(controller.name.value, style: TextStyle( fontSize: 18, fontWeight: FontWeight.w700)),)
+                  Obx(()=> Text(controller.nameController.text, style: TextStyle( fontSize: 18, fontWeight: FontWeight.w700)),)
                 ],
               ),
             ),
