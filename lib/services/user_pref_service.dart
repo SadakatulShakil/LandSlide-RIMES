@@ -132,6 +132,11 @@ class UserPrefService {
     await _prefs?.setString(_keyUserType, type);
   }
 
+  // Update user data
+  Future<void> updateUserPhoto(String url) async {
+  await _prefs?.setString(_keyUserPhoto, url);
+  }
+
 
   // Get user Token
   String? get userToken => _prefs?.getString(_keyUserToken);

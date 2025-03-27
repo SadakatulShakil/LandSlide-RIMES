@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lanslide_report/page/webview_view.dart';
@@ -23,32 +25,61 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         title: Text("profile_title".tr, style: TextStyle(fontWeight: FontWeight.w700)),
+        actions: [
+          Obx(() => controller.isConfirmVisible.value
+              ? Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: InkWell(
+                onTap: () => controller.uploadImage(),
+                child: Row(
+                  children: [
+                    Icon(Icons.check, color: Colors.white, size: 20),
+                    SizedBox(width: 5),
+                    Text("Confirm", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                            ),
+                          ),
+              )
+              : SizedBox.shrink()),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-
             SizedBox(height: 20),
-
             Center(
               child: Column(
                 children: [
                   Stack(
                     children: [
-                      Obx(
-                        ()=> CircleAvatar(
+                      Obx(() {
+                        return CircleAvatar(
                           radius: 64,
-                          backgroundImage: NetworkImage(controller.photo.value),
-                        )
-                      ),
+                          backgroundImage: controller.selectedImagePath.value.isNotEmpty
+                              ? FileImage(File(controller.selectedImagePath.value)) // Show preview
+                              : (controller.photo.value.isNotEmpty
+                              ? NetworkImage(controller.photo.value) // Show saved image
+                              : AssetImage("assets/images/default_avatar.png") // Fallback image
+                          ) as ImageProvider, // Ensures correct type
+                        );
+                      }),
                       Positioned(
                           child: CircleAvatar(
                             backgroundColor: Colors.amber,
                             foregroundColor: Colors.white,
                             radius: 18,
-                            child: IconButton(onPressed: () {}, icon: Icon(Icons.camera_alt_rounded, size: 20,)),
+                            child: IconButton(onPressed: () {
+                              controller.pickImage();
+                            }, icon: Icon(Icons.camera_alt_rounded, size: 20,)),
                           ),
                           bottom: 0,
                           right: 0
@@ -57,7 +88,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   SizedBox(height: 16),
                   Obx(()=> Text(controller.mobile.value)),
-                  Obx(()=> Text(controller.nameController.text, style: TextStyle( fontSize: 18, fontWeight: FontWeight.w700)),)
+                  Obx(()=> Text(controller.name.value, style: TextStyle( fontSize: 18, fontWeight: FontWeight.w700)),)
                 ],
               ),
             ),

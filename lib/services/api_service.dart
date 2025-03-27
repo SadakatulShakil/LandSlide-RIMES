@@ -26,5 +26,6 @@ class ApiURL {
 
   // Profile
   static Uri profile = Uri.parse('${base_url_api}profile');
+  static Uri profile_image = Uri.parse('${base_url_image}api/profile/photo');
 
 }
