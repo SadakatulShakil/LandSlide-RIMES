@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
 import 'package:geolocator/geolocator.dart';
-import 'package:lanslide_report/services/user_pref_service.dart';
-import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
-import 'package:get/get.dart';
+import 'package:lanslide_report/services/user_pref_service.dart';
 
 import 'api_service.dart';
 
@@ -36,8 +34,6 @@ class LocationService {
     return await Geolocator.getCurrentPosition();
 
   }
-
-
 
   Future<void> getLocation() async {
 

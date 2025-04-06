@@ -34,20 +34,27 @@ class ReportListController extends GetxController {
 
   Future<void> fetchOnlineReports() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.0.76:8000/reports/'));
+      final response = await http.get(Uri.parse('http://192.168.0.58:8000/reports/'));
 
       if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body);
-        // Process the data and update the reports list
-        onlineReports = data.map((e) => LandslideReport.fromJson(e)).toList().obs;
+        var decodedResponse = jsonDecode(response.body);
+
+        // Extracting the 'reports' list
+        if (decodedResponse is Map<String, dynamic> && decodedResponse.containsKey('reports')) {
+          List<dynamic> reportsList = decodedResponse['reports'];
+
+          onlineReports.value = reportsList.map((e) => LandslideReport.fromJson(e)).toList();
+        } else {
+          print('Unexpected response format');  // DEBUGGING
+          Get.snackbar('Error', 'Unexpected response format');
+        }
       } else {
-        // Handle the error
+        print('Error: ${response.statusCode}');  // DEBUGGING
         Get.snackbar('Error', 'Failed to fetch online reports');
       }
     } catch (e) {
-      // Handle the exception
-      print('Error: $e');
-      Get.snackbar('Error: $e', 'Failed to fetch online reports');
+      print('Error: $e');  // DEBUGGING
+      Get.snackbar('Error', 'Failed to fetch online reports');
     }
   }
 

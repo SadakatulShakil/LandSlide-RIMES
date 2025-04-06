@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:lanslide_report/page/profile.dart';
-import 'package:lanslide_report/page/report_form_page.dart';
 
-import '../services/AppDrawer.dart';
+import '../Utills/AppDrawer.dart';
 
 class DashboardPage extends StatelessWidget {
   // Sample pie chart data for landslide types
@@ -45,12 +42,6 @@ class DashboardPage extends StatelessWidget {
           automaticallyImplyLeading: false,
           title: Text("dashboard".tr, style: TextStyle(fontWeight: FontWeight.w700)),
           actions: [
-            // IconButton(
-            //   icon: Icon(Icons.account_circle_rounded),
-            //   onPressed: () {
-            //     Get.to(() => Profile(), transition: Transition.rightToLeft);
-            //   },
-            // ),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: CircleAvatar(

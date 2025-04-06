@@ -1,9 +1,9 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:lanslide_report/controller/navigation/navigation_binding.dart';
-import 'package:lanslide_report/page/dashboard.dart';
 
 import '../../page/navigation_view.dart';
 import '../../page/otp.dart';

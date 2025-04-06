@@ -187,13 +187,13 @@ class ReportController extends GetxController {
       slopeAngle: slopeAngle.value,
       rainfallData: rainfallData.value,
       soilMoistureContent: soilMoistureContent.value,
-      impactInfrastructure: impactInfrastructure.value,
-      damageRoads: damageRoads.value,
-      damageBuildings: damageBuildings.value,
-      damageCriticalInfrastructure: damageCriticalInfrastructure.value,
-      damageUtilities: damageUtilities.value,
-      damageBridges: damageBridges.value,
-      damImpact: damImpact.value,
+      impactInfrastructure: impactInfrastructure.value.toString(),
+      damageRoads: damageRoads.value.toString(),
+      damageBuildings: damageBuildings.value.toString(),
+      damageCriticalInfrastructure: damageCriticalInfrastructure.value.toString(),
+      damageUtilities: damageUtilities.value.toString(),
+      damageBridges: damageBridges.value.toString(),
+      damImpact: damImpact.value.toString(),
       soilImpact: soilImpact.value,
       vegetationImpact: vegetationImpact.value,
       waterwayImpact: waterwayImpact.value,
@@ -202,6 +202,7 @@ class ReportController extends GetxController {
       distance2: distance2.value,
     );
     await dao.insertReport(report);
+    Get.back();
     resetForm();
     Get.snackbar('Success', 'Report saved offline');
   }
@@ -211,10 +212,12 @@ class ReportController extends GetxController {
     try {
       var token = userPrefService.userToken ?? '';
 
-      var url = "http://192.168.0.76:8000/reports/";
+      var url = "http://192.168.0.58:8000/reports/";
 
       // Format imagePaths as a JSON string, or empty if no images
+      print('checkImagePath: $imagePaths');
       var formattedImagePaths = imagePaths.isEmpty ? '' : jsonEncode(imagePaths);
+      print('checkImagePath1: $formattedImagePaths');
 
       var reportData = {
         'landslideId': 'LS2468',
@@ -233,7 +236,7 @@ class ReportController extends GetxController {
         'injured': injured.value,
         'displaced': displaced.value,
         'deaths': deaths.value,
-        'imagePaths': formattedImagePaths,  // This will either be an empty string or a valid JSON array string
+        'imagePaths': formattedImagePaths.toString(),
         'landslideSetting': landslideSetting.value,
         'classification': classification.value,
         'materialType': materialType.value,
@@ -274,6 +277,7 @@ class ReportController extends GetxController {
       if (response.statusCode == 201) {
         var decode = jsonDecode(response.body);
         Get.back();
+        resetForm();
         Get.snackbar("Success", decode['message'],
             backgroundColor: Colors.green, snackPosition: SnackPosition.BOTTOM);
       } else {

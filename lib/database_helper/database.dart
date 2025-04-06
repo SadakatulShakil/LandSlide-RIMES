@@ -22,7 +22,7 @@ class LandslideReport {
   final String injured;
   final String displaced;
   final String deaths;
-  final String imagePaths; // Now stores multiple image paths as JSON
+  final String? imagePaths; // Nullable to prevent errors
   final String landslideSetting;
   final String classification;
   final String materialType;
@@ -33,13 +33,13 @@ class LandslideReport {
   final String slopeAngle;
   final String rainfallData;
   final String soilMoistureContent;
-  final bool impactInfrastructure;
-  final bool damageRoads;
-  final bool damageBuildings;
-  final bool damageCriticalInfrastructure;
-  final bool damageUtilities;
-  final bool damageBridges;
-  final bool damImpact;
+  final String impactInfrastructure;
+  final String damageRoads;
+  final String damageBuildings;
+  final String damageCriticalInfrastructure;
+  final String damageUtilities;
+  final String damageBridges;
+  final String damImpact;
   final String soilImpact;
   final String vegetationImpact;
   final String waterwayImpact;
@@ -63,7 +63,7 @@ class LandslideReport {
     required this.injured,
     required this.displaced,
     required this.deaths,
-    required this.imagePaths, // Updated field
+    this.imagePaths,
     required this.landslideSetting,
     required this.classification,
     required this.materialType,
@@ -90,12 +90,19 @@ class LandslideReport {
     this.isSynced = false,
   });
 
-  // Convert JSON string to List<String>
+  /// Convert JSON string to List<String>
   List<String> getImagePaths() {
-    return jsonDecode(imagePaths).cast<String>();
+    if (imagePaths == null || imagePaths!.isEmpty) {
+      return [];
+    }
+    try {
+      return List<String>.from(jsonDecode(imagePaths!));
+    } catch (e) {
+      return [];
+    }
   }
 
-  // Convert a JSON map to a LandslideReport object
+  /// Convert a LandslideReport object from JSON
   factory LandslideReport.fromJson(Map<String, dynamic> json) {
     return LandslideReport(
       id: json['id'] as int?,
@@ -112,7 +119,7 @@ class LandslideReport {
       injured: json['injured'] as String,
       displaced: json['displaced'] as String,
       deaths: json['deaths'] as String,
-      imagePaths: json['imagePaths'] as String, // Make sure imagePaths is a String
+      imagePaths: json['imagePaths'] != null ? jsonEncode(json['imagePaths']) : null,
       landslideSetting: json['landslideSetting'] as String,
       classification: json['classification'] as String,
       materialType: json['materialType'] as String,
@@ -123,24 +130,24 @@ class LandslideReport {
       slopeAngle: json['slopeAngle'] as String,
       rainfallData: json['rainfallData'] as String,
       soilMoistureContent: json['soilMoistureContent'] as String,
-      impactInfrastructure: json['impactInfrastructure'] as bool,
-      damageRoads: json['damageRoads'] as bool,
-      damageBuildings: json['damageBuildings'] as bool,
-      damageCriticalInfrastructure: json['damageCriticalInfrastructure'] as bool,
-      damageUtilities: json['damageUtilities'] as bool,
-      damageBridges: json['damageBridges'] as bool,
-      damImpact: json['damImpact'] as bool,
+      impactInfrastructure: json['impactInfrastructure'].toString(), // Convert to String
+      damageRoads: json['damageRoads'].toString(),
+      damageBuildings: json['damageBuildings'].toString(),
+      damageCriticalInfrastructure: json['damageCriticalInfrastructure'].toString(),
+      damageUtilities: json['damageUtilities'].toString(),
+      damageBridges: json['damageBridges'].toString(),
+      damImpact: json['damImpact'].toString(),
       soilImpact: json['soilImpact'] as String,
       vegetationImpact: json['vegetationImpact'] as String,
       waterwayImpact: json['waterwayImpact'] as String,
       economicImpact: json['economicImpact'] as String,
       distance1: json['distance1'] as String,
       distance2: json['distance2'] as String,
-      isSynced: json['isSynced'] as bool? ?? false, // Default to false if not provided
+      isSynced: json['isSynced'] as bool? ?? false,
     );
   }
 
-  // Convert LandslideReport object to JSON map
+  /// Convert LandslideReport object to JSON map
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -157,7 +164,7 @@ class LandslideReport {
       'injured': injured,
       'displaced': displaced,
       'deaths': deaths,
-      'imagePaths': imagePaths,
+      'imagePaths': imagePaths ?? jsonEncode([]),
       'landslideSetting': landslideSetting,
       'classification': classification,
       'materialType': materialType,
@@ -168,13 +175,13 @@ class LandslideReport {
       'slopeAngle': slopeAngle,
       'rainfallData': rainfallData,
       'soilMoistureContent': soilMoistureContent,
-      'impactInfrastructure': impactInfrastructure,
-      'damageRoads': damageRoads,
-      'damageBuildings': damageBuildings,
-      'damageCriticalInfrastructure': damageCriticalInfrastructure,
-      'damageUtilities': damageUtilities,
-      'damageBridges': damageBridges,
-      'damImpact': damImpact,
+      'impactInfrastructure': impactInfrastructure.toString(),
+      'damageRoads': damageRoads.toString(),
+      'damageBuildings': damageBuildings.toString(),
+      'damageCriticalInfrastructure': damageCriticalInfrastructure.toString(),
+      'damageUtilities': damageUtilities.toString(),
+      'damageBridges': damageBridges.toString(),
+      'damImpact': damImpact.toString(),
       'soilImpact': soilImpact,
       'vegetationImpact': vegetationImpact,
       'waterwayImpact': waterwayImpact,
@@ -207,6 +214,5 @@ abstract class AppDatabase extends FloorDatabase {
 }
 
 Future<AppDatabase> initializeDatabase() async {
-  final database = await $FloorAppDatabase.databaseBuilder('landslide_app.db').build();
-  return database;
+  return await $FloorAppDatabase.databaseBuilder('landslide_app.db').build();
 }

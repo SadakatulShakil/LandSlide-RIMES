@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:lanslide_report/services/location_service.dart';
+
 import '../controller/report/report_controller.dart';
 import '../database_helper/database.dart';
 import '../services/user_pref_service.dart';
