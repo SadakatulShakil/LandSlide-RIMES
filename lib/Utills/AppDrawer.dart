@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:lanslide_report/page/report_data_list.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
 
+import '../controller/profile/ProfileController.dart';
 import '../controller/webview/webview_binding.dart';
 import '../page/Mobile.dart';
+import '../page/profile.dart';
 import '../page/webview_view.dart';
 import '../services/api_service.dart';
 import 'AppColors.dart';
@@ -18,6 +20,7 @@ class AppDrawer extends StatefulWidget {
 
 class _AppDrawerState extends State<AppDrawer> {
   final userPrefService = UserPrefService();
+  final controller = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +35,17 @@ class _AppDrawerState extends State<AppDrawer> {
                 borderRadius: BorderRadius.circular(100),
                 color: AppColors().app_secondary
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(200),
-                child: Image.asset('assets/images/profile.png', fit: BoxFit.cover),
+              child: GestureDetector(
+                onTap: () {
+                  Get.to(()=> Profile(isBackButton: true), transition: Transition.rightToLeft);
+                },
+                child: CircleAvatar(
+                  radius: 64,
+                  backgroundImage: (controller.photo.value.isNotEmpty
+                      ? NetworkImage(controller.photo.value) // Show saved image
+                      : AssetImage("assets/images/default_avatar.png") // Fallback image
+                  ) as ImageProvider, // Ensures correct type
+                ),
               ),
             ),
             accountName: Text( userPrefService.userName!.isEmpty ? userPrefService.userMobile ?? '' : userPrefService.userName ?? '' ),

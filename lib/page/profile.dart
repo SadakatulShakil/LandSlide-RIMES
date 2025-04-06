@@ -10,7 +10,8 @@ import '../controller/webview/webview_binding.dart';
 import '../services/api_service.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  bool isBackButton;
+  Profile({super.key, required this.isBackButton});
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -25,6 +26,12 @@ class _ProfileState extends State<Profile> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: widget.isBackButton
+            ? IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        )
+            : null, // Hide back button if false
         title: Text("profile_title".tr, style: TextStyle(fontWeight: FontWeight.w700)),
         actions: [
           Obx(() => controller.isConfirmVisible.value
@@ -311,14 +318,14 @@ class _ProfileState extends State<Profile> {
                         SizedBox(height: 20),
                         Center(
                           child: CircleAvatar(
-                            backgroundColor: Colors.red,
+                            backgroundColor: AppColors().app_alert_extreme,
                             foregroundColor: Colors.white,
                             radius: 30,
                             child: IconButton(onPressed: () { controller.logout(); }, icon: Icon(Icons.login_rounded, size: 30,)),
                           ),
                         ),
                         SizedBox(height: 4),
-                        Text("profile_logout".tr, style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
+                        Text("profile_logout".tr, style: TextStyle(color: AppColors().app_alert_extreme, fontWeight: FontWeight.w500)),
                         SizedBox(height: 4),
                         Text("profile_logout_text".tr)
                       ],

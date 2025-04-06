@@ -20,7 +20,7 @@ class NavigationController extends GetxController {
   var currentTab = 0.obs;
   final List<Widget> screen = [
     DashboardPage(),
-    Profile(),
+    Profile(isBackButton: false,),
     ReportFormPage()
   ];
   final userPrefService = UserPrefService();
