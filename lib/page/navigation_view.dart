@@ -50,9 +50,9 @@ class NavigationView extends GetView<NavigationController> {
       splashFactory: NoSplash.splashFactory,
       child: Column(
         children: [
-          Obx(()=> Icon( icon, color: controller.currentTab == index ? const Color(0xFF015205) : Colors.black54) ),
+          Obx(()=> Icon( icon, color: controller.currentTab == index ? Colors.teal : Colors.black54) ),
           Obx(()=> Text( label.tr, style: TextStyle( fontWeight: controller.currentTab == index ? FontWeight.bold : FontWeight.normal,
-              color:  controller.currentTab == index ? const Color(0xFF015205) : Colors.black54 ),
+              color:  controller.currentTab == index ? Colors.teal : Colors.black54 ),
           ))
         ],
       ),

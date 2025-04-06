@@ -97,15 +97,14 @@ class DashboardPage extends StatelessWidget {
                     Text(
                       'Sunday',
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       '9th March 2025',
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
                       ),
                     ),
                   ],
@@ -165,7 +164,7 @@ class DashboardPage extends StatelessWidget {
         Icon(
           icon,
           size: 24,
-          color: Colors.green,
+          color: Colors.teal,
         ),
         const SizedBox(height: 4.0),
         Text(
@@ -230,25 +229,25 @@ class DashboardPage extends StatelessWidget {
                     BarChartGroupData(
                       x: 0,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 11, width: 20),
+                        BarChartRodData(fromY: 0, toY: 11, width: 20, color: Colors.teal),
                       ],
                     ),
                     BarChartGroupData(
                       x: 1,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 10, width: 20),
+                        BarChartRodData(fromY: 0, toY: 10, width: 20, color: Colors.teal),
                       ],
                     ),
                     BarChartGroupData(
                       x: 2,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 15, width: 20),
+                        BarChartRodData(fromY: 0, toY: 15, width: 20, color: Colors.teal),
                       ],
                     ),
                     BarChartGroupData(
                       x: 3,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 12, width: 20),
+                        BarChartRodData(fromY: 0, toY: 12, width: 20, color: Colors.teal),
                       ],
                     ),
                   ],
@@ -316,7 +315,7 @@ class DashboardPage extends StatelessWidget {
                       ],
                       isCurved: true,
                       barWidth: 3,
-                      color: Colors.blue,
+                      color: Colors.teal,
                       dotData: FlDotData(show: true),
                     ),
                   ],
