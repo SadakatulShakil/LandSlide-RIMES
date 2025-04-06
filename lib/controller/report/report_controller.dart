@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../Utills/AppColors.dart';
 import '../../database_helper/database.dart';
 import '../../services/user_pref_service.dart';
 import 'package:http/http.dart' as http;
@@ -354,83 +355,122 @@ class ReportController extends GetxController {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-              Text('Review'),
-            ],
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('District: ${district.value}'),
-                Text('Upazila: ${upazila.value}'),
-                Text('Latitude: ${latitude.value}'),
-                Text('Longitude: ${longitude.value}'),
-                Text('Date: ${date.value}'),
-                Text('Time: ${time.value}'),
-                Text('Cause of Landslide: ${cause_land_slide.value}'),
-                Text('State of Landslide: ${state_land_slide.value}'),// check
-                Text('Water Table Level: ${water_table_level.value}'),
-                Text('Area Displaced Mass: ${area_displaced_mass.value}'),
-                Text('Number of Households: ${households.value}'),
-                Text('Income Level: ${income_level.value}'),
-                Text('Injured: ${injured.value}'),
-                Text('Displaced: ${displaced.value}'),
-                Text('Deaths: ${deaths.value}'),
-                Text('Landslide Setting: ${landslideSetting.value}'),
-                Text('Classification: ${classification.value}'),
-                Text('Material Type: ${materialType.value}'),
-                Text('Failure Type: ${failureType.value}'),
-                Text('Distribution Style: ${distributionStyle.value}'),
-                Text('Land Cover Type: ${landCoverType.value}'),
-                Text('Land Use Type: ${landUseType.value}'),
-                Text('Slope Angle: ${slopeAngle.value}'),
-                Text('Rainfall Data: ${rainfallData.value}'),
-                Text('Soil Moisture Content: ${soilMoistureContent.value}'),
-                Text('Impact on Infrastructure: ${impactInfrastructure.value}'),
-                Text('Damage to Roads: ${damageRoads.value}'),
-                Text('Damage to Buildings: ${damageBuildings.value}'),
-                Text('Damage to Critical Infrastructure: ${damageCriticalInfrastructure.value}'),
-                Text('Damage to Utilities: ${damageUtilities.value}'),
-                Text('Damage to Bridges: ${damageBridges.value}'),
-                Text('Dam Impact: ${damImpact.value}'),
-                Text('Soil Impact: ${soilImpact.value}'),
-                Text('Vegetation Impact: ${vegetationImpact.value}'),
-                Text('Waterway Impact: ${waterwayImpact.value}'),
-                Text('Economic Impact: ${economicImpact.value}'),
-                Text('Distance from Key Location 1: ${distance1.value}'),
-                Text('Distance from Key Location 2: ${distance2.value}'),
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.8, // 80% of screen height
+            ),
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title + Close Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Review',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+                Divider(), // Optional: Adds a separator line
+
+                // Scrollable Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('District: ${district.value}'),
+                        Text('Upazila: ${upazila.value}'),
+                        Text('Latitude: ${latitude.value}'),
+                        Text('Longitude: ${longitude.value}'),
+                        Text('Date: ${date.value}'),
+                        Text('Time: ${time.value}'),
+                        Text('Cause of Landslide: ${cause_land_slide.value}'),
+                        Text('State of Landslide: ${state_land_slide.value}'),
+                        Text('Water Table Level: ${water_table_level.value}'),
+                        Text('Area Displaced Mass: ${area_displaced_mass.value}'),
+                        Text('Number of Households: ${households.value}'),
+                        Text('Income Level: ${income_level.value}'),
+                        Text('Injured: ${injured.value}'),
+                        Text('Displaced: ${displaced.value}'),
+                        Text('Deaths: ${deaths.value}'),
+                        Text('Landslide Setting: ${landslideSetting.value}'),
+                        Text('Classification: ${classification.value}'),
+                        Text('Material Type: ${materialType.value}'),
+                        Text('Failure Type: ${failureType.value}'),
+                        Text('Distribution Style: ${distributionStyle.value}'),
+                        Text('Land Cover Type: ${landCoverType.value}'),
+                        Text('Land Use Type: ${landUseType.value}'),
+                        Text('Slope Angle: ${slopeAngle.value}'),
+                        Text('Rainfall Data: ${rainfallData.value}'),
+                        Text('Soil Moisture Content: ${soilMoistureContent.value}'),
+                        Text('Impact on Infrastructure: ${impactInfrastructure.value}'),
+                        Text('Damage to Roads: ${damageRoads.value}'),
+                        Text('Damage to Buildings: ${damageBuildings.value}'),
+                        Text('Damage to Critical Infrastructure: ${damageCriticalInfrastructure.value}'),
+                        Text('Damage to Utilities: ${damageUtilities.value}'),
+                        Text('Damage to Bridges: ${damageBridges.value}'),
+                        Text('Dam Impact: ${damImpact.value}'),
+                        Text('Soil Impact: ${soilImpact.value}'),
+                        Text('Vegetation Impact: ${vegetationImpact.value}'),
+                        Text('Waterway Impact: ${waterwayImpact.value}'),
+                        Text('Economic Impact: ${economicImpact.value}'),
+                        Text('Distance from Key Location 1: ${distance1.value}'),
+                        Text('Distance from Key Location 2: ${distance2.value}'),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Fixed Action Buttons
+                SizedBox(height: 8,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors().app_secondary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text('Save (Offline)', style: TextStyle(fontSize: 12, color: AppColors().app_primary, fontWeight: FontWeight.bold)),
+                      onPressed: () {
+                        saveOffline(Get.find<LandslideReportDao>());
+                      },
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors().app_primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text('Save (Online)', style: TextStyle(color: AppColors().app_primary_bg, fontSize: 12)),
+                      onPressed: () {
+                        saveOnline();
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Save (Offline)'),
-              onPressed: () {
-                saveOffline(Get.find<LandslideReportDao>());
-                // Implement save offline functionality
-              },
-            ),
-            TextButton(
-              child: Text('Save (Online)'),
-              onPressed: () {
-                saveOnline();
-                // Implement save online functionality
-              },
-            ),
-          ],
         );
       },
     );
   }
+
 }

@@ -30,7 +30,7 @@ class _AppDrawerState extends State<AppDrawer> {
               padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
-                color: AppColors().app_natural_white
+                color: AppColors().app_secondary
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(200),

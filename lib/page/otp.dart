@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../Utills/AppColors.dart';
 import '../controller/otp/OtpController.dart';
 
 class Otp extends StatefulWidget {
@@ -48,8 +49,13 @@ class _OtpState extends State<Otp> {
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder()
+                            border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(color: AppColors().app_primary),
+                          ),
                         ),
+                        cursorColor: AppColors().app_primary,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(1),
                           FilteringTextInputFormatter.digitsOnly
@@ -66,8 +72,13 @@ class _OtpState extends State<Otp> {
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder()
-                        ),
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: AppColors().app_primary),
+                      ),
+                    ),
+                    cursorColor: AppColors().app_primary,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(1),
                           FilteringTextInputFormatter.digitsOnly
@@ -84,8 +95,13 @@ class _OtpState extends State<Otp> {
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder()
+                            border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(color: AppColors().app_primary),
+                          ),
                         ),
+                        cursorColor: AppColors().app_primary,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(1),
                           FilteringTextInputFormatter.digitsOnly
@@ -102,8 +118,13 @@ class _OtpState extends State<Otp> {
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder()
+                            border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(color: AppColors().app_primary),
+                          ),
                         ),
+                        cursorColor: AppColors().app_primary,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(1),
                           FilteringTextInputFormatter.digitsOnly
@@ -121,13 +142,13 @@ class _OtpState extends State<Otp> {
                   child: ElevatedButton(
                     onPressed: controller.loginClick,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF004A03),
+                      backgroundColor: AppColors().app_primary,
                       padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    child: const Text("Login", style: TextStyle(color: Colors.amber, fontSize: 16)),
+                    child: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
               ),

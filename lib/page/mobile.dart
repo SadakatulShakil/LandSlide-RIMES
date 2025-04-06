@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lanslide_report/Utills/AppColors.dart';
 
 import '../controller/mobile/MobileController.dart';
 
@@ -35,9 +36,14 @@ class _MobileState extends State<Mobile> {
                   controller: controller.mobile,
                   decoration: InputDecoration(
                       hintText: "01xxxxxxxxx",
-                      label: Text("Enter Mobile Number"),
-                      border: OutlineInputBorder()
+                      label: Text("Enter Mobile Number", style: TextStyle(color: AppColors().app_primary),),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: AppColors().app_primary),
+                    ),
                   ),
+                  cursorColor: AppColors().app_primary,
                   keyboardType: TextInputType.number,
                 ),
               ),
@@ -49,13 +55,13 @@ class _MobileState extends State<Mobile> {
                   child: ElevatedButton(
                     onPressed: controller.gotoOTP,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF004A03),
+                      backgroundColor: AppColors().app_primary,
                       padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    child: Text("Login", style: TextStyle(color: Colors.amber, fontSize: 16)),
+                    child: Text("Login", style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
               ),

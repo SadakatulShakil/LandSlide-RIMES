@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:lanslide_report/Utills/AppColors.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../controller/webview/webview_controller.dart';
@@ -21,8 +22,8 @@ class WebviewView extends GetView<WebviewController> {
             Obx(()=> Visibility(
                 visible: controller.isPageLoading.value != 100,
                 child: CircularProgressIndicator(
-                  backgroundColor: Colors.white,
-                  color: Colors.teal,
+                  backgroundColor: AppColors().app_secondary,
+                  color: AppColors().app_primary,
                 )
             ))
           ]

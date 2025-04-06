@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lanslide_report/page/report_form_page.dart';
 
+import '../Utills/AppColors.dart';
 import '../controller/navigation/navigation_controller.dart';
 
 class NavigationView extends GetView<NavigationController> {
@@ -12,8 +13,8 @@ class NavigationView extends GetView<NavigationController> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors().app_primary,
+        foregroundColor: AppColors().app_secondary,
         onPressed: () {
           Get.to(()=> ReportFormPage());
           //controller.onItemTapped(4);
@@ -50,9 +51,9 @@ class NavigationView extends GetView<NavigationController> {
       splashFactory: NoSplash.splashFactory,
       child: Column(
         children: [
-          Obx(()=> Icon( icon, color: controller.currentTab == index ? Colors.teal : Colors.black54) ),
+          Obx(()=> Icon( icon, color: controller.currentTab == index ? AppColors().app_primary : Colors.black54) ),
           Obx(()=> Text( label.tr, style: TextStyle( fontWeight: controller.currentTab == index ? FontWeight.bold : FontWeight.normal,
-              color:  controller.currentTab == index ? Colors.teal : Colors.black54 ),
+              color:  controller.currentTab == index ? AppColors().app_primary : Colors.black54 ),
           ))
         ],
       ),

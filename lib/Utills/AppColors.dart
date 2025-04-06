@@ -2,18 +2,15 @@
 import 'dart:ui';
 
 class AppColors {
-  final app_primary = const Color(0xFF004A07);
-  final app_primary_dark = const Color(0xFF5C775D);
-  final app_primary_light = const Color(0xFF28A745);
-  final app_primary_bg_dark = const Color(0xFFE1FFDF);
-  final app_primary_bg_light = const Color(0xFFF9FFF5);
+  final app_primary = const Color(0xFF008080);
+  final app_primary_bg = const Color(0xFFE0F2F1);
 
-  final app_secondary = const Color(0xFFFFD205);
-  final app_secondary_bg = const Color(0xFFFFF3BB);
+  final app_secondary = const Color(0xFFFFFFFF);
+  final app_secondary_bg = const Color(0xC7B6D5EA);
+  final positive_bg = const Color(0xFF14A20A);
 
-  final app_natural_black = const Color(0xFF3B443B);
-  final app_natural_gray = const Color(0xFF4D534D);
-  final app_natural_white = const Color(0xFFFFFFFF);
+  final black_font_color = const Color(0xFF000000);
+  final grey_font_color = const Color(0xFF4D534D);
 
 
   final app_alert_normal = const Color(0xFF004A07);

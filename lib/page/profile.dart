@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lanslide_report/Utills/AppColors.dart';
 import 'package:lanslide_report/page/webview_view.dart';
 
 import '../controller/profile/ProfileController.dart';
@@ -32,7 +33,7 @@ class _ProfileState extends State<Profile> {
                 child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                color: Colors.green,
+                color: AppColors().positive_bg,
                 borderRadius: BorderRadius.circular(20),
                             ),
                             child: InkWell(
@@ -74,8 +75,8 @@ class _ProfileState extends State<Profile> {
                       }),
                       Positioned(
                           child: CircleAvatar(
-                            backgroundColor: Colors.amber,
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors().app_alert_severe,
+                            foregroundColor: AppColors().app_secondary,
                             radius: 18,
                             child: IconButton(onPressed: () {
                               controller.pickImage();
@@ -103,7 +104,7 @@ class _ProfileState extends State<Profile> {
                   Container(
                     width: MediaQuery.of(context).size.height,
                     decoration: BoxDecoration(
-                      color: Colors.teal,
+                      color: AppColors().app_primary,
                       borderRadius: BorderRadius.circular(5)
                     ),
                     child: Column(
@@ -112,13 +113,14 @@ class _ProfileState extends State<Profile> {
                           padding: EdgeInsets.symmetric(horizontal: 4),
                           child: TabBar(
                             dividerHeight: 0,
-                            unselectedLabelColor: Colors.white,
+                            labelColor: AppColors().app_primary,
+                            unselectedLabelColor: AppColors().app_secondary,
                             indicatorWeight: 1,
                             indicatorPadding: EdgeInsets.symmetric(vertical: 4),
                             indicatorSize: TabBarIndicatorSize.tab,
-                            indicatorColor: Colors.white,
+                            indicatorColor: AppColors().app_secondary,
                             indicator: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors().app_secondary,
                               borderRadius: BorderRadius.circular(5)
                             ),
                             controller: controller.tabController,
@@ -156,15 +158,16 @@ class _ProfileState extends State<Profile> {
                             controller: controller.nameController,
                             enabled: true,
                             decoration: InputDecoration(
-                              labelText: "profile_info_name".tr,
+                              label: Text("profile_info_name".tr, style: TextStyle(color: AppColors().app_primary),),
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey)),
                               disabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey)),
                               focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.green)
+                                  borderSide: BorderSide(color: AppColors().app_primary)
                               ),
                             ),
+                            cursorColor: AppColors().app_primary,
                           ),
                         ),
 
@@ -177,15 +180,16 @@ class _ProfileState extends State<Profile> {
                             controller: controller.emailController,
                             enabled: true,
                             decoration: InputDecoration(
-                              labelText: "profile_info_email".tr,
+                              label: Text("profile_info_email".tr, style: TextStyle(color: AppColors().app_primary),),
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey)),
                               disabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey)),
                               focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.green)
+                                  borderSide: BorderSide(color: AppColors().app_primary)
                               ),
                             ),
+                            cursorColor: AppColors().app_primary,
                           ),
                         ),
 
@@ -198,15 +202,16 @@ class _ProfileState extends State<Profile> {
                             controller: controller.addressController,
                             enabled: true,
                             decoration: InputDecoration(
-                              labelText: "profile_info_address".tr,
+                              label: Text("profile_info_address".tr, style: TextStyle(color: AppColors().app_primary),),
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey)),
                               disabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey)),
                               focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.green)
+                                  borderSide: BorderSide(color: AppColors().app_primary)
                               ),
                             ),
+                            cursorColor: AppColors().app_primary,
                           ),
                         ),
 
@@ -218,8 +223,8 @@ class _ProfileState extends State<Profile> {
                             onPressed: controller.updateProfile,
                             child: Text("profile_info_update_button".tr),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
-                              foregroundColor: Colors.white,
+                              backgroundColor: AppColors().app_primary,
+                              foregroundColor: AppColors().app_secondary,
                               textStyle: TextStyle(fontSize: 16),
                               minimumSize: Size(100, 50),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))
@@ -256,8 +261,8 @@ class _ProfileState extends State<Profile> {
                             ),
                             child: ToggleButtons(
                               borderRadius: BorderRadius.circular(10),
-                              fillColor: Colors.purple.shade100,
-                              selectedColor: Colors.black,
+                              fillColor: AppColors().app_primary_bg,
+                              selectedColor: AppColors().app_primary,
                               color: Colors.black54,
                               textStyle: TextStyle(fontSize: 16),
                               isSelected: controller.selectedLanguage,
@@ -334,12 +339,12 @@ class _ProfileState extends State<Profile> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 3,
       child: ListTile(
-        leading: Icon(icon, size: 30, color: Colors.black54),
+        leading: Icon(icon, size: 30, color: AppColors().app_primary),
         title: Text(
           text,
           style: TextStyle(fontSize: 16),
         ),
-        trailing: Icon(Icons.arrow_forward_ios, color: Colors.black54),
+        trailing: Icon(Icons.arrow_forward_ios, color: AppColors().app_primary),
         tileColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         onTap: onTap,

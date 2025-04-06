@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lanslide_report/Utills/AppColors.dart';
 
 import '../Utills/AppDrawer.dart';
 
@@ -38,7 +39,7 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors().app_secondary,
           automaticallyImplyLeading: false,
           title: Text("dashboard".tr, style: TextStyle(fontWeight: FontWeight.w700)),
           actions: [
@@ -46,9 +47,10 @@ class DashboardPage extends StatelessWidget {
               padding: const EdgeInsets.only(right: 8.0),
               child: CircleAvatar(
                   radius: 18,
-                  backgroundColor: Colors.teal.shade50,
+                  backgroundColor: AppColors().app_primary_bg,
                   child: Builder(
-                    builder: (context) => IconButton(onPressed: (){ Scaffold.of(context).openDrawer(); }, icon: Icon(Icons.menu), iconSize: 20),
+                    builder: (context) => IconButton(onPressed: (){ Scaffold.of(context).openDrawer();},
+                      icon: Icon(Icons.menu), iconSize: 20, color: AppColors().app_primary,),
                   )
               ),
             ),
@@ -81,7 +83,6 @@ class DashboardPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),
         //side: const BorderSide( width: 1.0),
       ),
-      //color: Colors.green.shade50,
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 16.0),
         child: Column(
@@ -164,12 +165,12 @@ class DashboardPage extends StatelessWidget {
         Icon(
           icon,
           size: 24,
-          color: Colors.teal,
+          color: AppColors().app_primary,
         ),
         const SizedBox(height: 4.0),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Colors.black54),
+          style:  TextStyle(fontSize: 12, color: AppColors().grey_font_color),
         ),
         Text(
           value,
@@ -229,25 +230,25 @@ class DashboardPage extends StatelessWidget {
                     BarChartGroupData(
                       x: 0,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 11, width: 20, color: Colors.teal),
+                        BarChartRodData(fromY: 0, toY: 11, width: 20, color: AppColors().app_primary),
                       ],
                     ),
                     BarChartGroupData(
                       x: 1,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 10, width: 20, color: Colors.teal),
+                        BarChartRodData(fromY: 0, toY: 10, width: 20, color: AppColors().app_primary),
                       ],
                     ),
                     BarChartGroupData(
                       x: 2,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 15, width: 20, color: Colors.teal),
+                        BarChartRodData(fromY: 0, toY: 15, width: 20, color: AppColors().app_primary),
                       ],
                     ),
                     BarChartGroupData(
                       x: 3,
                       barRods: [
-                        BarChartRodData(fromY: 0, toY: 12, width: 20, color: Colors.teal),
+                        BarChartRodData(fromY: 0, toY: 12, width: 20, color: AppColors().app_primary),
                       ],
                     ),
                   ],
@@ -315,7 +316,7 @@ class DashboardPage extends StatelessWidget {
                       ],
                       isCurved: true,
                       barWidth: 3,
-                      color: Colors.teal,
+                      color: AppColors().app_primary,
                       dotData: FlDotData(show: true),
                     ),
                   ],
