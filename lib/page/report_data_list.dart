@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lanslide_report/Utills/AppColors.dart';
 
 import 'offline_list.dart';
 import 'online_list.dart';
@@ -17,7 +18,7 @@ class ReportDataList extends StatelessWidget {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
             child: Container(
-              color: Color(0xFF0A3D91),//background color
+              color: AppColors().app_primary,//background color
               child: TabBar(
 
                 indicatorSize: TabBarIndicatorSize.tab,

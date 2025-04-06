@@ -12,42 +12,48 @@ class OfflineList extends StatelessWidget {
     // Instantiate the controller
     final ReportListController reportController = Get.put(ReportListController());
 
-    return Scaffold(
-      body: Obx(
-            () {
-          // Observe changes in the reports list
-          if (reportController.offlineReports.isEmpty) {
-            return Center(child: Text("No reports found"));
-          }
+    return RefreshIndicator(
+      onRefresh: () async {
+        // Refresh the offline reports
+        await reportController.fetchOfflineReports();
+      },
+      child: Scaffold(
+        body: Obx(
+              () {
+            // Observe changes in the reports list
+            if (reportController.offlineReports.isEmpty) {
+              return Center(child: Text("No reports found"));
+            }
 
-          return ListView.builder(
-            itemCount: reportController.offlineReports.length,
-            itemBuilder: (context, index) {
-              final report = reportController.offlineReports[index];
-              final status = report.isSynced ? "Synced" : "Unsynced"; // Determine the status
+            return ListView.builder(
+              itemCount: reportController.offlineReports.length,
+              itemBuilder: (context, index) {
+                final report = reportController.offlineReports[index];
+                final status = report.isSynced ? "Synced" : "Unsynced"; // Determine the status
 
-              return GestureDetector(
-                onTap: () => _showReportDetails(context, report),
-                child: Card(
-                  elevation: 0,
-                    color: Colors.blueGrey[50],
-                    child: ListTile(
-                    title: Text(report.district),
-                    subtitle: Text('Cause: ${report.causeOfLandSlide}'),
-                    trailing: status == "Unsynced"
-                        ? IconButton(
-                          icon: Icon(Icons.cloud_upload),
-                          onPressed: () async {
-                        //await reportController.markAsSynced(report.id!);
-                      },
-                    )
-                        : Icon(Icons.check_circle, color: Colors.green),
+                return GestureDetector(
+                  onTap: () => _showReportDetails(context, report),
+                  child: Card(
+                    elevation: 0,
+                      color: Colors.blueGrey[50],
+                      child: ListTile(
+                      title: Text(report.district),
+                      subtitle: Text('Cause: ${report.causeOfLandSlide}'),
+                      trailing: status == "Unsynced"
+                          ? IconButton(
+                            icon: Icon(Icons.cloud_upload),
+                            onPressed: () async {
+                          //await reportController.markAsSynced(report.id!);
+                        },
+                      )
+                          : Icon(Icons.check_circle, color: Colors.green),
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

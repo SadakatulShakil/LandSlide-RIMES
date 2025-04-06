@@ -10,31 +10,36 @@ class OnlineList extends StatelessWidget {
   Widget build(BuildContext context) {
     final ReportListController reportController = Get.put(ReportListController());
 
-    return Scaffold(
-      body: Obx(() {
-        if (reportController.onlineReports.isEmpty) {
-          return const Center(child: Text("No reports found"));
-        }
+    return RefreshIndicator(
+      onRefresh: () async {
+        await reportController.fetchOnlineReports();
+      },
+      child: Scaffold(
+        body: Obx(() {
+          if (reportController.onlineReports.isEmpty) {
+            return const Center(child: Text("No reports found"));
+          }
 
-        return ListView.builder(
-          itemCount: reportController.onlineReports.length,
-          itemBuilder: (context, index) {
-            final report = reportController.onlineReports[index];
+          return ListView.builder(
+            itemCount: reportController.onlineReports.length,
+            itemBuilder: (context, index) {
+              final report = reportController.onlineReports[index];
 
-            return GestureDetector(
-              onTap: () => _showReportDetails(context, report),
-              child: Card(
-                elevation: 2,
-                color: Colors.blueGrey[50],
-                child: ListTile(
-                  title: Text(report.district),
-                  subtitle: Text('Cause: ${report.causeOfLandSlide}'),
+              return GestureDetector(
+                onTap: () => _showReportDetails(context, report),
+                child: Card(
+                  elevation: 2,
+                  color: Colors.blueGrey[50],
+                  child: ListTile(
+                    title: Text(report.district),
+                    subtitle: Text('Cause: ${report.causeOfLandSlide}'),
+                  ),
                 ),
-              ),
-            );
-          },
-        );
-      }),
+              );
+            },
+          );
+        }),
+      ),
     );
   }
 

@@ -34,7 +34,7 @@ class ReportListController extends GetxController {
 
   Future<void> fetchOnlineReports() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.0.58:8000/reports/'));
+      final response = await http.get(Uri.parse('http://192.168.0.65:8000/reports/'));
 
       if (response.statusCode == 200) {
         var decodedResponse = jsonDecode(response.body);
