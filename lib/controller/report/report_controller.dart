@@ -144,7 +144,6 @@ class ReportController extends GetxController {
       userPrefService.locationDistrict ?? '',
     );
     isLoading.value = false;
-    // This alone won't update Obx widgets, they rely on .obs changes which we've done above
   }
 
   Future<void> getCurrentLocation() async {
@@ -473,4 +472,97 @@ class ReportController extends GetxController {
     );
   }
 
+  void showCommonReportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.5, // 80% of screen height
+            ),
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title + Close Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Review',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+                Divider(), // Optional: Adds a separator line
+
+                // Scrollable Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('District: ${district.value}'),
+                        Text('Upazila: ${upazila.value}'),
+                        Text('Latitude: ${latitude.value}'),
+                        Text('Longitude: ${longitude.value}'),
+                        Text('Date: ${date.value}'),
+                        Text('Time: ${time.value}'),
+                        Text('Injured: ${injured.value}'),
+                        Text('Deaths: ${deaths.value}'),
+                        Text('Damage to Roads: ${damageRoads.value}'),
+                        Text('Damage to Buildings: ${damageBuildings.value}'),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Fixed Action Buttons
+                SizedBox(height: 8,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors().app_secondary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text('Save (Offline)', style: TextStyle(fontSize: 12, color: AppColors().app_primary, fontWeight: FontWeight.bold)),
+                      onPressed: () {
+                        saveOffline(Get.find<LandslideReportDao>());
+                      },
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors().app_primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text('Save (Online)', style: TextStyle(color: AppColors().app_primary_bg, fontSize: 12)),
+                      onPressed: () {
+                        saveOnline();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

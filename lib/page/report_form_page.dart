@@ -24,7 +24,6 @@ class _ReportFormPageState extends State<ReportFormPage> {
   final userPrefService = UserPrefService();
   final _formKeys = List.generate(4, (_) => GlobalKey<FormState>());
   final ImagePicker _picker = ImagePicker();
-  List<File> _selectedImages = [];
 
   Future<void> _pickImage() async {
     if (controller.imagePaths.length >= 3) {
@@ -70,11 +69,211 @@ class _ReportFormPageState extends State<ReportFormPage> {
     controller.showReportDialog(context);
   }
 
+  void _showCommonSummaryDialog(){
+    controller.showCommonReportDialog(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('userType: ${userPrefService.userType}');
     return Scaffold(
       appBar: AppBar(title: Text('Inventory Report')),
-      body: Obx(() {
+      body: userPrefService.userType == 'common'?
+      Obx(() {
+        return Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: Theme(
+                    data: ThemeData(
+                      colorScheme: ColorScheme.light(primary: AppColors().app_primary),
+                    ),
+                    child: Stepper(
+                      elevation: 0,
+                      currentStep: controller.currentStep.value,
+                      type: StepperType.horizontal,
+                      onStepTapped: (step) {
+                        bool canJump = true;
+                        for (int i = 0; i < step; i++) {
+                          if (!_formKeys[i].currentState!.validate()) {
+                            canJump = false;
+                            break;
+                          }
+                        }
+                        if (canJump) controller.currentStep.value = step;
+                      },
+                      onStepContinue: () {
+                        if (_formKeys[controller.currentStep.value]
+                            .currentState!
+                            .validate()) {
+                          if (controller.currentStep.value < 1) {
+                            controller.currentStep++;
+                          } else {
+                            _showCommonSummaryDialog();
+                          }
+                        }
+                      },
+                      onStepCancel: () {
+                        if (controller.currentStep.value > 0)
+                          controller.currentStep--;
+                      },
+                      controlsBuilder: (context, details) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            if (controller.currentStep.value > 0)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: details.onStepCancel,
+                                  child: Text('Previous', style: TextStyle(color: AppColors().app_primary),),
+                                ),
+                              ),
+                            const SizedBox(width: 8),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: ElevatedButton(
+                                onPressed: details.onStepContinue,
+                                child: Text(controller.currentStep.value == 1
+                                    ? 'Submit'
+                                    : 'Next', style: TextStyle(color: AppColors().app_primary),),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      steps: [
+                        // Step 1: Basic Information (Auto-Filled)
+                        Step(
+                          state: controller.currentStep.value > 0
+                              ? StepState.complete
+                              : StepState.indexed,
+                          title: SizedBox.shrink(),
+                          content: Form(
+                            key: _formKeys[0],
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Auto-Filled Info",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold)),
+                                  _buildReadOnlyField("Landslide ID", controller.id.value),
+                                  _buildReadOnlyField("District",
+                                      controller.district.value),
+                                  _buildReadOnlyField("Upazila",
+                                      controller.upazila.value),
+                                  _buildReadOnlyField("Location", controller.latAndLon.value),
+                                ]),
+                          ),
+                          isActive: controller.currentStep.value >= 0,
+                        ),
+                        // Step 2: Basic Information (Manually Input)
+                        Step(
+                          state: controller.currentStep.value > 1
+                              ? StepState.complete
+                              : StepState.indexed,
+                          title: SizedBox.shrink(),
+                          content: Form(
+                            key: _formKeys[1],
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Basic Info',
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold)),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      // Show uploaded images
+                                      Obx(() => Row(
+                                        children: controller.imagePaths.asMap().entries.map((entry) {
+                                          int index = entry.key;
+                                          String path = entry.value;
+                                          return Stack(
+                                            children: [
+                                              Container(
+                                                margin: EdgeInsets.only(right: 8),
+                                                width: 80,
+                                                height: 80,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  image: DecorationImage(
+                                                    image: FileImage(File(path)),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                right: 0,
+                                                top: 0,
+                                                child: GestureDetector(
+                                                  onTap: () => _removeImage(index),
+                                                  child: Container(
+                                                    padding: EdgeInsets.all(3),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: AppColors().app_alert_extreme,
+                                                    ),
+                                                    child: Icon(Icons.close, color: AppColors().app_secondary, size: 16),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }).toList(),
+                                      )),
+                                      // Upload button (hidden if 3 images already added)
+                                      if (controller.imagePaths.length < 3)
+                                        ElevatedButton(
+                                          onPressed: _pickImage,
+                                          child: Text("Upload Image", style: TextStyle(color: AppColors().black_font_color),),
+                                        ),
+                                    ],
+                                  ),
+
+                                  //_buildTextField("Landslide Location"),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Card(
+                                    child: Column(
+                                      children: [
+                                        _buildDatePicker(context, "Date"),
+                                        _buildTimePicker(context, "Time"),
+                                      ],
+                                    ),
+                                  ),
+                                  _buildNumberField("Injured"),
+                                  _buildNumberField("Deaths"),
+                                  _buildYesNoOption(
+                                      "Damage to Roads", controller.damageRoads),
+                                  _buildYesNoOption("Damage to Buildings",
+                                      controller.damageBuildings),
+                                ]),
+                          ),
+                          isActive: controller.currentStep.value >= 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (controller.isLoading.value)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black45, // Dark overlay
+                  child: Center(
+                      child: CircularProgressIndicator()), // Loading spinner
+                ),
+              ),
+          ],
+        );
+      }):
+      Obx(() {
         return Stack(
           children: [
             Column(
@@ -354,7 +553,7 @@ class _ReportFormPageState extends State<ReportFormPage> {
               ),
           ],
         );
-      }),
+      })
     );
   }
 
