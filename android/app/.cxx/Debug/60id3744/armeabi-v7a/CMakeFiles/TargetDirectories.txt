@@ -1,0 +1,2 @@
+/Users/shakil/Projects/lanslide_report/android/app/.cxx/Debug/60id3744/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/shakil/Projects/lanslide_report/android/app/.cxx/Debug/60id3744/armeabi-v7a/CMakeFiles/rebuild_cache.dir

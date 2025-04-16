@@ -159,7 +159,7 @@ class _ReportFormPageState extends State<ReportFormPage> {
                                       style: TextStyle(
                                           fontSize: 25,
                                           fontWeight: FontWeight.bold)),
-                                  _buildReadOnlyField("Landslide ID", controller.id.value),
+                                  //_buildReadOnlyField("Landslide ID", controller.id.value),
                                   _buildReadOnlyField("District",
                                       controller.district.value),
                                   _buildReadOnlyField("Upazila",

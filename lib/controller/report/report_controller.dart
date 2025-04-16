@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../Utills/AppColors.dart';
 import '../../database_helper/database.dart';
+import '../../services/api_service.dart';
 import '../../services/user_pref_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -89,7 +90,7 @@ class ReportController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getSharedPrefData();
+    //getSharedPrefData();
     getCurrentLocation();
   }
 
@@ -109,19 +110,19 @@ class ReportController extends GetxController {
     numDeaths.text = deaths.value;
   }
 
-  Future getSharedPrefData() async {
-    id.value = userPrefService.userId ?? '';
-    district.value = userPrefService.locationDistrict ?? '';
-    upazila.value = userPrefService.locationUpazila ?? '';
-    longitude.value = userPrefService.lon ?? '';
-    latitude.value = userPrefService.lat ?? '';
-    address.value = userPrefService.locationName ?? '';
-    //latAndLon.value = 'Lat: ${latitude.value}, Lon: ${longitude.value}';
-
-    print('New Location3: ${latAndLon.value}');
-
-    bindControllers();
-  }
+  // Future getSharedPrefData() async {
+  //   id.value = userPrefService.userId ?? '';
+  //   district.value = userPrefService.locationDistrict ?? '';
+  //   upazila.value = userPrefService.locationUpazila ?? '';
+  //   longitude.value = userPrefService.lon ?? '';
+  //   latitude.value = userPrefService.lat ?? '';
+  //   address.value = userPrefService.locationName ?? '';
+  //   //latAndLon.value = 'Lat: ${latitude.value}, Lon: ${longitude.value}';
+  //
+  //   print('New Location3: ${latAndLon.value}');
+  //
+  //   bindControllers();
+  // }
 
   Future updateLocation(LatLng newLocation) async{
     // Update the observable values
@@ -134,16 +135,36 @@ class ReportController extends GetxController {
     latAndLonController.text = latAndLon.value;
     print('New Location2: ${latAndLonController.text}');
 
-    // Save to preferences
-    userPrefService.saveLocationData(
-      latitude.value,
-      longitude.value,
-      userPrefService.userId ?? '',
-      userPrefService.userName ?? '',
-      userPrefService.locationUpazila ?? '',
-      userPrefService.locationDistrict ?? '',
-    );
-    isLoading.value = false;
+    // Fetch the address and other details from the API
+    try {
+      var response = await http.get(Uri.parse(ApiURL.location_latlon + "?lat=" + latitude.value + "&lon=" + longitude.value));
+      if(response.statusCode != 200) {
+        isLoading.value = false;
+        Get.snackbar("Error", "Failed to fetch location data");
+        return;
+      }else {
+        var decode = jsonDecode(response.body);
+        print('shakil ${decode}');
+        address.value = decode['result']['name'];
+        upazila.value = decode['result']['upazila'];
+        district.value = decode['result']['district'];
+        districtController.text = district.value;
+        upazilaController.text = upazila.value;
+        print('shakil111111 ${upazila.value}');
+        await userPrefService.saveLocationData(
+            latitude.value,
+            longitude.value,
+            decode['result']['id'],
+            decode['result']['name'],
+            decode['result']['upazila'],
+            decode['result']['district']
+        );
+        isLoading.value = false;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    //isLoading.value = false;
   }
 
   Future<void> getCurrentLocation() async {
@@ -155,6 +176,31 @@ class ReportController extends GetxController {
       longitude.value = position.longitude.toStringAsFixed(5);
       latAndLon.value = "Lat: ${position.latitude}, Lon: ${position.longitude}";
       latAndLonController.text = latAndLon.value;
+
+      var response = await http.get(Uri.parse(ApiURL.location_latlon + "?lat=" + latitude.value + "&lon=" + longitude.value));
+      if(response.statusCode != 200) {
+        isLoading.value = false;
+        Get.snackbar("Error", "Failed to fetch location data");
+        return;
+      }else {
+        var decode = jsonDecode(response.body);
+        print('shakil ${decode}');
+        address.value = decode['result']['name'];
+        upazila.value = decode['result']['upazila'];
+        district.value = decode['result']['district'];
+        districtController.text = district.value;
+        upazilaController.text = upazila.value;
+        print('shakil111111 ${upazila.value}');
+        await userPrefService.saveLocationData(
+            latitude.value,
+            longitude.value,
+            decode['result']['id'],
+            decode['result']['name'],
+            decode['result']['upazila'],
+            decode['result']['district']
+        );
+        isLoading.value = false;
+      }
     } catch (e) {
       Get.snackbar("Error", "Failed to get location");
     }
