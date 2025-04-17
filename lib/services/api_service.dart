@@ -12,8 +12,9 @@ class ApiURL {
   // Weather
   static Uri locations = Uri.parse('${base_url_api}weather/locations');
   static String dailyforecast = '${base_url_api}weather/dailyforecast';
-  static String currentforecast = '${base_url_api}weather/currentforecast';
+  static String currentforecast = 'https://bamisapp.bdservers.site/api/weather/currentforecast';
   static String location_latlon = '${base_url_location}weather/location_latlon';
+  static String placeholder_auth = "https://bamisapp.bdservers.site/assets/auth/profile.jpg";
 
   // Weather Alert
   static String webview_url = '${base_url}webview/weather_alert';

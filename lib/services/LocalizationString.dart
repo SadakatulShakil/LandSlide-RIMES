@@ -24,7 +24,14 @@ class LocalizationString extends Translations {
       'dashboard_sidebar_important_video': 'App Manual',
       'dashboard_sidebar_about_us': 'About Us',
       'dashboard_sidebar_privacy_policy': 'Privacy Policy',
-
+      'dashboard_rainfall': 'Rainfall',
+      'dashboard_humidity': 'Humidity',
+      'dashboard_wind': 'Wind Speed',
+      'dashboard_time_good_morning': "Good Morning",
+      'dashboard_time_good_noon': "Good Noon",
+      'dashboard_time_good_afternoon': "Good Afternoon",
+      'dashboard_time_good_evening': "Good Evening",
+      'dashboard_time_good_night': "Good Night",
     },
     'bn_BD': {
       'title': 'LandSlide Report',
@@ -46,6 +53,14 @@ class LocalizationString extends Translations {
       'dashboard_sidebar_important_video': 'অ্যাপ ম্যানুয়াল',
       'dashboard_sidebar_about_us': 'আমাদের সম্পর্কে',
       'dashboard_sidebar_privacy_policy': 'গোপনীয়তা নীতি',
+      'dashboard_rainfall': 'বৃষ্টিপাত',
+      'dashboard_humidity': 'আর্দ্রতা',
+      'dashboard_wind': 'বাতাসের গতি',
+      'dashboard_time_good_morning': "শুভ সকাল",
+      'dashboard_time_good_noon': "শুভ দুপুর",
+      'dashboard_time_good_afternoon': "শুভ বিকাল",
+      'dashboard_time_good_evening': "শুভ সন্ধা",
+      'dashboard_time_good_night': "শুভ রাত্রি",
     }
   };
 }

@@ -1,12 +1,16 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lanslide_report/Utills/AppColors.dart';
 
 import '../Utills/AppDrawer.dart';
+import '../controller/dashboard/DashboardController.dart';
+import '../services/api_service.dart';
 
 class DashboardPage extends StatelessWidget {
   // Sample pie chart data for landslide types
+  final controller = Get.put(DashboardController());
   final pieChartData = [
     PieChartSectionData(
       value: 40,
@@ -39,9 +43,13 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-          backgroundColor: AppColors().app_secondary,
+          backgroundColor: Colors.teal.shade50,
           automaticallyImplyLeading: false,
-          title: Text("dashboard".tr, style: TextStyle(fontWeight: FontWeight.w700)),
+          title: Obx(() => ListTile(
+              title: Text(controller.fullname.value.isEmpty ? controller.mobile.value : controller.fullname.value, style: TextStyle(fontWeight: FontWeight.w700)),
+              subtitle: Text(controller.initTime.value),
+          )
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
@@ -56,19 +64,26 @@ class DashboardPage extends StatelessWidget {
             ),
           ]
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildWeatherCard(),
-              SizedBox(height: 10),
-              _buildLandslideBarChart(),
-              SizedBox(height: 10),
-              _buildLandslideLineChart(),
-              SizedBox(height: 45),
-            ],
+      body: RefreshIndicator(
+        onRefresh: controller.onRefresh,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text('Today\'s Weather', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ),
+                _buildWeatherCard(),
+                SizedBox(height: 10),
+                _buildLandslideBarChart(),
+                SizedBox(height: 10),
+                _buildLandslideLineChart(),
+                SizedBox(height: 45),
+              ],
+            ),
           ),
         ),
       ),
@@ -77,106 +92,148 @@ class DashboardPage extends StatelessWidget {
 
   // Weather Card
   Widget _buildWeatherCard() {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-        //side: const BorderSide( width: 1.0),
-      ),
+    return Obx(()=> Card(
+      elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //Text('Weather forecast', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+
+                      Row(
+                        children: [
+                          Icon(Icons.location_on_sharp, color: AppColors().app_primary),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(controller.currentLocationName.value ?? "", style: TextStyle(color: AppColors().black_font_color)),
+                                Text(controller.forecast.value.length > 0 ? "${controller.forecast.value[0]?['weekday']}, ${controller.forecast.value[0]?['date']}" : "", style: TextStyle(color: AppColors().black_font_color)),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              Image.network( controller.forecast.value.length > 0 ? 'https://bamisapp.bdservers.site/' + "assets/weather_icons/${controller.forecast.value[0]['icon']}" : ApiURL.placeholder_auth, height: 48),
+                              // Text(controller.forecast.value.length > 0 ? "${controller.forecast.value[0]['type']}" : "", style: TextStyle(color: Colors.white)),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Obx(() => Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          RichText(
+                              text: TextSpan(
+                                  text: controller.forecast.value.length > 0 ? "${controller.forecast.value[0]['temp']['val_avg']}${controller.forecast.value[0]['temp_unit']}" : "", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors().app_primary)
+                              )
+                          ),
+                          RichText(
+                              text: TextSpan(
+                                  children: [
+                                    WidgetSpan(child: Icon(Icons.arrow_upward, size: 14, color: AppColors().app_primary)),
+                                    TextSpan(text: controller.forecast.value.length > 0 ? "${controller.forecast.value[0]['temp']['val_max']}${controller.forecast.value[0]['temp_unit']}" : "", style: TextStyle(color: AppColors().app_primary))
+                                  ]
+                              )
+                          ),
+                          RichText(
+                              text: TextSpan(
+                                  children: [
+                                    WidgetSpan(child: Icon(Icons.arrow_downward, size: 14, color: AppColors().app_primary)),
+                                    TextSpan(text: controller.forecast.value.length > 0 ? "${controller.forecast.value[0]['temp']['val_min']}${controller.forecast.value[0]['temp_unit']}" : "", style: TextStyle(color: AppColors().app_primary))
+                                  ]
+                              )
+                          ),
+                        ],
+                      ))
+                    ],
+                  ),
+                )
+              ],
+            ),
+
+            SizedBox(height: 12),
+            controller.isForecastLoading.value == true ? LinearProgressIndicator() : Divider(height: 1, thickness: 1, color: AppColors().app_primary),
+            SizedBox(height: 16),
+
+            Row(
+              mainAxisAlignment:
+              MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Sunday',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Icon(
+                      CupertinoIcons.cloud_heavyrain,
+                      color: AppColors().app_primary,
                     ),
                     Text(
-                      '9th March 2025',
-                      style: const TextStyle(
-                        fontSize: 14,
-                      ),
+                      "dashboard_rainfall".tr,
+                      style: TextStyle(color: AppColors().black_font_color),
                     ),
+                    Text(controller.forecast.value.length > 0 ?
+                    "${controller.forecast.value[0]['rf']['val_avg'] ?? ''} ${controller.forecast.value[0]['rf_unit'] ?? ''}" : "",
+                      style: TextStyle(
+                          color: AppColors().app_primary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16),
+                    )
                   ],
                 ),
                 Column(
                   children: [
                     Icon(
-                      Icons.sunny_snowing,
-                      size: 30,
-                      color: Colors.orange,
+                      CupertinoIcons.drop,
+                      color: AppColors().app_primary,
                     ),
                     Text(
-                      'Sunny and Snowing',
-                      style: const TextStyle(fontSize: 14),
+                      "dashboard_humidity".tr,
+                      style: TextStyle(color: AppColors().black_font_color),
                     ),
+                    Text(controller.forecast.value.length > 0 ?
+                    "${controller.forecast.value[0]['rh']['val_avg'] ?? ''} ${controller.forecast.value[0]['rh_unit'] ?? ''}" : "",
+                      style: TextStyle(
+                          color: AppColors().app_primary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Icon(
+                      CupertinoIcons.wind,
+                      color: AppColors().app_primary,
+                    ),
+                    Text(
+                      "dashboard_wind".tr,
+                      style: TextStyle(color: AppColors().black_font_color),
+                    ),
+                    Text(controller.forecast.value.length > 0 ?
+                    "${controller.forecast.value[0]['windspd']['val_avg']} ${controller.forecast.value[0]['windspd_unit']}" : "",
+                      style: TextStyle(
+                          color: AppColors().app_primary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16),
+                    )
                   ],
                 ),
               ],
-            ),
-            const SizedBox(height: 12.0),
-            const Divider(),
-            const SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildForecastDetail(
-                  icon: Icons.thermostat,
-                  label: 'Temperature',
-                  value: "25°C",
-                ),
-                _buildForecastDetail(
-                  icon: Icons.water_drop,
-                  label: 'Precipitation',
-                  value: "50mm",
-                ),
-                _buildForecastDetail(
-                  icon: Icons.opacity,
-                  label: 'Humidity',
-                  value: "80%",
-                ),
-                _buildForecastDetail(
-                  icon: Icons.air,
-                  label: 'Wind Speed',
-                  value: "10km/h",
-                ),
-              ],
-            ),
+            )
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildForecastDetail({required IconData icon, required String label, required String value}) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          size: 24,
-          color: AppColors().app_primary,
-        ),
-        const SizedBox(height: 4.0),
-        Text(
-          label,
-          style:  TextStyle(fontSize: 12, color: AppColors().grey_font_color),
-        ),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-      ],
+    )
     );
   }
 
