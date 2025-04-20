@@ -28,40 +28,10 @@ class DashboardController extends GetxController {
       "page": "flood-forecast"
     },
     {
-      "name": "dashboard_crop_advisory",
-      "image": "crop_advisory.png",
-      "page": "crop-advisory"
-    },
-    {
-      "name": "dashboard_pest_disease",
-      "image": "pest_disease_alert.png",
-      "page": "crop-disease"
-    },
-    {
-      "name": "dashboard_pest_disease_information",
-      "image": "pest_disease_information.png",
-      "page": "pest-disease-alerts"
-    },
-    {
-      "name": "dashboard_task_reminder",
-      "image": "task_reminder.png",
-      "page": "task-reminder"
-    },
-    {
-      "name": "dashboard_advisory_bulletin",
-      "image": "advisory_bulletin.png",
-      "page": "bulletins"
-    },
-    {
       "name": "dashboard_online_library",
       "image": "online_library.png",
       "page": "elibrary"
-    },
-    // {
-    //   "name": "dashboard_farm_metrics",
-    //   "image": "farm_metrics.png",
-    //   "page": "farm-metrics"
-    // }
+    }
   ];
 
   var initTime = "Good Morning".obs;

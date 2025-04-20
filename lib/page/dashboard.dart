@@ -78,6 +78,49 @@ class DashboardPage extends StatelessWidget {
                 ),
                 _buildWeatherCard(),
                 SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  height: 130,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: controller.dashboardMenu.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () => {
+                                  //Get.toNamed(controller.dashboardMenu[index]['page']);
+                                  controller.openModule(index)
+                                },
+                                child: Card(
+                                  color: const Color.fromRGBO(225, 255, 225, 1),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    // child: Image.network(controller.dashboardMenu[index]['image'], height: 48),
+                                    child: Image.asset(
+                                        'assets/module_icons/${controller.dashboardMenu[index]['image']}',
+                                        height: 48, errorBuilder:
+                                        (context, object, stackTrace) {
+                                      return Image.asset(
+                                          'assets/module_icons/ic_weather_forecast.png',
+                                          height: 48);
+                                    }),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 0),
+                              Text(
+                                '${controller.dashboardMenu[index]['name']}'.tr,
+                                textAlign: TextAlign.center,
+                              )
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+                const SizedBox(height: 10),
                 _buildLandslideBarChart(),
                 SizedBox(height: 10),
                 _buildLandslideLineChart(),
@@ -121,7 +164,7 @@ class DashboardPage extends StatelessWidget {
                           ),
                           Column(
                             children: [
-                              Image.network( controller.forecast.value.length > 0 ? 'https://bamisapp.bdservers.site/' + "assets/weather_icons/${controller.forecast.value[0]['icon']}" : ApiURL.placeholder_auth, height: 48),
+                              Image.network( controller.forecast.value.length > 0 ? ApiURL.bamis_url + "assets/weather_icons/${controller.forecast.value[0]['icon']}" : ApiURL.placeholder_auth, height: 48),
                               // Text(controller.forecast.value.length > 0 ? "${controller.forecast.value[0]['type']}" : "", style: TextStyle(color: Colors.white)),
                             ],
                           ),

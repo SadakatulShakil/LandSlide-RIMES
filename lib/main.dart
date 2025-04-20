@@ -8,6 +8,7 @@ import 'package:lanslide_report/services/LocalizationString.dart';
 import 'package:lanslide_report/services/location_service.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
 
+import 'Utills/routes/app_pages.dart';
 import 'controller/mobile/MobileController.dart';
 import 'controller/navigation/navigation_binding.dart';
 import 'controller/report/report_controller.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         )
             : Mobile();
       }),
+      getPages: AppPages.routes,
       initialBinding: NavigationBinding(),
       translations: LocalizationString(),
       locale: const Locale('bn', 'BD'),
