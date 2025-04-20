@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/reportList/reportListController.dart';
 import '../../database_helper/database.dart';
+import '../database_helper/entities/report_entities.dart';
 
 class OnlineList extends StatelessWidget {
   const OnlineList({super.key});

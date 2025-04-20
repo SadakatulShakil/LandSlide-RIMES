@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../../database_helper/database.dart'; // Import your database classes
+import 'package:lanslide_report/services/db_service.dart';
+import '../../database_helper/database.dart';
+import '../../database_helper/entities/report_entities.dart'; // Import your database classes
 
 class ReportListController extends GetxController {
   // Observable for combined reports
@@ -18,7 +20,9 @@ class ReportListController extends GetxController {
   }
 
   Future<void> _initializeDatabase() async {
-    appDatabase = await initializeDatabase();
+    appDatabase = await $FloorAppDatabase
+        .databaseBuilder('landslide_BD1.db')
+        .build();
     fetchOfflineReports();
     fetchOnlineReports();
   }

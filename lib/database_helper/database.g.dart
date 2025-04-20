@@ -74,6 +74,10 @@ class _$AppDatabase extends AppDatabase {
 
   LandslideReportDao? _landslideReportDaoInstance;
 
+  PostDao? _postDaoInstance;
+
+  CommentDao? _commentDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -97,6 +101,10 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `landslide_reports` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `district` TEXT NOT NULL, `upazila` TEXT NOT NULL, `latitude` TEXT NOT NULL, `longitude` TEXT NOT NULL, `causeOfLandSlide` TEXT NOT NULL, `stateOfLandSlide` TEXT NOT NULL, `waterTableLevel` TEXT NOT NULL, `areaDisplacedMass` TEXT NOT NULL, `numberOfHouseholds` TEXT NOT NULL, `incomeLevel` TEXT NOT NULL, `injured` TEXT NOT NULL, `displaced` TEXT NOT NULL, `deaths` TEXT NOT NULL, `imagePaths` TEXT, `landslideSetting` TEXT NOT NULL, `classification` TEXT NOT NULL, `materialType` TEXT NOT NULL, `failureType` TEXT NOT NULL, `distributionStyle` TEXT NOT NULL, `landCoverType` TEXT NOT NULL, `landUseType` TEXT NOT NULL, `slopeAngle` TEXT NOT NULL, `rainfallData` TEXT NOT NULL, `soilMoistureContent` TEXT NOT NULL, `impactInfrastructure` TEXT NOT NULL, `damageRoads` TEXT NOT NULL, `damageBuildings` TEXT NOT NULL, `damageCriticalInfrastructure` TEXT NOT NULL, `damageUtilities` TEXT NOT NULL, `damageBridges` TEXT NOT NULL, `damImpact` TEXT NOT NULL, `soilImpact` TEXT NOT NULL, `vegetationImpact` TEXT NOT NULL, `waterwayImpact` TEXT NOT NULL, `economicImpact` TEXT NOT NULL, `distance1` TEXT NOT NULL, `distance2` TEXT NOT NULL, `isSynced` INTEGER NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `posts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `likes` INTEGER NOT NULL, `is_liked` INTEGER NOT NULL, `comment_count` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `comments` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `post_id` INTEGER NOT NULL, `content` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -108,6 +116,16 @@ class _$AppDatabase extends AppDatabase {
   LandslideReportDao get landslideReportDao {
     return _landslideReportDaoInstance ??=
         _$LandslideReportDao(database, changeListener);
+  }
+
+  @override
+  PostDao get postDao {
+    return _postDaoInstance ??= _$PostDao(database, changeListener);
+  }
+
+  @override
+  CommentDao get commentDao {
+    return _commentDaoInstance ??= _$CommentDao(database, changeListener);
   }
 }
 
@@ -275,5 +293,161 @@ class _$LandslideReportDao extends LandslideReportDao {
   Future<void> insertReport(LandslideReport report) async {
     await _landslideReportInsertionAdapter.insert(
         report, OnConflictStrategy.abort);
+  }
+}
+
+class _$PostDao extends PostDao {
+  _$PostDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _postEntityInsertionAdapter = InsertionAdapter(
+            database,
+            'posts',
+            (PostEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'title': item.title,
+                  'description': item.description,
+                  'imagePath': item.imagePath,
+                  'likes': item.likes,
+                  'is_liked': item.isLiked,
+                  'comment_count': item.commentCount,
+                  'created_at': item.createdAt
+                }),
+        _postEntityUpdateAdapter = UpdateAdapter(
+            database,
+            'posts',
+            ['id'],
+            (PostEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'title': item.title,
+                  'description': item.description,
+                  'imagePath': item.imagePath,
+                  'likes': item.likes,
+                  'is_liked': item.isLiked,
+                  'comment_count': item.commentCount,
+                  'created_at': item.createdAt
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<PostEntity> _postEntityInsertionAdapter;
+
+  final UpdateAdapter<PostEntity> _postEntityUpdateAdapter;
+
+  @override
+  Future<List<PostEntity>> getAllPosts() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM posts ORDER BY created_at DESC',
+        mapper: (Map<String, Object?> row) => PostEntity(
+            id: row['id'] as int?,
+            title: row['title'] as String,
+            description: row['description'] as String,
+            imagePath: row['imagePath'] as String,
+            likes: row['likes'] as int,
+            isLiked: row['is_liked'] as int,
+            commentCount: row['comment_count'] as int,
+            createdAt: row['created_at'] as int));
+  }
+
+  @override
+  Future<PostEntity?> getPostById(int id) async {
+    return _queryAdapter.query('SELECT * FROM posts WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => PostEntity(
+            id: row['id'] as int?,
+            title: row['title'] as String,
+            description: row['description'] as String,
+            imagePath: row['imagePath'] as String,
+            likes: row['likes'] as int,
+            isLiked: row['is_liked'] as int,
+            commentCount: row['comment_count'] as int,
+            createdAt: row['created_at'] as int),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deletePost(int id) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM posts WHERE id = ?1', arguments: [id]);
+  }
+
+  @override
+  Future<void> insertPost(PostEntity post) async {
+    await _postEntityInsertionAdapter.insert(post, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> updatePost(PostEntity post) async {
+    await _postEntityUpdateAdapter.update(post, OnConflictStrategy.abort);
+  }
+}
+
+class _$CommentDao extends CommentDao {
+  _$CommentDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _commentEntityInsertionAdapter = InsertionAdapter(
+            database,
+            'comments',
+            (CommentEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'post_id': item.postId,
+                  'content': item.content,
+                  'createdAt': item.createdAt
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<CommentEntity> _commentEntityInsertionAdapter;
+
+  @override
+  Future<List<CommentEntity>> getCommentsForPost(int postId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM comments WHERE post_id = ?1 ORDER BY createdAt DESC',
+        mapper: (Map<String, Object?> row) => CommentEntity(
+            id: row['id'] as int?,
+            postId: row['post_id'] as int,
+            content: row['content'] as String,
+            createdAt: row['createdAt'] as int),
+        arguments: [postId]);
+  }
+
+  @override
+  Future<void> deleteComment(int id) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM comments WHERE id = ?1', arguments: [id]);
+  }
+
+  @override
+  Future<int?> getCommentCountForPost(int postId) async {
+    return _queryAdapter.query(
+        'SELECT COUNT(*) FROM comments WHERE post_id = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as int,
+        arguments: [postId]);
+  }
+
+  @override
+  Future<void> updateCommentCount(
+    int postId,
+    int count,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE posts SET comment_count = ?2 WHERE id = ?1',
+        arguments: [postId, count]);
+  }
+
+  @override
+  Future<void> insertComment(CommentEntity comment) async {
+    await _commentEntityInsertionAdapter.insert(
+        comment, OnConflictStrategy.replace);
   }
 }

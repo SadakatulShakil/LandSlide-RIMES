@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../controller/reportList/reportListController.dart';
 import '../database_helper/database.dart';
+import '../database_helper/entities/report_entities.dart';
 
 class OfflineList extends StatelessWidget {
   const OfflineList({super.key});

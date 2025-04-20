@@ -1,4 +1,8 @@
 import 'package:get/get.dart';
+import 'package:lanslide_report/controller/community/community_bindings.dart';
+import 'package:lanslide_report/page/add_post_page.dart';
+import 'package:lanslide_report/page/community_page.dart';
+import 'package:lanslide_report/page/post_details_page.dart';
 
 import '../../controller/flood_forecast/flood_forecast_binding.dart';
 import '../../controller/weather_alert/weather_alert_binding.dart';
@@ -34,6 +38,11 @@ class AppPages {
       name: _Paths.WEBVIEW,
       page: () => const WebviewView(),
       binding: WebviewBinding(),
+    ),
+    GetPage(
+      name: _Paths.COMMUNITY,
+      page: () => const CommunityPage(),
+      binding: CommunityBinding(),
     ),
     // GetPage(
     //   name: _Paths.PDFVIEW,

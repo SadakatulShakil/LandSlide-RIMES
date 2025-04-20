@@ -95,7 +95,7 @@ class DashboardPage extends StatelessWidget {
                                   controller.openModule(index)
                                 },
                                 child: Card(
-                                  color: const Color.fromRGBO(225, 255, 225, 1),
+                                  color: Colors.teal.shade50,
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     // child: Image.network(controller.dashboardMenu[index]['image'], height: 48),

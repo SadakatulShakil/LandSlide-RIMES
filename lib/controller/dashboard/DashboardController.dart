@@ -28,9 +28,9 @@ class DashboardController extends GetxController {
       "page": "flood-forecast"
     },
     {
-      "name": "dashboard_online_library",
+      "name": "community_connection",
       "image": "online_library.png",
-      "page": "elibrary"
+      "page": "community-connection"
     }
   ];
 

@@ -8,6 +8,7 @@ abstract class Routes {
   static const FLOOD_FORECAST = _Paths.FLOOD_FORECAST;
   static const WEBVIEW = _Paths.WEBVIEW;
   static const PDFVIEW = _Paths.PDFVIEW;
+  static const COMMUNITY = _Paths.COMMUNITY;
   static const COMMUNITY_POST_DETAIL = _Paths.COMMUNITY_POST_DETAIL;
   static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
   static const IMPORTANT_VIDEO = _Paths.IMPORTANT_VIDEO;
@@ -28,6 +29,7 @@ abstract class _Paths {
   static const WEBVIEW = '/webview';
   static const PDFVIEW = '/pdfview';
   static const COMMUNITY_POST_DETAIL = '/community-post-detail';
+  static const COMMUNITY = '/community-connection';
   static const NOTIFICATIONS = '/notifications';
   static const IMPORTANT_VIDEO = '/important-video';
   static const CONTACT_US = '/contact-us';
