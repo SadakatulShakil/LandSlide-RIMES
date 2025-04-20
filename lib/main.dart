@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lanslide_report/controller/navigation/navigation_controller.dart';
 import 'package:lanslide_report/page/mobile.dart';
-import 'package:lanslide_report/page/dashboard.dart';
-import 'package:lanslide_report/page/report_form_page.dart';
 import 'package:lanslide_report/services/LocalizationString.dart';
 import 'package:lanslide_report/services/location_service.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
@@ -12,7 +9,6 @@ import 'Utills/routes/app_pages.dart';
 import 'controller/mobile/MobileController.dart';
 import 'controller/navigation/navigation_binding.dart';
 import 'controller/report/report_controller.dart';
-import 'database_helper/database.dart';
 import 'services/db_service.dart'; // Import your DBService
 
 void main() async {

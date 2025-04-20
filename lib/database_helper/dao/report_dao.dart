@@ -5,7 +5,7 @@ import '../entities/report_entities.dart';
 
 @dao
 abstract class LandslideReportDao {
-  @Insert()
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertReport(LandslideReport report);
 
   @Query('SELECT * FROM landslide_reports WHERE isSynced = 0')

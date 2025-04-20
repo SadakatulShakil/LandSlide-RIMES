@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lanslide_report/services/db_service.dart';
 import '../../Utills/AppColors.dart';
 import '../../database_helper/dao/report_dao.dart';
 import '../../database_helper/database.dart';
@@ -17,6 +18,7 @@ import 'package:http/http.dart' as http;
 class ReportController extends GetxController {
   final userPrefService = UserPrefService();
   final ImagePicker _picker = ImagePicker();
+  late AppDatabase _database;
   var isLoading = false.obs;
   var currentStep = 0.obs;
 
@@ -93,8 +95,10 @@ class ReportController extends GetxController {
   void onInit() {
     super.onInit();
     //getSharedPrefData();
+    //_initializeDatabase();
     getCurrentLocation();
   }
+
 
   void bindControllers() {
     idController.text = id.value;
@@ -249,7 +253,7 @@ class ReportController extends GetxController {
       distance1: distance1.value,
       distance2: distance2.value,
     );
-    await dao.insertReport(report);
+    await DBService().saveReport(report);
     Get.back();
     resetForm();
     Get.snackbar('Success', 'Report saved offline');

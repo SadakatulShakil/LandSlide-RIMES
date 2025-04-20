@@ -22,8 +22,8 @@ class ApiURL {
   // Weather Alert
   static String webview_url = '${bamis_url}webview/weather_alert/';
   // Sidebar
-  static String sidebar_contact_us = '${base_url}sidebar/contact_us';
-  static String sidebar_faq = '${base_url}sidebar/faq';
+  static String sidebar_contact_us = '${bamis_url}sidebar/contact_us';
+  static String sidebar_faq = '${bamis_url}sidebar/faq';
 
   // FCM
   static Uri fcm = Uri.parse('${base_url_api}auth/fcm');

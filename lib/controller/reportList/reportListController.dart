@@ -20,9 +20,6 @@ class ReportListController extends GetxController {
   }
 
   Future<void> _initializeDatabase() async {
-    appDatabase = await $FloorAppDatabase
-        .databaseBuilder('landslide_BD1.db')
-        .build();
     fetchOfflineReports();
     fetchOnlineReports();
   }

@@ -21,7 +21,7 @@ class ReportFormPage extends StatefulWidget {
 class _ReportFormPageState extends State<ReportFormPage> {
   final controller = Get.find<ReportController>();
   TextEditingController locationController = TextEditingController();
-  final dao = Get.find<LandslideReportDao>();
+  //final dao = Get.find<LandslideReportDao>();
   final userPrefService = UserPrefService();
   final _formKeys = List.generate(4, (_) => GlobalKey<FormState>());
   final ImagePicker _picker = ImagePicker();

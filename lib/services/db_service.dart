@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../database_helper/database.dart';
 import '../database_helper/entities/comment_entities.dart';
 import '../database_helper/entities/post_entities.dart';
+import '../database_helper/entities/report_entities.dart';
 import '../models/community_post_model.dart';
 import '../models/comment_model.dart';
 
@@ -108,5 +109,12 @@ class DBService extends GetxService {
       content: entity.content,
       createdAt: DateTime.fromMillisecondsSinceEpoch(entity.createdAt),
     );
+  }
+
+
+
+  //report
+  Future<void> saveReport(LandslideReport reports) async {
+    await _database.landslideReportDao.insertReport(reports);
   }
 }

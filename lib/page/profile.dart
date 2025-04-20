@@ -71,13 +71,17 @@ class _ProfileState extends State<Profile> {
                     children: [
                       Obx(() {
                         return CircleAvatar(
-                          radius: 64,
-                          backgroundImage: controller.selectedImagePath.value.isNotEmpty
-                              ? FileImage(File(controller.selectedImagePath.value)) // Show preview
-                              : (controller.photo.value.isNotEmpty
-                              ? NetworkImage(controller.photo.value) // Show saved image
-                              : AssetImage("assets/images/default_avatar.png") // Fallback image
-                          ) as ImageProvider, // Ensures correct type
+                          maxRadius: 65,
+                          backgroundColor: AppColors().app_primary,
+                          child: CircleAvatar(
+                            radius: 63,
+                            backgroundImage: controller.selectedImagePath.value.isNotEmpty
+                                ? FileImage(File(controller.selectedImagePath.value)) // Show preview
+                                : (controller.photo.value.isNotEmpty
+                                ? NetworkImage(controller.photo.value) // Show saved image
+                                : AssetImage("assets/images/default_avatar.png") // Fallback image
+                            ) as ImageProvider, // Ensures correct type
+                          ),
                         );
                       }),
                       Positioned(

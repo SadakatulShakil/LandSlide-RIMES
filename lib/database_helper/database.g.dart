@@ -292,7 +292,7 @@ class _$LandslideReportDao extends LandslideReportDao {
   @override
   Future<void> insertReport(LandslideReport report) async {
     await _landslideReportInsertionAdapter.insert(
-        report, OnConflictStrategy.abort);
+        report, OnConflictStrategy.replace);
   }
 }
 

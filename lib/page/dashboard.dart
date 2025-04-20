@@ -136,6 +136,7 @@ class DashboardPage extends StatelessWidget {
   // Weather Card
   Widget _buildWeatherCard() {
     return Obx(()=> Card(
+      color:  AppColors().app_primary_bg, //Colors.teal.shade50,
       elevation: 2,
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -282,7 +283,11 @@ class DashboardPage extends StatelessWidget {
 
   Widget _buildLandslideBarChart() {
     return Card(
-      elevation: 2,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors().app_primary, width: 1),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 16.0),
         child: Column(
@@ -363,6 +368,7 @@ class DashboardPage extends StatelessWidget {
 
   Widget _buildLandslideLineChart() {
     return Card(
+      color: AppColors().app_primary_bg,
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 16.0),
