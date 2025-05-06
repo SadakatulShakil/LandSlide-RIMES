@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../services/api_service.dart';
+import '../../services/api_urls.dart';
 
 class WebviewController extends GetxController {
 

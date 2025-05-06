@@ -7,7 +7,7 @@ import 'package:lanslide_report/controller/navigation/navigation_binding.dart';
 
 import '../../page/navigation_view.dart';
 import '../../page/otp.dart';
-import '../../services/api_service.dart';
+import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
 
 class MobileController extends GetxController{
@@ -27,6 +27,7 @@ class MobileController extends GetxController{
     var params = jsonEncode({ "mobile": "${mobile.value.text}" });
     var response = await http.post(ApiURL.mobile, body: params);
     dynamic decode = jsonDecode(response.body) ;
+    print('shakil mobile: ${decode}');
     if(response.statusCode != 200) {
       return Get.defaultDialog(
           title: "Alert",

@@ -11,7 +11,7 @@ import '../../Utills/AppColors.dart';
 import '../../database_helper/dao/report_dao.dart';
 import '../../database_helper/database.dart';
 import '../../database_helper/entities/report_entities.dart';
-import '../../services/api_service.dart';
+import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
 import 'package:http/http.dart' as http;
 

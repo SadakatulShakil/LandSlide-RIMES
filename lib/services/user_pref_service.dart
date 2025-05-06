@@ -1,4 +1,4 @@
-import 'package:lanslide_report/services/api_service.dart';
+import 'package:lanslide_report/services/api_urls.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;

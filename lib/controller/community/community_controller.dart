@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../models/comment_model.dart';
 import '../../models/community_post_model.dart';
 import '../../services/db_service.dart';
-// import '../services/api_service.dart';
+// import '../services/api_urls.dart';
 
 class CommunityController extends GetxController {
   final DBService dbService = Get.find();

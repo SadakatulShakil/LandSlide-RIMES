@@ -8,7 +8,7 @@ import '../controller/webview/webview_binding.dart';
 import '../page/Mobile.dart';
 import '../page/profile.dart';
 import '../page/webview_view.dart';
-import '../services/api_service.dart';
+import '../services/api_urls.dart';
 import 'AppColors.dart';
 
 class AppDrawer extends StatefulWidget {
@@ -59,7 +59,7 @@ class _AppDrawerState extends State<AppDrawer> {
             leading: Icon(Icons.storage),
             title: Text("Report Data".tr),
             onTap: () {
-              Get.to(()=> ReportDataList(), transition: Transition.rightToLeft);
+              //Get.to(()=> ReportDataList(), transition: Transition.rightToLeft);
             },
           ),
           ListTile(
@@ -73,7 +73,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 "title": "dashboard_sidebar_about_us".tr,
                 "url": ApiURL.sidebar_contact_us
               };
-              Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
+              //Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
             },
             child: ListTile(
               leading: Icon(Icons.info),
@@ -86,7 +86,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 "title": "dashboard_sidebar_privacy_policy".tr,
                 "url": ApiURL.sidebar_faq
               };
-              Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
+              //Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
             },
             child: ListTile(
               leading: Icon(Icons.forum_outlined),

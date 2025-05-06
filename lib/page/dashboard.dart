@@ -6,7 +6,7 @@ import 'package:lanslide_report/Utills/AppColors.dart';
 
 import '../Utills/AppDrawer.dart';
 import '../controller/dashboard/DashboardController.dart';
-import '../services/api_service.dart';
+import '../services/api_urls.dart';
 
 class DashboardPage extends StatelessWidget {
   // Sample pie chart data for landslide types

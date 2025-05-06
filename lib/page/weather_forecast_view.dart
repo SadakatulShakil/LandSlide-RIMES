@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../Utills/AppColors.dart';
 import '../controller/weather_forecast/weather_forecast_controller.dart';
-import '../services/api_service.dart';
+import '../services/api_urls.dart';
 
 class WeatherForecastView extends GetView<WeatherForecastController> {
   const WeatherForecastView({super.key});

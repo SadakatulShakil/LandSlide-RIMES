@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../../Utills/AppColors.dart';
 import '../../models/ModelLocation.dart';
-import '../../services/api_service.dart';
+import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
 
 class WeatherForecastController extends GetxController {

@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../../page/navigation_view.dart';
-import '../../services/api_service.dart';
+import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
 import '../navigation/navigation_binding.dart';
 
@@ -65,7 +65,7 @@ class OtpController extends GetxController {
     });
     var response = await http.post(ApiURL.otpcheck, body: params);
     dynamic decode = jsonDecode(response.body) ;
-    print("test_response: ${decode.toString()}");
+    print("Otp_response: ${decode.toString()}");
     if(response.statusCode != 200) {
       return Get.defaultDialog(
           title: "Alert",

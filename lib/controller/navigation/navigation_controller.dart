@@ -9,7 +9,7 @@ import 'package:lanslide_report/page/report_form_page.dart';
 import '../../page/Mobile.dart';
 import '../../page/dashboard.dart';
 import '../../page/profile.dart';
-import '../../services/api_service.dart';
+import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
 
 class NavigationController extends GetxController {

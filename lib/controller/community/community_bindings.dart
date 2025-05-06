@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../../services/db_service.dart';
 import 'community_controller.dart';
-// import '../services/api_service.dart';
+// import '../services/api_urls.dart';
 
 class CommunityBinding implements Bindings {
   @override

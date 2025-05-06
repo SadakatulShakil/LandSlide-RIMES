@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:lanslide_report/services/user_pref_service.dart';
 
-import 'api_service.dart';
+import 'api_urls.dart';
 
 class LocationService {
 

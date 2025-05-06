@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 import '../../page/Mobile.dart';
-import '../../services/api_service.dart';
+import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
 
 class ProfileController extends GetxController with GetSingleTickerProviderStateMixin {
@@ -38,7 +38,7 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
   late var email = "".obs;
   late var address = "".obs;
   late var type = "".obs;
-  late var photo = "${ApiURL.base_url_image}assets/auth/profile.jpg".obs;
+  late var photo = "${ApiURL.base_url_image}assets/images/profile.jpg".obs;
 
   var selectedImagePath = ''.obs;
   var isConfirmVisible = false.obs; // To show/hide the confirm button

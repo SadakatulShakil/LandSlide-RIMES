@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lanslide_report/controller/survey/surveylist_controller.dart';
 import 'package:lanslide_report/page/mobile.dart';
+import 'package:lanslide_report/page/survey_page.dart';
 import 'package:lanslide_report/services/LocalizationString.dart';
 import 'package:lanslide_report/services/location_service.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
@@ -30,6 +32,7 @@ void main() async {
 
   // Put your services in GetX dependency injection
   Get.put(ReportController());
+  Get.put(SurveyListController());
   Get.put(dbService, permanent: true); // Add DBService with permanent flag
 
   runApp(MyApp());
@@ -50,7 +53,7 @@ class MyApp extends StatelessWidget {
             body: Center(
               child: Image.asset('assets/logo/bmd_logo.png', height: 96),
             ))
-                : Mobile();
+                : SurveyPage();
       }),
       getPages: AppPages.routes,
       initialBinding: NavigationBinding(),

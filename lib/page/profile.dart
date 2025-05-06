@@ -7,7 +7,7 @@ import 'package:lanslide_report/page/webview_view.dart';
 
 import '../controller/profile/ProfileController.dart';
 import '../controller/webview/webview_binding.dart';
-import '../services/api_service.dart';
+import '../services/api_urls.dart';
 
 class Profile extends StatefulWidget {
   bool isBackButton;
