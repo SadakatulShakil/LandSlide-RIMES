@@ -81,30 +81,130 @@
 
 import 'dart:convert';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import '../../models/question_model.dart';
+import '../../services/api_urls.dart';
+import '../../services/user_pref_service.dart';
 
 class SurveyController extends GetxController {
+  final userPrefService = UserPrefService();
   var allQuestions = <SurveyQuestion>[].obs;
   var groupedQuestions = <String, List<SurveyQuestion>>{}.obs;
   var currentStep = 0.obs;
   var isLoading = true.obs;
   late final String surveyId;
   var isValid = false.obs;
+  var id = ''.obs;
+  var address = ''.obs;
+  var district = ''.obs;
+  var upazila = ''.obs;
+  var latitude = ''.obs;
+  var longitude = ''.obs;
+  var latAndLon = ''.obs;
 
    final String baseUrl = 'https://landslide.bdservers.site/api/question'; // Replace with your base URL
-   final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDY0MzkxOTAsImlhdCI6MTc0NjQzOTE5MCwiZXhwIjoxNzQ2NTI1NTkwfQ.OONV9kf19eNay5X70ropys5tDxGADXNhgeSTDhT6r1Q'; // Replace with token
+  final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDY1OTYwMzAsImlhdCI6MTc0NjU5NjAzMCwiZXhwIjoxNzQ2NjgyNDMwfQ.oP5GSE3ZuiG_A1kgonWq_JlG6sB-i7su-3APOJNQqoo'; // Replace with token
 
 
   @override
   void onInit() {
     super.onInit();
+    getCurrentLocation();
     surveyId = Get.arguments['surveyId'];
-    fetchQuestions(surveyId);
   }
 
+  ///getting current location
+  Future<void> getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      latitude.value = position.latitude.toStringAsFixed(5);
+      longitude.value = position.longitude.toStringAsFixed(5);
+      latAndLon.value = "Lat: ${position.latitude}, Lon: ${position.longitude}";
+      //latAndLonController.text = latAndLon.value;
+
+      var response = await http.get(Uri.parse(
+          ApiURL.location_latlon + "?lat="
+          + position.latitude.toStringAsFixed(5) + "&lon="
+          + position.longitude.toStringAsFixed(5)),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": token, // Add token to the header},
+          }
+      );
+      if(response.statusCode != 200) {
+        isLoading.value = false;
+        Get.snackbar("Error", "Failed to fetch location data");
+        return;
+      }else {
+        var decode = jsonDecode(response.body);
+        print('shakil ${decode}');
+        id.value = decode['result']['id'];
+        address.value = decode['result']['name'];
+        upazila.value = decode['result']['upazila'];
+        district.value = decode['result']['district'];
+        // districtController.text = district.value;
+        // upazilaController.text = upazila.value;
+        print('shakilNew ${upazila.value}');
+        await userPrefService.saveLocationData(
+            latitude.value,
+            longitude.value,
+            decode['result']['id'],
+            decode['result']['name'],
+            decode['result']['upazila'],
+            decode['result']['district']
+        );
+        isLoading.value = false;
+        fetchQuestions(surveyId);
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Failed to get location");
+    }
+  }
+  ///update given location
+  Future updateLocation(LatLng newLocation) async{
+
+    isLoading.value = true;
+    latitude.value = newLocation.latitude.toStringAsFixed(5);
+    longitude.value = newLocation.longitude.toStringAsFixed(5);
+    latAndLon.value = 'Lat: ${latitude.value}, Lon: ${longitude.value}';
+    print('New Location: ${latAndLon.value}');
+    try {
+      var response = await http.get(Uri.parse(ApiURL.location_latlon + "?lat=" + latitude.value + "&lon=" + longitude.value));
+      if(response.statusCode != 200) {
+        isLoading.value = false;
+        Get.snackbar("Error", "Failed to fetch location data");
+        return;
+      }else {
+        var decode = jsonDecode(response.body);
+        print('shakil ${decode}');
+        id.value = decode['result']['id'];
+        address.value = decode['result']['name'];
+        upazila.value = decode['result']['upazila'];
+        district.value = decode['result']['district'];
+
+        print('shakil111111 ${upazila.value}');
+        await userPrefService.saveLocationData(
+            latitude.value,
+            longitude.value,
+            decode['result']['id'],
+            decode['result']['name'],
+            decode['result']['upazila'],
+            decode['result']['district']
+        );
+        isLoading.value = false;
+        fetchQuestions(surveyId);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    //isLoading.value = false;
+  }
   /// Call the API for return fetched questions
   Future<List<SurveyQuestion>> fetchSurveyQuestions(int sId) async {
     final response = await http.get(Uri.parse('$baseUrl/survey_questions?id=$sId'),
@@ -128,6 +228,20 @@ class SurveyController extends GetxController {
     int sId = int.tryParse(surveyId) ?? 0;
     try {
       final questions = await fetchSurveyQuestions(sId);
+      for (var q in questions) {
+        if (q.title.toLowerCase().contains("landslide id")) {
+          q.answer = id.value;
+        } else if (q.title.toLowerCase().contains("district")) {
+          q.answer = district.value;
+        } else if (q.title.toLowerCase().contains("upazila")) {
+          q.answer = upazila.value;
+        } else if (q.title.toLowerCase().contains("latitude")) {
+          q.answer = latitude.value;
+        } else if (q.title.toLowerCase().contains("longitude")) {
+          q.answer = longitude.value;
+        }
+      }
+
       allQuestions.assignAll(questions);
 
       final Map<String, List<SurveyQuestion>> grouped = {};
@@ -199,7 +313,7 @@ class SurveyController extends GetxController {
   Future<void> completeSurvey() async {
     final data = {
       "sid": int.tryParse(surveyId) ?? 0,
-      "title": "Survey for ${DateTime.now()} NEW",
+      "title": "Survey ${DateTime.now()} Complete",
       "status": "complete",
     };
     final url = Uri.parse("$baseUrl/survey");
@@ -211,14 +325,16 @@ class SurveyController extends GetxController {
           "Content-Type": "application/json",
           "Authorization": token, // Add token to the header},
         },
-        body: data,
+        body: jsonEncode(data),
       );
 
+      print('ResponseCode: ${response.statusCode}');
       if (response.statusCode != 200) {
         throw Exception("Failed to submit final answers");
       }
 
       print("Final Answers submitted: ${response.body}");
+      Get.back(result: 'refresh');
     } catch (e) {
       Get.snackbar("Error", "Failed to complete answers: $e");
     }
@@ -227,5 +343,15 @@ class SurveyController extends GetxController {
 
     await Future.delayed(Duration(milliseconds: 500)); // simulate API
   }
+
+  bool isReadOnlyField(String title) {
+    final lower = title.toLowerCase();
+    return lower.contains('landslide id') ||
+        lower.contains('district') ||
+        lower.contains('upazila') ||
+        lower.contains('latitude') ||
+        lower.contains('longitude');
+  }
+
 }
 

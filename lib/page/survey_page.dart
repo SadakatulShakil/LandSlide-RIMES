@@ -25,8 +25,12 @@ class SurveyPage extends StatelessWidget {
           itemBuilder: (context, index) {
             final survey = controller.surveys[index];
             return GestureDetector(
-                onTap: () {
-                  Get.to(() => SurveyQuestionPage(), arguments: {'surveyId': survey.id});
+                onTap: () async{
+                  var result = await Get.to(() => SurveyQuestionPage(),
+                      arguments: {'surveyId': survey.id});
+                  if (result == 'refresh') {
+                    controller.fetchSurveys();
+                  }
                 },
               child: Card(
                 child: ListTile(

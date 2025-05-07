@@ -1,13 +1,21 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../controller/survey/survey_question_controller.dart';
 import '../models/question_model.dart';
+import 'map_page.dart';
 
-class SurveyQuestionPage extends StatelessWidget {
+class SurveyQuestionPage extends StatefulWidget {
+  @override
+  State<SurveyQuestionPage> createState() => _SurveyQuestionPageState();
+}
+
+class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
   final controller = Get.put(SurveyController());
+
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -58,10 +66,30 @@ class SurveyQuestionPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16.0, bottom: 5),
-              child: Text(
-                currentGroup,
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              padding: const EdgeInsets.only(left: 16.0, bottom: 5, right: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    currentGroup,
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      controller.isLoading.value = true;
+                      LatLng? location = await Get.to(() => MapPage(controller.latitude.value, controller.longitude.value));
+                      if (location != null) {
+                        // Start loading when the location is selected
+                        print('check: ====> Lat: ${location.latitude}, Lon: ${location.longitude}');
+                        await controller.updateLocation(location);
+                      }
+                      controller.isLoading.value = false;
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Colors.green.shade100,
+                        child: Icon(Icons.map, color: Colors.green)),
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -145,7 +173,7 @@ class SurveyQuestionPage extends StatelessWidget {
   Widget _buildQuestionWidget(SurveyQuestion question) {
     switch (question.type) {
       case 'String':
-        return TextField(
+        return Obx(() => TextField(
           decoration: InputDecoration(
             labelText: question.title,
             border: OutlineInputBorder(),
@@ -153,9 +181,11 @@ class SurveyQuestionPage extends StatelessWidget {
                 ? 'This field is required'
                 : null,
           ),
+          readOnly: controller.isReadOnlyField(question.title),
+          textInputAction: TextInputAction.next,
           controller: TextEditingController(text: question.answer ?? ''),
           onChanged: (val) => question.answer = val,
-        );
+        ));
       case 'Number':
         return TextField(
           decoration: InputDecoration(
@@ -165,6 +195,7 @@ class SurveyQuestionPage extends StatelessWidget {
                 ? 'This field is required'
                 : null,
           ),
+          textInputAction: TextInputAction.next,
           keyboardType: TextInputType.number,
           controller: TextEditingController(text: question.answer?.toString() ?? ''),
           onChanged: (val) => question.answer = int.tryParse(val),
@@ -177,7 +208,11 @@ class SurveyQuestionPage extends StatelessWidget {
         return SwitchListTile(
           title: Text(question.title),
           value: question.answer ?? false,
-          onChanged: (val) => question.answer = val,
+          onChanged: (val) {
+            setState(() {
+              question.answer = val;
+            });
+          },
         );
       case 'Array':
         return _imagePicker(question);
@@ -198,8 +233,9 @@ class SurveyQuestionPage extends StatelessWidget {
           lastDate: DateTime(2100),
         );
         if (date != null) {
-          question.answer = date.toIso8601String().split('T')[0];
-          controller.update();
+          setState(() {
+            question.answer = date.toIso8601String().split('T')[0];
+          });
         }
       },
     );
@@ -215,8 +251,9 @@ class SurveyQuestionPage extends StatelessWidget {
           initialTime: TimeOfDay.now(),
         );
         if (time != null) {
-          question.answer = time.format(Get.context!);
-          controller.update();
+          setState(() {
+            question.answer = time.format(context);
+          });
         }
       },
     );
@@ -250,9 +287,10 @@ class SurveyQuestionPage extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      images.remove(path);  // Remove the image on close button tap
-                      question.answer = images;
-                      controller.update();
+                      setState(() {
+                        images.remove(path);
+                        question.answer = images;
+                      });
                     },
                     child: Container(
                       color: Colors.black54,
@@ -268,13 +306,14 @@ class SurveyQuestionPage extends StatelessWidget {
                 onTap: () async {
                   final List<XFile>? picked = await _picker.pickMultiImage();
                   if (picked != null && picked.isNotEmpty) {
-                    for (var x in picked) {
-                      if (images.length < 3) {
-                        images.add(x.path);  // Add the image path to list
+                    setState(() {
+                      for (var x in picked) {
+                        if (images.length < 3) {
+                          images.add(x.path);
+                        }
                       }
-                    }
-                    question.answer = images;
-                    controller.update();
+                      question.answer = images;
+                    });
                   }
                 },
                 child: Container(
