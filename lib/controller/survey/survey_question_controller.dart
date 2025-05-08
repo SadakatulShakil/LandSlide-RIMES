@@ -80,6 +80,7 @@
 //
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -107,7 +108,7 @@ class SurveyController extends GetxController {
   var latAndLon = ''.obs;
 
    final String baseUrl = 'https://landslide.bdservers.site/api/question'; // Replace with your base URL
-  final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDY1OTYwMzAsImlhdCI6MTc0NjU5NjAzMCwiZXhwIjoxNzQ2NjgyNDMwfQ.oP5GSE3ZuiG_A1kgonWq_JlG6sB-i7su-3APOJNQqoo'; // Replace with token
+  final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDY2ODcxMjYsImlhdCI6MTc0NjY4NzEyNiwiZXhwIjoxNzQ2NzczNTI2fQ.DMiIetVqSxKfPP8JBFSXbkd7bBzUECBxzHHVdwjU1gA'; // Replace with token
 
 
   @override
@@ -253,6 +254,29 @@ class SurveyController extends GetxController {
       isLoading.value = false;
     }
   }
+  ///upload image Api
+  Future<String?> uploadImage(File imageFile) async {
+    final url = Uri.parse("$baseUrl/upload");
+
+    final request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = token
+      ..files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+    try {
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final resString = await response.stream.bytesToString();
+        final resJson = jsonDecode(resString);
+        return resJson['result'];
+      } else {
+        print('Upload failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+    }
+    return null;
+  }
   /// Next step click and call partial answer submission
   void nextStep() async{
     if (currentStep.value < groupedQuestions.length - 1) currentStep++;
@@ -263,11 +287,27 @@ class SurveyController extends GetxController {
   List<Map<String, dynamic>> _buildAnswerPayload() {
     return groupedQuestions.values
         .expand((questions) => questions)
-        .map((q) => {
-      "id": q.id,
-      "answer": q.answer is List ? (q.answer as List).join(',') : q.answer.toString()
-    })
-        .toList();
+        .map((q) {
+      dynamic answer;
+
+      if (q.type == 'Boolean') {
+        // Convert string/bool/null to a valid bool
+        if (q.answer == true || q.answer == "true") {
+          answer = true;
+        } else {
+          answer = false;
+        }
+      } else if (q.answer is List) {
+        answer = (q.answer as List).join(',');
+      } else {
+        answer = q.answer?.toString();
+      }
+
+      return {
+        "id": q.id,
+        "answer": answer.toString(),
+      };
+    }).toList();
   }
   /// Call the answer submission API
   Future<void> submitAnswers() async {
@@ -284,6 +324,7 @@ class SurveyController extends GetxController {
         body: jsonEncode(payload),
       );
 
+      print('responseCode Answer: ${response.statusCode}');
       if (response.statusCode != 200) {
         throw Exception("Failed to submit answers");
       }
@@ -343,7 +384,7 @@ class SurveyController extends GetxController {
 
     await Future.delayed(Duration(milliseconds: 500)); // simulate API
   }
-
+  ///Check readonly field
   bool isReadOnlyField(String title) {
     final lower = title.toLowerCase();
     return lower.contains('landslide id') ||

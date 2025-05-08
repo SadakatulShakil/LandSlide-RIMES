@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lanslide_report/Utills/AppColors.dart';
 import 'package:lanslide_report/page/survey_question_page.dart';
 
 import '../controller/survey/surveylist_controller.dart';
@@ -10,7 +11,7 @@ class SurveyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("My Surveys")),
+      appBar: AppBar(title: Text("My Surveys"), backgroundColor: AppColors().app_primary_bg,),
       body: Obx(() {
         if (controller.isLoading.value) {
           return Center(child: CircularProgressIndicator());

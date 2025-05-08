@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:lanslide_report/page/report_form_page.dart';
+import 'package:lanslide_report/page/survey_page.dart';
 
 import '../Utills/AppColors.dart';
 import '../controller/navigation/navigation_controller.dart';
@@ -16,7 +17,7 @@ class NavigationView extends GetView<NavigationController> {
         backgroundColor: AppColors().app_primary,
         foregroundColor: AppColors().app_secondary,
         onPressed: () {
-          Get.to(()=> ReportFormPage());
+          Get.to(()=> SurveyPage());
           //controller.onItemTapped(4);
         },
         tooltip: "tool".tr,
