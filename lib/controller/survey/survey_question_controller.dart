@@ -106,10 +106,10 @@ class SurveyController extends GetxController {
   var latitude = ''.obs;
   var longitude = ''.obs;
   var latAndLon = ''.obs;
+  var isLocationUpdated =  false.obs;
 
    final String baseUrl = 'https://landslide.bdservers.site/api/question'; // Replace with your base URL
-  final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDY2ODcxMjYsImlhdCI6MTc0NjY4NzEyNiwiZXhwIjoxNzQ2NzczNTI2fQ.DMiIetVqSxKfPP8JBFSXbkd7bBzUECBxzHHVdwjU1gA'; // Replace with token
-
+  //final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDcwMjc1MTIsImlhdCI6MTc0NzAyNzUxMiwiZXhwIjoxNzQ3MTEzOTEyfQ.c7cTLsQsBxzLUhlrxcOZy1PCyMVESs9g31doe3E7iyE'; // Replace with token
 
   @override
   void onInit() {
@@ -135,7 +135,7 @@ class SurveyController extends GetxController {
           + position.longitude.toStringAsFixed(5)),
           headers: {
             "Content-Type": "application/json",
-            "Authorization": token, // Add token to the header},
+            "Authorization": userPrefService.userToken ?? '', // Add token to the header},
           }
       );
       if(response.statusCode != 200) {
@@ -211,7 +211,7 @@ class SurveyController extends GetxController {
     final response = await http.get(Uri.parse('$baseUrl/survey_questions?id=$sId'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token, // Add token to the header},
+          "Authorization": userPrefService.userToken ?? '', // Add token to the header},
         }
     );
 
@@ -231,6 +231,7 @@ class SurveyController extends GetxController {
       final questions = await fetchSurveyQuestions(sId);
       for (var q in questions) {
         if (q.title.toLowerCase().contains("landslide id")) {
+          print('valueOfDistrict: ${q.answer}');
           q.answer = id.value;
         } else if (q.title.toLowerCase().contains("district")) {
           q.answer = district.value;
@@ -259,7 +260,7 @@ class SurveyController extends GetxController {
     final url = Uri.parse("$baseUrl/upload");
 
     final request = http.MultipartRequest('POST', url)
-      ..headers['Authorization'] = token
+      ..headers['Authorization'] = userPrefService.userToken ?? ''
       ..files.add(await http.MultipartFile.fromPath('image', imageFile.path));
 
     try {
@@ -319,7 +320,7 @@ class SurveyController extends GetxController {
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token, // Add token to the header},
+          "Authorization": userPrefService.userToken ?? '', // Add token to the header},
         },
         body: jsonEncode(payload),
       );
@@ -364,7 +365,7 @@ class SurveyController extends GetxController {
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token, // Add token to the header},
+          "Authorization": userPrefService.userToken ?? '', // Add token to the header},
         },
         body: jsonEncode(data),
       );

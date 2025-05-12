@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:lanslide_report/page/report_form_page.dart';
+import 'package:lanslide_report/page/survey_page.dart';
 
 import '../../page/Mobile.dart';
 import '../../page/dashboard.dart';
@@ -21,7 +21,7 @@ class NavigationController extends GetxController {
   final List<Widget> screen = [
     DashboardPage(),
     Profile(isBackButton: false,),
-    ReportFormPage()
+    SurveyPage()
   ];
   final userPrefService = UserPrefService();
 
@@ -63,6 +63,4 @@ class NavigationController extends GetxController {
       var response = await http.post(ApiURL.fcm, body: body, headers: { HttpHeaders.authorizationHeader: '${userPrefService.userToken}' } );
     }
   }
-
-
 }

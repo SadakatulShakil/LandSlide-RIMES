@@ -1,16 +1,18 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lanslide_report/page/mobile.dart';
-import 'package:lanslide_report/page/survey_page.dart';
 import 'package:lanslide_report/services/LocalizationString.dart';
 import 'package:lanslide_report/services/location_service.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
 
+import 'Utills/firebase_option.dart';
 import 'Utills/routes/app_pages.dart';
 import 'controller/mobile/MobileController.dart';
 import 'controller/navigation/navigation_binding.dart';
-import 'controller/report/report_controller.dart';
-import 'controller/reportList/reportListController.dart';
 import 'services/db_service.dart'; // Import your DBService
 
 void main() async {
@@ -25,13 +27,16 @@ void main() async {
   // User Location initialization
   try {
     await LocationService().getLocation();
+    if (kIsWeb || Platform.isAndroid || Platform.isIOS) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
   } on Exception catch (e, stack) {
     print('🔥 Location Initialization Error: $e');
     print(stack);
   }
 
-  // Put your services in GetX dependency injection
-  Get.put(ReportController());
   Get.put(dbService, permanent: true); // Add DBService with permanent flag
 
   runApp(MyApp());
@@ -53,8 +58,8 @@ class MyApp extends StatelessWidget {
               child: Image.asset('assets/logo/bmd_logo.png', height: 96),
             ))
                 :
-        //Mobile();
-        SurveyPage();
+        Mobile();
+        //SurveyPage();
       }),
       getPages: AppPages.routes,
       initialBinding: NavigationBinding(),

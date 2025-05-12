@@ -123,6 +123,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                         ElevatedButton(
                           onPressed: () {
                             _validateAndMoveNext(questions);
+                            controller.isLocationUpdated.value = false;
                           },
                           child: const Text("Next"),
                         )

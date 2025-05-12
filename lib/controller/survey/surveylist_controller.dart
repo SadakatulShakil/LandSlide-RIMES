@@ -3,13 +3,15 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../../models/survey_list_model.dart';
+import '../../services/user_pref_service.dart';
 
 class SurveyListController extends GetxController {
+  final userPrefService = UserPrefService();
   var surveys = <Survey>[].obs;
   var isLoading = false.obs;
 
   final String baseUrl = 'https://landslide.bdservers.site/api/question'; // Replace with your base URL
-  final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDY2ODcxMjYsImlhdCI6MTc0NjY4NzEyNiwiZXhwIjoxNzQ2NzczNTI2fQ.DMiIetVqSxKfPP8JBFSXbkd7bBzUECBxzHHVdwjU1gA'; // Replace with token
+  //final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDcwMjc1MTIsImlhdCI6MTc0NzAyNzUxMiwiZXhwIjoxNzQ3MTEzOTEyfQ.c7cTLsQsBxzLUhlrxcOZy1PCyMVESs9g31doe3E7iyE'; // Replace with token
 
   @override
   void onInit() {
@@ -24,7 +26,7 @@ class SurveyListController extends GetxController {
       final response = await http.get(Uri.parse('$baseUrl/survey'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token, // Add token to the header
+          "Authorization": userPrefService.userToken ?? '', // Add token to the header
         },
       );
       print('====> $baseUrl/survey');
@@ -55,7 +57,7 @@ class SurveyListController extends GetxController {
         body: jsonEncode({"title": title}),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token, // Add token to the header
+          "Authorization": userPrefService.userToken ?? '', // Add token to the header
         },
       );
 
@@ -88,7 +90,7 @@ class SurveyListController extends GetxController {
         body: jsonEncode({"sid": id}),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token, // Add token to the header
+          "Authorization": userPrefService.userToken ?? '', // Add token to the header
         },
       );
 

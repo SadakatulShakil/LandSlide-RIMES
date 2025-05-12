@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import '../controller/report/report_controller.dart';
+import 'package:lanslide_report/controller/survey/survey_question_controller.dart';
 
 class MapPage extends StatefulWidget {
   final String lat, lon;
@@ -16,7 +16,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
-  final controller = Get.find<ReportController>();
+  final controller = Get.find<SurveyController>();
 
   // Track both initial and selected locations
   late LatLng initialLocation;
@@ -36,8 +36,8 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     // Convert lat & lon from String to double
-    double latitude = double.tryParse(widget.lat) ?? 37.7749;
-    double longitude = double.tryParse(widget.lon) ?? -122.4194;
+    double latitude = double.tryParse(widget.lat) ?? 23.83762;
+    double longitude = double.tryParse(widget.lon) ?? 90.37012;
 
     // Set initial location and selected location to the same point at first
     initialLocation = LatLng(latitude, longitude);
@@ -263,7 +263,7 @@ class _MapPageState extends State<MapPage> {
 
               // Copy to clipboard
               Clipboard.setData(ClipboardData(text: formattedDistance));
-
+              controller.isLocationUpdated.value = true;
               // Show snackbar
               showTopSnackBar(context, "Distance copied: $formattedDistance. Use it if needed");
               // Get.snackbar(
@@ -273,9 +273,6 @@ class _MapPageState extends State<MapPage> {
               //     margin: EdgeInsets.all(16),
               //     padding: EdgeInsets.all(16)
               // );
-
-              // Update location in controller
-              controller.updateLocation(selectedLocation);
 
               // navigating back
               Get.back(result: selectedLocation);

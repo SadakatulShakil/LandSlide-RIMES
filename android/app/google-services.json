@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "523768930449",
+    "project_id": "landslide-459607",
+    "storage_bucket": "landslide-459607.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523768930449:android:185c309fa15e881823df30",
+        "android_client_info": {
+          "package_name": "com.rimes.lanslide_report"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgZj_me5Ig9i_wcebrHXD8XHMmRhUAhM8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
