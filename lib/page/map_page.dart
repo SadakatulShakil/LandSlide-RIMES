@@ -18,151 +18,28 @@ class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
   final controller = Get.find<SurveyController>();
 
-  // Track both initial and selected locations
   late LatLng initialLocation;
   late LatLng selectedLocation;
 
-  // Marker icons
   BitmapDescriptor initialMarkerIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor selectedMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
 
-  // Set of markers to display
   Set<Marker> markers = {};
-
-  // Track 3D view state
   bool is3DViewEnabled = true;
 
   @override
   void initState() {
     super.initState();
-    // Convert lat & lon from String to double
     double latitude = double.tryParse(widget.lat) ?? 23.83762;
     double longitude = double.tryParse(widget.lon) ?? 90.37012;
-
-    // Set initial location and selected location to the same point at first
     initialLocation = LatLng(latitude, longitude);
     selectedLocation = initialLocation;
-
-    // Set custom marker icons
     _setCustomMarkerIcons();
-
-    // Initialize markers with the initial position
     _setupInitialMarker();
-  }
 
-  // Setup custom marker icons
-  void _setCustomMarkerIcons() async {
-    // Initial location marker - red color
-    try {
-      BitmapDescriptor.asset(
-        const ImageConfiguration(size: Size(48, 48)),
-        'assets/images/pin_map.png',
-      ).then((icon) {
-        setState(() {
-          initialMarkerIcon = icon;
-          _setupInitialMarker(); // Refresh marker with new icon
-        });
-      }).catchError((_) {
-        initialMarkerIcon = BitmapDescriptor.defaultMarker; // Red default
-      });
-
-      // Selected location marker - blue color
-      BitmapDescriptor.asset(
-        const ImageConfiguration(size: Size(48, 48)),
-        'assets/images/push_pin.png',
-      ).then((icon) {
-        setState(() {
-          selectedMarkerIcon = icon;
-          if (selectedLocation != initialLocation) {
-            _updateSelectedMarker(); // Refresh if we have a selected location
-          }
-        });
-      }).catchError((_) {
-        selectedMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
-      });
-    } catch (e) {
-      // Fallback to default markers if any errors
-    }
-  }
-
-  // Setup the initial fixed marker
-  void _setupInitialMarker() {
-    setState(() {
-      markers.clear();
-
-      // Add initial position marker (fixed, non-draggable)
-      markers.add(Marker(
-        markerId: const MarkerId("initial-location"),
-        position: initialLocation,
-        icon: initialMarkerIcon,
-        infoWindow: const InfoWindow(title: "Initial Location"),
-      ));
-
-      // If we already have a selected location different from initial, add that too
-      if (selectedLocation != initialLocation) {
-        _updateSelectedMarker();
-      }
-    });
-  }
-
-  // Update or add the selected location marker
-  void _updateSelectedMarker() {
-    // Remove old selected marker if it exists
-    markers.removeWhere((marker) => marker.markerId.value == "selected-location");
-
-    // Add new selected location marker
-    markers.add(Marker(
-      markerId: const MarkerId("selected-location"),
-      position: selectedLocation,
-      icon: selectedMarkerIcon,
-      draggable: true,
-      infoWindow: const InfoWindow(title: "Selected Location"),
-      onDragEnd: (LatLng newPosition) {
-        setState(() {
-          selectedLocation = newPosition;
-          _updateSelectedMarker();
-        });
-      },
-    ));
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  // Calculate distance between two points in meters
-  double _calculateDistance() {
-    return Geolocator.distanceBetween(
-        initialLocation.latitude,
-        initialLocation.longitude,
-        selectedLocation.latitude,
-        selectedLocation.longitude
-    );
-  }
-
-  // Format distance for display
-  String _formatDistance(double distanceInMeters) {
-    if (distanceInMeters < 1000) {
-      return '${distanceInMeters.toStringAsFixed(0)} meters';
-    } else {
-      double distanceInKm = distanceInMeters / 1000;
-      return '${distanceInKm.toStringAsFixed(2)} km';
-    }
-  }
-
-  // Toggle 3D view (fixed version without getPosition)
-  void _toggle3DView() {
-    setState(() {
-      is3DViewEnabled = !is3DViewEnabled;
-
-      CameraPosition newPosition = CameraPosition(
-        target: selectedLocation != initialLocation ? selectedLocation : initialLocation,
-        zoom: 18.0,
-        tilt: is3DViewEnabled ? 60.0 : 0.0,
-        bearing: is3DViewEnabled ? 30.0 : 0.0,
-      );
-
-      mapController.animateCamera(CameraUpdate.newCameraPosition(newPosition));
+    // Show instruction modal after frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showInstructionModal();
     });
   }
 
@@ -200,6 +77,159 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
+  void _setCustomMarkerIcons() async {
+    try {
+      BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(48, 48)),
+        'assets/images/pin_map.png',
+      ).then((icon) {
+        setState(() {
+          initialMarkerIcon = icon;
+          _setupInitialMarker();
+        });
+      });
+
+      BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(48, 48)),
+        'assets/images/push_pin.png',
+      ).then((icon) {
+        setState(() {
+          selectedMarkerIcon = icon;
+          if (selectedLocation != initialLocation) _updateSelectedMarker();
+        });
+      });
+    } catch (_) {}
+  }
+
+  void _setupInitialMarker() {
+    setState(() {
+      markers.clear();
+      markers.add(Marker(
+        markerId: const MarkerId("initial-location"),
+        position: initialLocation,
+        icon: initialMarkerIcon,
+        infoWindow: const InfoWindow(title: "My Location"),
+      ));
+      if (selectedLocation != initialLocation) _updateSelectedMarker();
+    });
+  }
+
+  void _updateSelectedMarker() {
+    markers.removeWhere((m) => m.markerId.value == "selected-location");
+    markers.add(Marker(
+      markerId: const MarkerId("selected-location"),
+      position: selectedLocation,
+      icon: selectedMarkerIcon,
+      draggable: true,
+      infoWindow: const InfoWindow(title: "Landslide Location"),
+      onDragEnd: (newPosition) {
+        setState(() {
+          selectedLocation = newPosition;
+          _updateSelectedMarker();
+        });
+        _showSelectionSummaryModal();
+      },
+    ));
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  double _calculateDistance() {
+    return Geolocator.distanceBetween(
+      initialLocation.latitude,
+      initialLocation.longitude,
+      selectedLocation.latitude,
+      selectedLocation.longitude,
+    );
+  }
+
+  String _formatDistance(double meters) {
+    return meters < 1000
+        ? '${meters.toStringAsFixed(0)} meters'
+        : '${(meters / 1000).toStringAsFixed(2)} km';
+  }
+
+  void _toggle3DView() {
+    setState(() {
+      is3DViewEnabled = !is3DViewEnabled;
+      mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: selectedLocation != initialLocation ? selectedLocation : initialLocation,
+          zoom: 18.0,
+          tilt: is3DViewEnabled ? 60.0 : 0.0,
+          bearing: is3DViewEnabled ? 30.0 : 0.0,
+        ),
+      ));
+    });
+  }
+
+  void _showInstructionModal() {
+    Get.dialog(
+      AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Instructions'),
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Get.back(),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Select a place where the event happened.\n\nYou can tap on the map to select the location.\nYou can also drag the marker to fine-tune it.',
+        ),
+        actions: [
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () => Get.back(),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  void _showSelectionSummaryModal() {
+    final lat = selectedLocation.latitude.toStringAsFixed(6);
+    final lon = selectedLocation.longitude.toStringAsFixed(6);
+    final distance = _formatDistance(_calculateDistance());
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Location Selected'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Latitude: $lat'),
+            Text('Longitude: $lon'),
+            const SizedBox(height: 10),
+            Text('Distance from your location:\n$distance'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Again'),
+            onPressed: () => Get.back(), // Close dialog, let user pick again
+          ),
+          TextButton(
+            child: const Text('Confirm'),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: distance));
+              controller.isLocationUpdated.value = true;
+              showTopSnackBar(context, "Distance from your location being copied: $distance");
+              Get.back(); // Close dialog
+              Get.back(result: selectedLocation); // Return location
+            },
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +237,6 @@ class _MapPageState extends State<MapPage> {
       appBar: AppBar(
         title: const Text('Select Location'),
         actions: [
-          // Add a button to toggle 3D view/tilt
           IconButton(
             icon: Icon(is3DViewEnabled ? Icons.view_in_ar : Icons.map),
             onPressed: _toggle3DView,
@@ -222,65 +251,18 @@ class _MapPageState extends State<MapPage> {
           tilt: 45.0,
           bearing: 30.0,
         ),
-        mapType: MapType.hybrid, // Set to hybrid for satellite view
+        mapType: MapType.hybrid,
         markers: markers,
         onTap: (LatLng position) {
-          // When map is tapped, update selected location and marker
           setState(() {
             selectedLocation = position;
             _updateSelectedMarker();
           });
+          _showSelectionSummaryModal();
         },
         buildingsEnabled: true,
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
-      ),
-      // Show distance between markers if a new location is selected
-      bottomNavigationBar: selectedLocation != initialLocation
-          ? Container(
-            height: 40,
-            color: Colors.black87,
-            child: Center(
-              child: Text(
-              'Distance: ${_formatDistance(_calculateDistance())}',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-      )
-          : null,
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          // new location is selected
-          FloatingActionButton.extended(
-            heroTag: "confirm",
-            label: const Text("OK"),
-            icon: const Icon(Icons.check),
-            onPressed: () {
-              // Calculate and format distance
-              double distance = _calculateDistance();
-              String formattedDistance = _formatDistance(distance);
-
-              // Copy to clipboard
-              Clipboard.setData(ClipboardData(text: formattedDistance));
-              controller.isLocationUpdated.value = true;
-              // Show snackbar
-              showTopSnackBar(context, "Distance copied: $formattedDistance. Use it if needed");
-              // Get.snackbar(
-              //     "Distance copied: $formattedDistance",
-              //     'Use it if needed',
-              //     snackPosition: SnackPosition.BOTTOM,
-              //     margin: EdgeInsets.all(16),
-              //     padding: EdgeInsets.all(16)
-              // );
-
-              // navigating back
-              Get.back(result: selectedLocation);
-
-            },
-            backgroundColor: selectedLocation != initialLocation ? Colors.tealAccent : Colors.greenAccent,
-          ),
-        ],
       ),
     );
   }
