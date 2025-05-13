@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lanslide_report/controller/survey/survey_question_controller.dart';
+import 'package:lottie/lottie.dart' as lottie;
 
 class MapPage extends StatefulWidget {
   final String lat, lon;
@@ -243,26 +244,63 @@ class _MapPageState extends State<MapPage> {
           ),
         ],
       ),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: initialLocation,
-          zoom: 18.0,
-          tilt: 45.0,
-          bearing: 30.0,
-        ),
-        mapType: MapType.hybrid,
-        markers: markers,
-        onTap: (LatLng position) {
-          setState(() {
-            selectedLocation = position;
-            _updateSelectedMarker();
-          });
-          _showSelectionSummaryModal();
-        },
-        buildingsEnabled: true,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
+      body: Stack(
+        children: [
+          GoogleMap(
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: initialLocation,
+              zoom: 18.0,
+              tilt: 45.0,
+              bearing: 30.0,
+            ),
+            mapType: MapType.hybrid,
+            markers: markers,
+            onTap: (LatLng position) {
+              setState(() {
+                selectedLocation = position;
+                _updateSelectedMarker();
+              });
+              _showSelectionSummaryModal();
+            },
+            buildingsEnabled: true,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          ),
+
+          Positioned(
+            top: 80,
+            right: 10,
+            child: GestureDetector(
+              onTap: _showInstructionModal,
+              child: Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Text('TIPS', style: TextStyle(fontSize: 8),),
+                    lottie.Lottie.asset(
+                      'assets/json/idea_bulb.json',
+                      width: 35,
+                      height: 25,
+                      repeat: true,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

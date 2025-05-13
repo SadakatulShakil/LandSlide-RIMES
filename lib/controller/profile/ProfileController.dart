@@ -245,6 +245,8 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
         middleText: "Something went wrong!",
         textCancel: 'Ok',
       );
+    }finally {
+      getSharedPrefData();
     }
   }
 

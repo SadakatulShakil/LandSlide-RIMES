@@ -169,7 +169,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
     for (var question in questions) {
       if (question.required == '1') {
         if (question.type == 'String' &&
-            (question.answer == null || question.answer!.isEmpty)) {
+            (question.answer == null || question.answer!.isEmpty || question.answer == 'null')) {
           return false;
         }
         if (question.type == 'Date' &&
@@ -297,7 +297,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
               context: Get.context!,
               initialDate: DateTime.now(),
               firstDate: DateTime(2000),
-              lastDate: DateTime(2100),
+              lastDate: DateTime.now(),
             );
             if (date != null) {
               setState(() {

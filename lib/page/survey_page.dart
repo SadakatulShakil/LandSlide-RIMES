@@ -27,6 +27,10 @@ class SurveyPage extends StatelessWidget {
             final survey = controller.surveys[index];
             return GestureDetector(
                 onTap: () async{
+                  if(survey.status == 'complete') {
+                    Get.snackbar("Survey Status", "This survey is already completed");
+                    return;
+                  }
                   var result = await Get.to(() => SurveyQuestionPage(),
                       arguments: {'surveyId': survey.id});
                   if (result == 'refresh') {
@@ -36,7 +40,11 @@ class SurveyPage extends StatelessWidget {
               child: Card(
                 child: ListTile(
                   title: Text(survey.title),
-                  subtitle: Text(survey.status),
+                  subtitle: Text(survey.status, style: TextStyle(
+                      color: survey.status == 'complete'
+                          ? Colors.green : Colors.blue,
+                          fontWeight: FontWeight.bold
+                  ) ,),
                   trailing: IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () => controller.deleteSurvey(survey.id),

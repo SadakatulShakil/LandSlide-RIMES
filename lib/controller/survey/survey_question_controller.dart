@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../models/question_model.dart';
 import '../../services/api_urls.dart';
@@ -230,18 +231,25 @@ class SurveyController extends GetxController {
   }
   /// Call the final answer submission API
   void submitFinal() async {
+    isLoading.value = true;
+    try {
+      await submitAnswers();
+      await completeSurvey();
 
-    await submitAnswers();
-    await completeSurvey();
-
-    Get.snackbar("Success", "Survey submitted successfully!");
-    // Navigate or reset
+      Get.snackbar("Success", "Survey submitted successfully!");
+    } catch (e) {
+      Get.snackbar("Error", "Failed to submit answers: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
   /// Complete the answer submission API
   Future<void> completeSurvey() async {
+    final now = DateTime.now();
+    final formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(now);
     final data = {
       "sid": int.tryParse(surveyId) ?? 0,
-      "title": "Survey ${DateTime.now()} Complete",
+      "title": "My Survey ($surveyId) - $formattedDate",
       "status": "complete",
     };
     final url = Uri.parse("$baseUrl/survey");

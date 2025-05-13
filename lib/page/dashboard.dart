@@ -74,52 +74,52 @@ class DashboardPage extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0),
-                  child: Text('Today\'s Weather', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: Text('today_weather'.tr, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
                 _buildWeatherCard(),
                 SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  height: 130,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: controller.dashboardMenu.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () => {
-                                  //Get.toNamed(controller.dashboardMenu[index]['page']);
-                                  controller.openModule(index)
-                                },
-                                child: Card(
-                                  color: Colors.teal.shade50,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    // child: Image.network(controller.dashboardMenu[index]['image'], height: 48),
-                                    child: Image.asset(
-                                        'assets/module_icons/${controller.dashboardMenu[index]['image']}',
-                                        height: 48, errorBuilder:
-                                        (context, object, stackTrace) {
-                                      return Image.asset(
-                                          'assets/module_icons/ic_weather_forecast.png',
-                                          height: 48);
-                                    }),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 0),
-                              Text(
-                                '${controller.dashboardMenu[index]['name']}'.tr,
-                                textAlign: TextAlign.center,
-                              )
-                            ],
-                          ),
-                        );
-                      }),
-                ),
+                // Container(
+                //   width: double.infinity,
+                //   height: 130,
+                //   child: ListView.builder(
+                //       scrollDirection: Axis.horizontal,
+                //       itemCount: controller.dashboardMenu.length,
+                //       itemBuilder: (BuildContext context, int index) {
+                //         return Container(
+                //           margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                //           child: Column(
+                //             children: [
+                //               GestureDetector(
+                //                 onTap: () => {
+                //                   //Get.toNamed(controller.dashboardMenu[index]['page']);
+                //                   controller.openModule(index)
+                //                 },
+                //                 child: Card(
+                //                   color: Colors.teal.shade50,
+                //                   child: Padding(
+                //                     padding: const EdgeInsets.all(16.0),
+                //                     // child: Image.network(controller.dashboardMenu[index]['image'], height: 48),
+                //                     child: Image.asset(
+                //                         'assets/module_icons/${controller.dashboardMenu[index]['image']}',
+                //                         height: 48, errorBuilder:
+                //                         (context, object, stackTrace) {
+                //                       return Image.asset(
+                //                           'assets/module_icons/ic_weather_forecast.png',
+                //                           height: 48);
+                //                     }),
+                //                   ),
+                //                 ),
+                //               ),
+                //               const SizedBox(height: 0),
+                //               Text(
+                //                 '${controller.dashboardMenu[index]['name']}'.tr,
+                //                 textAlign: TextAlign.center,
+                //               )
+                //             ],
+                //           ),
+                //         );
+                //       }),
+                // ),
                 const SizedBox(height: 10),
                 _buildLandslideBarChart(),
                 SizedBox(height: 10),
@@ -283,6 +283,7 @@ class DashboardPage extends StatelessWidget {
 
   Widget _buildLandslideBarChart() {
     return Card(
+      color: AppColors().app_primary_bg,
       elevation: 0,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: AppColors().app_primary, width: 1),
@@ -293,7 +294,7 @@ class DashboardPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Landslide Frequency', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('landslide_frequency'.tr, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Container(
               height: 150,
@@ -368,14 +369,13 @@ class DashboardPage extends StatelessWidget {
 
   Widget _buildLandslideLineChart() {
     return Card(
-      color: AppColors().app_primary_bg,
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Landslide Frequency Over Time', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('landslide_frequency_overtime'.tr, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Container(
               height: 150,

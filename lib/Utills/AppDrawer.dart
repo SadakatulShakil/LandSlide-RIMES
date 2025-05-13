@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lanslide_report/page/report_data_list.dart';
+import 'package:lanslide_report/page/survey_page.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
 
 import '../controller/profile/ProfileController.dart';
@@ -57,9 +58,9 @@ class _AppDrawerState extends State<AppDrawer> {
 
           ListTile(
             leading: Icon(Icons.storage),
-            title: Text("Report Data".tr),
+            title: Text('survey_data'.tr),
             onTap: () {
-              //Get.to(()=> ReportDataList(), transition: Transition.rightToLeft);
+              Get.to(()=> SurveyPage(), transition: Transition.rightToLeft);
             },
           ),
           ListTile(

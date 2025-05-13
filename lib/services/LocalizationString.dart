@@ -48,6 +48,10 @@ class LocalizationString extends Translations {
       'wf_rf': 'Rainfall',
       'wf_rh': 'Humidity',
       'wf_wind': 'Wind Speed',
+      'survey_data': 'Survey Data',
+      'today_weather': 'Today\'s Weather',
+      'landslide_frequency': 'Landslide Frequency',
+      'landslide_frequency_overtime': 'Frequency Over Time',
     },
     'bn_BD': {
       'title': 'LandSlide Report',
@@ -93,6 +97,10 @@ class LocalizationString extends Translations {
       'wf_rf': 'বৃষ্টিপাত',
       'wf_rh': 'আপেক্ষিক আর্দ্রতা',
       'wf_wind': 'বাতাসের গতি',
+      'survey_data': 'জরিপ তথ্য',
+      'today_weather': 'আজকের আবহাওয়া',
+      'landslide_frequency': 'ভূমিধসের পুনরাবৃত্তির হার',
+      'landslide_frequency_overtime': 'সময়ের সাথে পুনরাবৃত্তির হার',
     }
   };
 }
