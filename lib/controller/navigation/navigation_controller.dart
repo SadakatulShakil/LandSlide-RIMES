@@ -21,7 +21,7 @@ class NavigationController extends GetxController {
   final List<Widget> screen = [
     DashboardPage(),
     Profile(isBackButton: false,),
-    SurveyPage()
+    //SurveyPage()
   ];
   final userPrefService = UserPrefService();
 

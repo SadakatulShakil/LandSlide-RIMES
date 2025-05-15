@@ -44,31 +44,32 @@ class SurveyPage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
                   child: Container(
+                    height: 85,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Number Box with Background Color
+                        // Number Box with Background Color (dynamic size)
                         Container(
-                          width: 50,
-                          height: 65,
+                          height: 85,
+                          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.only(
+                            color: AppColors().app_primary,
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(12),
                               bottomLeft: Radius.circular(12),
                             ),
                           ),
-                          alignment: Alignment.center,
                           child: CircleAvatar(
                             radius: 15,
                             backgroundColor: Colors.blue.shade100,
                             child: Text(
                               '${index + 1}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -85,9 +86,11 @@ class SurveyPage extends StatelessWidget {
                               children: [
                                 Text(
                                   survey.title,
-                                  style: TextStyle(fontSize: 16),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 16,),
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 2),
                                 Text(
                                   survey.status,
                                   style: TextStyle(
@@ -100,14 +103,14 @@ class SurveyPage extends StatelessWidget {
                           ),
                         ),
 
-                        // Delete Icon with Circular Background
+                        // Delete Icon
                         Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: const EdgeInsets.only(right: 8.0, top: 8.0),
                           child: CircleAvatar(
                             radius: 18,
                             backgroundColor: Colors.red.shade100,
                             child: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red, size: 20,),
+                              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
                               onPressed: () => controller.deleteSurvey(survey.id),
                               tooltip: 'Delete',
                             ),

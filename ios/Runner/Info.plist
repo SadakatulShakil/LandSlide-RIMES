@@ -16,6 +16,18 @@
 	<string>lanslide_report</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app needs access to location when open.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We use your location to improve map accuracy.</string>
+    <key>io.flutter.embedded_views_preview</key>
+    <true/>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to your photo library to select and upload images.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs access to your camera to take photos or record videos.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app needs access to your microphone to record audio while capturing videos.</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
