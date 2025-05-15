@@ -1,6 +1,6 @@
 # lanslide_report
 
-A new Flutter project.
+A new Flutter project. Which help people to get landslide report. common and advance user can upload their landslide report.
 
 ## Getting Started
 
