@@ -6,6 +6,7 @@ import '../database_helper/entities/post_entities.dart';
 import '../database_helper/entities/report_entities.dart';
 import '../models/community_post_model.dart';
 import '../models/comment_model.dart';
+import '../models/question_model.dart';
 
 class DBService extends GetxService {
   late AppDatabase _database;
@@ -117,4 +118,6 @@ class DBService extends GetxService {
   Future<void> saveReport(LandslideReport reports) async {
     await _database.landslideReportDao.insertReport(reports);
   }
+
+
 }

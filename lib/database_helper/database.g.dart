@@ -78,6 +78,8 @@ class _$AppDatabase extends AppDatabase {
 
   CommentDao? _commentDaoInstance;
 
+  SurveyQuestionDao? _surveyQuestionDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -105,6 +107,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `posts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `likes` INTEGER NOT NULL, `is_liked` INTEGER NOT NULL, `comment_count` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `comments` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `post_id` INTEGER NOT NULL, `content` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `survey_questions` (`id` TEXT NOT NULL, `surveyId` TEXT NOT NULL, `title` TEXT NOT NULL, `type` TEXT NOT NULL, `group` TEXT NOT NULL, `answer` TEXT, `required` TEXT NOT NULL, `synced` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -126,6 +130,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   CommentDao get commentDao {
     return _commentDaoInstance ??= _$CommentDao(database, changeListener);
+  }
+
+  @override
+  SurveyQuestionDao get surveyQuestionDao {
+    return _surveyQuestionDaoInstance ??=
+        _$SurveyQuestionDao(database, changeListener);
   }
 }
 
@@ -449,5 +459,89 @@ class _$CommentDao extends CommentDao {
   Future<void> insertComment(CommentEntity comment) async {
     await _commentEntityInsertionAdapter.insert(
         comment, OnConflictStrategy.replace);
+  }
+}
+
+class _$SurveyQuestionDao extends SurveyQuestionDao {
+  _$SurveyQuestionDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _surveyQuestionEntityInsertionAdapter = InsertionAdapter(
+            database,
+            'survey_questions',
+            (SurveyQuestionEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'surveyId': item.surveyId,
+                  'title': item.title,
+                  'type': item.type,
+                  'group': item.group,
+                  'answer': item.answer,
+                  'required': item.required,
+                  'synced': item.synced ? 1 : 0
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<SurveyQuestionEntity>
+      _surveyQuestionEntityInsertionAdapter;
+
+  @override
+  Future<List<SurveyQuestionEntity>> getQuestionsBySurveyId(
+      int surveyId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM survey_questions WHERE surveyId = ?1',
+        mapper: (Map<String, Object?> row) => SurveyQuestionEntity(
+            id: row['id'] as String,
+            surveyId: row['surveyId'] as String,
+            title: row['title'] as String,
+            type: row['type'] as String,
+            group: row['group'] as String,
+            answer: row['answer'] as String?,
+            required: row['required'] as String,
+            synced: (row['synced'] as int) != 0),
+        arguments: [surveyId]);
+  }
+
+  @override
+  Future<void> deleteBySurveyId(int surveyId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM survey_questions WHERE surveyId = ?1',
+        arguments: [surveyId]);
+  }
+
+  @override
+  Future<void> updateAnswerById(
+    String id,
+    String answer,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE SurveyQuestionEntity SET answer = ?2 WHERE id = ?1',
+        arguments: [id, answer]);
+  }
+
+  @override
+  Future<List<SurveyQuestionEntity>> getUnsyncedQuestions() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM survey_questions WHERE synced = 0',
+        mapper: (Map<String, Object?> row) => SurveyQuestionEntity(
+            id: row['id'] as String,
+            surveyId: row['surveyId'] as String,
+            title: row['title'] as String,
+            type: row['type'] as String,
+            group: row['group'] as String,
+            answer: row['answer'] as String?,
+            required: row['required'] as String,
+            synced: (row['synced'] as int) != 0));
+  }
+
+  @override
+  Future<void> insertAllQuestions(List<SurveyQuestionEntity> questions) async {
+    await _surveyQuestionEntityInsertionAdapter.insertList(
+        questions, OnConflictStrategy.replace);
   }
 }

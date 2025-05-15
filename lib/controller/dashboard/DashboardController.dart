@@ -144,11 +144,43 @@ class DashboardController extends GetxController {
       'Authorization': token.toString(),
       'Accept-Language': lang.toString()
     };
-    var response = await http.get(Uri.parse(ApiURL.currentforecast + "?location=$locationId"), headers: requestHeaders);
 
-    dynamic decode = jsonDecode(response.body);
-    forecast.value = decode['result'];
-    isForecastLoading.value = false;
+    try {
+      var response = await http.get(Uri.parse(ApiURL.currentforecast + "?location=$locationId"), headers: requestHeaders);
+      if (response.statusCode == 200) {
+        dynamic decode = jsonDecode(response.body);
+        forecast.value = decode['result'];
+
+      }else if (response.statusCode == 401) {
+        print('Unauthorized! Possible expired token.');
+
+        bool refreshed = await userService.refreshAccessToken();
+        if (refreshed) {
+          return getForecast(currentLocationId.value); // Retry after refreshing the token
+        } else {
+          return Get.defaultDialog(
+            title: "Session Expired",
+            middleText: "Please log in again.",
+            textCancel: 'Ok',
+          );
+        }
+      } else {
+        return Get.defaultDialog(
+          title: "Error",
+          middleText: 'Server site error occurred',
+          textCancel: 'Ok',
+        );
+      }
+    } catch (e) {
+      print("Error fetching forecast data: $e");
+      return Get.defaultDialog(
+          title: "Alert",
+          middleText: 'Something went wrong!',
+          textCancel: 'Ok'
+      );
+    }finally {
+      isForecastLoading.value = false;
+    }
   }
 
   Future gotoNotificationPage() async{

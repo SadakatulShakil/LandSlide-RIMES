@@ -35,9 +35,23 @@ class SurveyListController extends GetxController {
         if (data['status'] == true) {
           surveys.value = List<Survey>.from(
             data['result'].map((e) => Survey.fromJson(e)),
-          );
+          ).reversed.toList(); // Show last response first
+          print('check list: ${surveys.length}');
         } else {
           Get.snackbar("Error", data['message']);
+        }
+      }else if (response.statusCode == 401) {
+        print('Unauthorized! Possible expired token.');
+
+        bool refreshed = await userPrefService.refreshAccessToken();
+        if (refreshed) {
+          return fetchSurveys(); // Retry after refreshing the token
+        } else {
+          return Get.defaultDialog(
+            title: "Session Expired",
+            middleText: "Please log in again.",
+            textCancel: 'Ok',
+          );
         }
       } else {
         Get.snackbar("Error", "Failed to load surveys");
@@ -66,11 +80,24 @@ class SurveyListController extends GetxController {
         if (data['status'] == true) {
           surveys.value = List<Survey>.from(
             data['result'].map((e) => Survey.fromJson(e)),
-          );
+          ).reversed.toList();
           Get.back(); // Close dialog
           Get.snackbar("Success", data['message']);
         } else {
           Get.snackbar("Error", data['message']);
+        }
+      }else if (response.statusCode == 401) {
+        print('Unauthorized! Possible expired token.');
+
+        bool refreshed = await userPrefService.refreshAccessToken();
+        if (refreshed) {
+          return createSurvey(title); // Retry after refreshing the token
+        } else {
+          return Get.defaultDialog(
+            title: "Session Expired",
+            middleText: "Please log in again.",
+            textCancel: 'Ok',
+          );
         }
       } else {
         Get.snackbar("Error", "Failed to create survey");
@@ -101,6 +128,19 @@ class SurveyListController extends GetxController {
           Get.snackbar("Deleted", data['message']);
         } else {
           Get.snackbar("Error", data['message']);
+        }
+      }else if (response.statusCode == 401) {
+        print('Unauthorized! Possible expired token.');
+
+        bool refreshed = await userPrefService.refreshAccessToken();
+        if (refreshed) {
+          return deleteSurvey(id); // Retry after refreshing the token
+        } else {
+          return Get.defaultDialog(
+            title: "Session Expired",
+            middleText: "Please log in again.",
+            textCancel: 'Ok',
+          );
         }
       } else {
         Get.snackbar("Error", "Failed to delete survey");

@@ -26,11 +26,11 @@ class SurveyController extends GetxController {
   var latitude = ''.obs;
   var longitude = ''.obs;
   var latAndLon = ''.obs;
-  var isLocationUpdated =  false.obs;
+  var isLocationUpdated = false.obs;
   var _isFirstTime = false.obs;
-  var isSelectedLocation =  false.obs;
+  var isSelectedLocation = false.obs;
 
-   final String baseUrl = 'https://landslide.bdservers.site/api/question'; // Replace with your base URL
+  final String baseUrl = 'https://landslide.bdservers.site/api/question'; // Replace with your base URL
   //final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDcwMjc1MTIsImlhdCI6MTc0NzAyNzUxMiwiZXhwIjoxNzQ3MTEzOTEyfQ.c7cTLsQsBxzLUhlrxcOZy1PCyMVESs9g31doe3E7iyE'; // Replace with token
 
   @override
@@ -42,6 +42,8 @@ class SurveyController extends GetxController {
 
   ///shared pref location data
   Future getSharedPrefData() async {
+    final now = DateTime.now();
+    final formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
@@ -51,11 +53,14 @@ class SurveyController extends GetxController {
     address.value = userPrefService.locationName ?? '';
     district.value = userPrefService.locationDistrict ?? '';
     upazila.value = userPrefService.locationUpazila ?? '';
-    id.value = userPrefService.locationId ?? '';
+    id.value = formattedDate;
     fetchQuestions(surveyId);
   }
+
   ///update given location
-  Future updateLocation(LatLng newLocation) async{
+  Future updateLocation(LatLng newLocation) async {
+    final now = DateTime.now();
+    final formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
 
     isLoading.value = true;
     latitude.value = newLocation.latitude.toStringAsFixed(5);
@@ -63,15 +68,17 @@ class SurveyController extends GetxController {
     latAndLon.value = 'Lat: ${latitude.value}, Lon: ${longitude.value}';
     print('New Location: ${latAndLon.value}');
     try {
-      var response = await http.get(Uri.parse(ApiURL.location_latlon + "?lat=" + latitude.value + "&lon=" + longitude.value));
-      if(response.statusCode != 200) {
+      var response = await http.get(Uri.parse(
+          ApiURL.location_latlon + "?lat=" + latitude.value + "&lon=" +
+              longitude.value));
+      if (response.statusCode != 200) {
         isLoading.value = false;
         Get.snackbar("Error", "Failed to fetch location data");
         return;
-      }else {
+      } else {
         var decode = jsonDecode(response.body);
         print('shakil ${decode}');
-        id.value = decode['result']['id'];
+        id.value = formattedDate;
         address.value = decode['result']['name'];
         upazila.value = decode['result']['upazila'];
         district.value = decode['result']['district'];
@@ -80,7 +87,7 @@ class SurveyController extends GetxController {
         await userPrefService.saveLocationData(
             latitude.value,
             longitude.value,
-            decode['result']['id'],
+            formattedDate,
             decode['result']['name'],
             decode['result']['upazila'],
             decode['result']['district']
@@ -93,23 +100,42 @@ class SurveyController extends GetxController {
     }
     //isLoading.value = false;
   }
+
   /// Call the API for return fetched questions
   Future<List<SurveyQuestion>> fetchSurveyQuestions(int sId) async {
-    final response = await http.get(Uri.parse('$baseUrl/survey_questions?id=$sId'),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": userPrefService.userToken ?? '', // Add token to the header},
-        }
-    );
 
-    if (response.statusCode == 200) {
-      final decode = json.decode(response.body);
-      final List data = decode['result'];
-      return data.map((item) => SurveyQuestion.fromJson(item)).toList();
-    } else {
+    try {
+      final response = await http.get(
+          Uri.parse('$baseUrl/survey_questions?id=$sId'),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": userPrefService.userToken ?? '',
+            // Add token to the header},
+          }
+      );
+
+      if (response.statusCode == 200) {
+        final decode = json.decode(response.body);
+        final List data = decode['result'];
+        return data.map((item) => SurveyQuestion.fromJson(item)).toList();
+      }else if (response.statusCode == 401) {
+        print('Unauthorized! Possible expired token.');
+
+        bool refreshed = await userPrefService.refreshAccessToken();
+        if (refreshed) {
+          fetchQuestions(surveyId); // Retry after refreshing the token
+        } else {
+          Get.snackbar('Session expired', 'Please log in again.');
+        }
+      } else {
+        throw Exception('Failed to load survey questions');
+      }
+    } catch (e) {
       throw Exception('Failed to load survey questions');
     }
+    return [];
   }
+
   /// Call the API for save fetched questions as grouped
   void fetchQuestions(String surveyId) async {
     isLoading.value = true;
@@ -142,6 +168,7 @@ class SurveyController extends GetxController {
       isLoading.value = false;
     }
   }
+
   ///upload image Api
   Future<String?> uploadImage(File imageFile) async {
     final url = Uri.parse("$baseUrl/upload");
@@ -157,6 +184,19 @@ class SurveyController extends GetxController {
         final resString = await response.stream.bytesToString();
         final resJson = jsonDecode(resString);
         return resJson['result'];
+      }else if (response.statusCode == 401) {
+        print('Unauthorized! Possible expired token.');
+
+        bool refreshed = await userPrefService.refreshAccessToken();
+        if (refreshed) {
+          return uploadImage(imageFile); // Retry after refreshing the token
+        } else {
+          return Get.defaultDialog(
+            title: "Session Expired",
+            middleText: "Please log in again.",
+            textCancel: 'Ok',
+          );
+        }
       } else {
         print('Upload failed: ${response.statusCode}');
       }
@@ -165,12 +205,14 @@ class SurveyController extends GetxController {
     }
     return null;
   }
+
   /// Next step click and call partial answer submission
-  void nextStep() async{
+  void nextStep() async {
     if (currentStep.value < groupedQuestions.length - 1) currentStep++;
     isValid.value = false;
     await submitAnswers();
   }
+
   /// Make the submitted answer payload as Raw data format
   List<Map<String, dynamic>> _buildAnswerPayload() {
     return groupedQuestions.values
@@ -197,6 +239,7 @@ class SurveyController extends GetxController {
       };
     }).toList();
   }
+
   /// Call the answer submission API
   Future<void> submitAnswers() async {
     final payload = _buildAnswerPayload();
@@ -207,7 +250,8 @@ class SurveyController extends GetxController {
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": userPrefService.userToken ?? '', // Add token to the header},
+          "Authorization": userPrefService.userToken ?? '',
+          // Add token to the header},
         },
         body: jsonEncode(payload),
       );
@@ -215,6 +259,19 @@ class SurveyController extends GetxController {
       print('responseCode Answer: ${response.statusCode}');
       if (response.statusCode != 200) {
         throw Exception("Failed to submit answers");
+      }else if (response.statusCode == 401) {
+        print('Unauthorized! Possible expired token.');
+
+        bool refreshed = await userPrefService.refreshAccessToken();
+        if (refreshed) {
+          return submitAnswers(); // Retry after refreshing the token
+        } else {
+          return Get.defaultDialog(
+            title: "Session Expired",
+            middleText: "Please log in again.",
+            textCancel: 'Ok',
+          );
+        }
       }
 
       print("Answers submitted: ${response.body}");
@@ -225,10 +282,12 @@ class SurveyController extends GetxController {
 
     await Future.delayed(Duration(milliseconds: 500)); // simulate API
   }
+
   /// Call the stepper previous button
   void prevStep() {
     if (currentStep.value > 0) currentStep--;
   }
+
   /// Call the final answer submission API
   void submitFinal() async {
     isLoading.value = true;
@@ -243,6 +302,7 @@ class SurveyController extends GetxController {
       isLoading.value = false;
     }
   }
+
   /// Complete the answer submission API
   Future<void> completeSurvey() async {
     final now = DateTime.now();
@@ -259,7 +319,8 @@ class SurveyController extends GetxController {
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": userPrefService.userToken ?? '', // Add token to the header},
+          "Authorization": userPrefService.userToken ?? '',
+          // Add token to the header},
         },
         body: jsonEncode(data),
       );
@@ -267,6 +328,19 @@ class SurveyController extends GetxController {
       print('ResponseCode: ${response.statusCode}');
       if (response.statusCode != 200) {
         throw Exception("Failed to submit final answers");
+      }else if (response.statusCode == 401) {
+        print('Unauthorized! Possible expired token.');
+
+        bool refreshed = await userPrefService.refreshAccessToken();
+        if (refreshed) {
+          return completeSurvey(); // Retry after refreshing the token
+        } else {
+          return Get.defaultDialog(
+            title: "Session Expired",
+            middleText: "Please log in again.",
+            textCancel: 'Ok',
+          );
+        }
       }
 
       print("Final Answers submitted: ${response.body}");
@@ -279,6 +353,7 @@ class SurveyController extends GetxController {
 
     await Future.delayed(Duration(milliseconds: 500)); // simulate API
   }
+
   ///Check readonly field
   bool isReadOnlyField(String title) {
     final lower = title.toLowerCase();
@@ -288,6 +363,5 @@ class SurveyController extends GetxController {
         lower.contains('latitude') ||
         lower.contains('longitude');
   }
-
 }
 

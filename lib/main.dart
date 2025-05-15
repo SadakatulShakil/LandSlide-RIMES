@@ -57,9 +57,7 @@ class MyApp extends StatelessWidget {
             body: Center(
               child: Image.asset('assets/logo/bmd_logo.png', height: 96),
             ))
-                :
-        Mobile();
-        //SurveyPage();
+                : Mobile();
       }),
       getPages: AppPages.routes,
       initialBinding: NavigationBinding(),

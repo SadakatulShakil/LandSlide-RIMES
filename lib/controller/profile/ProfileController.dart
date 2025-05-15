@@ -51,6 +51,7 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
 
   @override
   void onInit() {
+    super.onInit();
     getSharedPrefData();
   }
 
@@ -170,7 +171,7 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
       } else {
         return Get.defaultDialog(
           title: "Error",
-          middleText: 'Failed to upload image',
+          middleText: 'Server site error occurred',
           textCancel: 'Ok',
         );
       }
