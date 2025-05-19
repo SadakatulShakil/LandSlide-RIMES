@@ -447,7 +447,9 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                         question.answer = images;
                       });
                     } else {
-                      Get.snackbar("Upload Failed", "Could not upload image");
+                      Get.snackbar("Upload Failed", "Could not upload image",
+                          backgroundColor: AppColors().app_alert_extreme,
+                          colorText: AppColors().app_secondary);
                     }
                   }
                 },

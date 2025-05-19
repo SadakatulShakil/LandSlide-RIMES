@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:lanslide_report/services/db_service.dart';
+import '../../Utills/AppColors.dart';
 import '../../database_helper/database.dart';
 import '../../database_helper/entities/report_entities.dart'; // Import your database classes
 
@@ -47,15 +48,24 @@ class ReportListController extends GetxController {
           onlineReports.value = reportsList.map((e) => LandslideReport.fromJson(e)).toList();
         } else {
           print('Unexpected response format');  // DEBUGGING
-          Get.snackbar('Error', 'Unexpected response format');
+          Get.snackbar('Error', 'Unexpected response format',
+              backgroundColor: AppColors().app_alert_extreme,
+              colorText: AppColors().app_secondary
+          );
         }
       } else {
         print('Error: ${response.statusCode}');  // DEBUGGING
-        Get.snackbar('Error', 'Failed to fetch online reports');
+        Get.snackbar('Error', 'Failed to fetch online reports',
+            backgroundColor: AppColors().app_alert_extreme,
+            colorText: AppColors().app_secondary
+        );
       }
     } catch (e) {
       print('Error: $e');  // DEBUGGING
-      Get.snackbar('Error', 'Failed to fetch online reports');
+      Get.snackbar('Error', 'Failed to fetch online reports',
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary
+      );
     }
   }
 

@@ -1,58 +1,106 @@
-import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:lanslide_report/services/user_pref_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'api_urls.dart';
+import 'user_pref_service.dart';
 
 class LocationService {
+  /// Ask for location permission and get current position
+  Future<Position?> getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
-
-  Future<Position> getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if(!serviceEnabled){
-      throw Exception('Location services are disables.');
+    if (!serviceEnabled) {
+      await Get.defaultDialog(
+        title: "Location Disabled",
+        content: const Text("Please enable location services."),
+        textConfirm: "Open Settings",
+        textCancel: "Cancel",
+        onConfirm: () async {
+          await Geolocator.openLocationSettings();
+          Get.back();
+        },
+      );
+      return null;
     }
 
-    permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.denied){
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if(permission == LocationPermission.denied){
-        throw Exception('Location permissions are denied.');
+      if (permission == LocationPermission.denied) {
+        await Get.defaultDialog(
+          title: "Permission Needed",
+          content: const Text("Location permission is required to proceed."),
+          textConfirm: "Try Again",
+          textCancel: "Cancel",
+          onConfirm: () async {
+            Get.back();
+            await getCurrentLocation(); // Try again
+          },
+        );
+        return null;
       }
     }
 
-    if(permission == LocationPermission.deniedForever){
-      throw Exception('Location permissions are permanently denied, we cannot request permissions');
+    if (permission == LocationPermission.deniedForever) {
+      await Get.defaultDialog(
+        title: "Permission Blocked",
+        content: const Text(
+            "Location permission is permanently denied. Please enable it from App Info > Permissions."),
+        textConfirm: "Open App Settings",
+        textCancel: "Cancel",
+        onConfirm: () async {
+          await openAppSettings();
+          Get.back();
+        },
+      );
+      return null;
     }
 
-    return await Geolocator.getCurrentPosition();
-
+    return await Geolocator.getCurrentPosition(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.best,
+      ),
+    );
   }
 
+  /// Get location, resolve address and store in shared prefs
   Future<void> getLocation() async {
-
-    final position = await getCurrentLocation();
-
     try {
-      var response = await http.get(Uri.parse(ApiURL.location_latlon + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString()));
-      var decode = jsonDecode(response.body);
-      print('shakil ${decode}');
-      await UserPrefService().saveLocationData(
-          position.latitude.toString(),
-          position.longitude.toString(),
-          decode['result']['id'],
-          decode['result']['name'],
-          decode['result']['upazila'],
-          decode['result']['district']
+      final position = await getCurrentLocation();
+
+      if (position == null) {
+        getLocation();
+        debugPrint("❌ Location permission not granted. Aborting.");
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse("${ApiURL.location_latlon}?lat=${position.latitude}&lon=${position.longitude}"),
       );
+
+      if (response.statusCode != 200) {
+        throw Exception("Failed to fetch location name.");
+      }
+
+      final decode = jsonDecode(response.body);
+
+      await UserPrefService().saveLocationData(
+        position.latitude.toStringAsFixed(5),
+        position.longitude.toStringAsFixed(5),
+        decode['result']['id'],
+        decode['result']['name'],
+        decode['result']['upazila'],
+        decode['result']['district'],
+      );
+
+      debugPrint("✅ Location saved.");
     } catch (e) {
-      print(e.toString());
+      debugPrint("❌ Location error: $e");
     }
   }
 

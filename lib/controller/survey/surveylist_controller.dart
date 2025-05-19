@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../../Utills/AppColors.dart';
 import '../../models/survey_list_model.dart';
 import '../../services/user_pref_service.dart';
 
@@ -38,7 +39,10 @@ class SurveyListController extends GetxController {
           ).reversed.toList(); // Show last response first
           print('check list: ${surveys.length}');
         } else {
-          Get.snackbar("Error", data['message']);
+          Get.snackbar("Error", data['message'],
+              backgroundColor: AppColors().app_alert_extreme,
+              colorText: AppColors().app_secondary
+          );
         }
       }else if (response.statusCode == 401) {
         print('Unauthorized! Possible expired token.');
@@ -54,10 +58,16 @@ class SurveyListController extends GetxController {
           );
         }
       } else {
-        Get.snackbar("Error", "Failed to load surveys");
+        Get.snackbar("Error", "Failed to load surveys",
+            backgroundColor: AppColors().app_alert_extreme,
+            colorText: AppColors().app_secondary
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "Unexpected error: $e");
+      Get.snackbar("Error", "Unexpected error: $e",
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary
+      );
     } finally {
       isLoading.value = false;
     }
@@ -82,9 +92,14 @@ class SurveyListController extends GetxController {
             data['result'].map((e) => Survey.fromJson(e)),
           ).reversed.toList();
           Get.back(); // Close dialog
-          Get.snackbar("Success", data['message']);
+          Get.snackbar("Success", data['message'],
+              backgroundColor: AppColors().app_alert_normal,
+              colorText: AppColors().app_secondary);
         } else {
-          Get.snackbar("Error", data['message']);
+          Get.snackbar("Error", data['message'],
+              backgroundColor: AppColors().app_alert_extreme,
+              colorText: AppColors().app_secondary
+          );
         }
       }else if (response.statusCode == 401) {
         print('Unauthorized! Possible expired token.');
@@ -100,10 +115,14 @@ class SurveyListController extends GetxController {
           );
         }
       } else {
-        Get.snackbar("Error", "Failed to create survey");
+        Get.snackbar("Error", "Failed to create survey",
+            backgroundColor: AppColors().app_alert_extreme,
+            colorText: AppColors().app_secondary);
       }
     } catch (e) {
-      Get.snackbar("Error", "Unexpected error: $e");
+      Get.snackbar("Error", "Unexpected error: $e",
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary);
     } finally {
       isLoading.value = false;
     }
@@ -125,9 +144,13 @@ class SurveyListController extends GetxController {
         final data = jsonDecode(response.body);
         if (data['status'] == true) {
           surveys.removeWhere((s) => s.id == id);
-          Get.snackbar("Deleted", data['message']);
+          Get.snackbar("Deleted", data['message'],
+              backgroundColor: AppColors().app_alert_moderate ,
+              colorText: AppColors().app_secondary);
         } else {
-          Get.snackbar("Error", data['message']);
+          Get.snackbar("Error", data['message'],
+              backgroundColor: AppColors().app_alert_extreme,
+              colorText: AppColors().app_secondary);
         }
       }else if (response.statusCode == 401) {
         print('Unauthorized! Possible expired token.');
@@ -143,10 +166,14 @@ class SurveyListController extends GetxController {
           );
         }
       } else {
-        Get.snackbar("Error", "Failed to delete survey");
+        Get.snackbar("Error", "Failed to delete survey",
+            backgroundColor: AppColors().app_alert_extreme,
+            colorText: AppColors().app_secondary);
       }
     } catch (e) {
-      Get.snackbar("Error", "Unexpected error: $e");
+      Get.snackbar("Error", "Unexpected error: $e",
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary);
     } finally {
       isLoading.value = false;
     }

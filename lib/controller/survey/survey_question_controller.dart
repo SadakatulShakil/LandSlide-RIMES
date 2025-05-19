@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../../Utills/AppColors.dart';
 import '../../models/question_model.dart';
 import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
@@ -73,7 +74,9 @@ class SurveyController extends GetxController {
               longitude.value));
       if (response.statusCode != 200) {
         isLoading.value = false;
-        Get.snackbar("Error", "Failed to fetch location data");
+        Get.snackbar("Error", "Failed to fetch location data",
+            backgroundColor: AppColors().app_alert_extreme,
+            colorText: AppColors().app_secondary);
         return;
       } else {
         var decode = jsonDecode(response.body);
@@ -125,7 +128,9 @@ class SurveyController extends GetxController {
         if (refreshed) {
           fetchQuestions(surveyId); // Retry after refreshing the token
         } else {
-          Get.snackbar('Session expired', 'Please log in again.');
+          Get.snackbar('Session expired', 'Please log in again.',
+              backgroundColor: AppColors().app_alert_moderate,
+              colorText: AppColors().app_secondary);
         }
       } else {
         throw Exception('Failed to load survey questions');
@@ -276,7 +281,9 @@ class SurveyController extends GetxController {
 
       print("Answers submitted: ${response.body}");
     } catch (e) {
-      Get.snackbar("Error", "Failed to submit answers: $e");
+      Get.snackbar("Error", "Failed to submit answers: $e",
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary);
     }
     print("Submitting answers: $payload");
 
@@ -295,9 +302,13 @@ class SurveyController extends GetxController {
       await submitAnswers();
       await completeSurvey();
 
-      Get.snackbar("Success", "Survey submitted successfully!");
+      Get.snackbar("Success", "Survey submitted successfully!",
+          backgroundColor: AppColors().app_alert_normal,
+          colorText: AppColors().app_secondary);
     } catch (e) {
-      Get.snackbar("Error", "Failed to submit answers: $e");
+      Get.snackbar("Error", "Failed to submit answers: $e",
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary);
     } finally {
       isLoading.value = false;
     }
@@ -346,7 +357,10 @@ class SurveyController extends GetxController {
       print("Final Answers submitted: ${response.body}");
       Get.back(result: 'refresh');
     } catch (e) {
-      Get.snackbar("Error", "Failed to complete answers: $e");
+      Get.snackbar("Error", "Failed to complete answers: $e",
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary
+      );
     }
 
     print("Completing survey: $data");

@@ -1,5 +1,6 @@
 // controllers/community_controller.dart
 import 'package:get/get.dart';
+import 'package:lanslide_report/Utills/AppColors.dart';
 
 import '../../models/comment_model.dart';
 import '../../models/community_post_model.dart';
@@ -30,7 +31,10 @@ class CommunityController extends GetxController {
       // For offline version:
       posts.value = await dbService.getPosts();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load posts');
+      Get.snackbar('Error', 'Failed to load posts',
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary
+      );
     } finally {
       isLoading.value = false;
     }
@@ -46,7 +50,10 @@ class CommunityController extends GetxController {
       await dbService.savePost(post);
       await loadPosts();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to create post');
+      Get.snackbar('Error', 'Failed to create post',
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary
+      );
     }
   }
 
@@ -85,7 +92,10 @@ class CommunityController extends GetxController {
       // await apiService.toggleLike(postId);
       // posts[posts.indexWhere((p) => p.id == postId)] = updatedPost;
     } catch (e) {
-      Get.snackbar('Error', 'Failed to toggle like');
+      Get.snackbar('Error', 'Failed to toggle like',
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary
+      );
     }
   }
 
@@ -99,7 +109,10 @@ class CommunityController extends GetxController {
       // For offline version:
       comments.value = await dbService.getCommentsForPost(postId);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load comments');
+      Get.snackbar('Error', 'Failed to load comments',
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary
+      );
     } finally {
       isLoading.value = false;
     }
@@ -137,7 +150,10 @@ class CommunityController extends GetxController {
       // comments.insert(0, newComment);
       // // You would need API endpoint to update comment count
     } catch (e) {
-      Get.snackbar('Error', 'Failed to add comment');
+      Get.snackbar('Error', 'Failed to add comment',
+          backgroundColor: AppColors().app_alert_extreme,
+          colorText: AppColors().app_secondary
+      );
     }
   }
 }
