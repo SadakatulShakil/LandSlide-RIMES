@@ -32,7 +32,6 @@ class SurveyController extends GetxController {
   var isSelectedLocation = false.obs;
 
   final String baseUrl = 'https://landslide.bdservers.site/api/question'; // Replace with your base URL
-  //final String token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJmdWxsbmFtZSI6Ilx1MDliOFx1MDliZVx1MDlhN1x1MDliZVx1MDliMFx1MDlhMyBcdTA5YWNcdTA5Y2RcdTA5YWZcdTA5YWNcdTA5YjlcdTA5YmVcdTA5YjBcdTA5OTVcdTA5YmVcdTA5YjBcdTA5YzAiLCJlbWFpbCI6IiIsIm1vYmlsZSI6IjAxNzUxMzMwMzk0IiwiYWRkcmVzcyI6IiIsInBob3RvIjoiMi5wbmciLCJ0eXBlIjoiYWR2YW5jZWQiLCJjcmVhdGVkX2F0IjoiMjAyNS0wMy0xMiAxNDoyMTo1MyIsInVwZGF0ZWRfYXQiOiIyMDI1LTA1LTA1IDA5OjQzOjQ1IiwiQVBJX1RJTUUiOjE3NDcwMjc1MTIsImlhdCI6MTc0NzAyNzUxMiwiZXhwIjoxNzQ3MTEzOTEyfQ.c7cTLsQsBxzLUhlrxcOZy1PCyMVESs9g31doe3E7iyE'; // Replace with token
 
   @override
   void onInit() {
@@ -302,7 +301,7 @@ class SurveyController extends GetxController {
       await submitAnswers();
       await completeSurvey();
 
-      Get.snackbar("Success", "Survey submitted successfully!",
+      Get.snackbar("Success", "survey_success".tr,
           backgroundColor: AppColors().app_alert_normal,
           colorText: AppColors().app_secondary);
     } catch (e) {

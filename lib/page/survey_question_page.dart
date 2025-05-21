@@ -23,7 +23,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Survey Question"),
+        title: Text("survey_question".tr),
         backgroundColor: AppColors().app_primary_bg,
       ),
       body: Obx(() {
@@ -34,7 +34,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
         final groupKeys = controller.groupedQuestions.keys.toList();
 
         if (groupKeys.isEmpty) {
-          return const Center(child: Text("No survey questions found."));
+          return Center(child: Text("no_questions".tr));
         }
 
         final currentGroup = groupKeys[controller.currentStep.value];
@@ -396,35 +396,47 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
           spacing: 8,
           children: [
             ...images.map((url) {
-              return Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  Image.network(
-                    url,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.broken_image, size: 30),
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors().app_primary_bg,
+                ),
+                child: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        url,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.broken_image, size: 30),
+                        ),
+                      ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        images.remove(url);
-                        question.answer = images;
-                      });
-                    },
-                    child: Container(
-                      color: Colors.black54,
-                      child: Icon(Icons.close,
-                          size: 20, color: Colors.deepOrangeAccent),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          images.remove(url);
+                          question.answer = images;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.black54,
+                        ),
+                        child: Icon(Icons.close,
+                            size: 20, color: Colors.deepOrangeAccent),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }).toList(),
             if (images.length < 3)
@@ -447,7 +459,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                         question.answer = images;
                       });
                     } else {
-                      Get.snackbar("Upload Failed", "Could not upload image",
+                      Get.snackbar("upload_failed".tr, "upload_failed_msg".tr,
                           backgroundColor: AppColors().app_alert_extreme,
                           colorText: AppColors().app_secondary);
                     }
@@ -456,7 +468,10 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                 child: Container(
                   width: 80,
                   height: 80,
-                  color: AppColors().app_primary_bg,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors().app_primary_bg,
+                  ),
                   child:
                       Icon(Icons.add_a_photo, color: AppColors().app_primary),
                 ),

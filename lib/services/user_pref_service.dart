@@ -190,6 +190,7 @@ class UserPrefService {
   // Clear user data (logout)
   Future<void> clearUserData() async {
     await _prefs?.remove(_keyUserToken);
+    await _prefs?.remove(_keyUserRefresh);
     await _prefs?.remove(_keyUserId);
     await _prefs?.remove(_keyUserName);
     await _prefs?.remove(_keyUserEmail);

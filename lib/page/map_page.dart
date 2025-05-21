@@ -106,10 +106,10 @@ class _MapPageState extends State<MapPage> {
     setState(() {
       markers.clear();
       markers.add(Marker(
-        markerId: const MarkerId("initial-location"),
+        markerId: MarkerId("initial-location"),
         position: initialLocation,
         icon: initialMarkerIcon,
-        infoWindow: const InfoWindow(title: "My Location"),
+        infoWindow: InfoWindow(title: "My Location"),
       ));
       if (selectedLocation != initialLocation) _updateSelectedMarker();
     });
@@ -172,19 +172,19 @@ class _MapPageState extends State<MapPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Instructions'),
+            Text('instructions'.tr),
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => Get.back(),
             ),
           ],
         ),
-        content: const Text(
-          'Select a place where the event happened.\n\nYou can tap on the map to select the location.\nYou can also drag the marker to fine-tune it.',
+        content: Text(
+          'survey_instructions'.tr,
         ),
         actions: [
           TextButton(
-            child: const Text('OK'),
+            child: Text('ok'.tr),
             onPressed: () => Get.back(),
           ),
         ],
@@ -200,28 +200,28 @@ class _MapPageState extends State<MapPage> {
 
     Get.dialog(
       AlertDialog(
-        title: const Text('Location Selected'),
+        title: Text('location_selected'.tr),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Latitude: $lat'),
-            Text('Longitude: $lon'),
+            Text('${'latitude'.tr}$lat'),
+            Text('${'longitude'.tr}$lon'),
             const SizedBox(height: 10),
-            Text('Distance from your location:\n$distance'),
+            Text('${'distance_location'.tr}\n$distance'),
           ],
         ),
         actions: [
           TextButton(
-            child: const Text('Again'),
+            child:  Text('again_btn'.tr),
             onPressed: () => Get.back(), // Close dialog, let user pick again
           ),
           TextButton(
-            child: const Text('Confirm'),
+            child: Text('confirm_btn'.tr),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: distance));
               controller.isLocationUpdated.value = true;
-              showTopSnackBar(context, "Distance from your location being copied: $distance");
+              showTopSnackBar(context, '${'distance_snackbar'.tr}$distance');
               Get.back(); // Close dialog
               Get.back(result: selectedLocation); // Return location
             },
@@ -236,7 +236,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Location'),
+        title: Text('select_location'.tr),
         actions: [
           IconButton(
             icon: Icon(is3DViewEnabled ? Icons.view_in_ar : Icons.map),

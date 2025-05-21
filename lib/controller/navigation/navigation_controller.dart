@@ -21,7 +21,6 @@ class NavigationController extends GetxController {
   final List<Widget> screen = [
     DashboardPage(),
     Profile(isBackButton: false,),
-    //SurveyPage()
   ];
   final userPrefService = UserPrefService();
 
@@ -49,18 +48,5 @@ class NavigationController extends GetxController {
 
   void changePage(int index) {
     currentTab.value = index;
-  }
-
-  Future checkLogin() async {
-    print('shakil token: ${userPrefService.userToken}');
-    if(userPrefService.userToken == null || userPrefService.userToken == "") {
-      Get.off(Mobile(), transition: Transition.downToUp);
-    } else {
-      var body = jsonEncode({
-        "fcm": userPrefService.fcmToken,
-        "device": "android"
-      });
-      var response = await http.post(ApiURL.fcm, body: body, headers: { HttpHeaders.authorizationHeader: '${userPrefService.userToken}' } );
-    }
   }
 }

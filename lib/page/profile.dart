@@ -10,8 +10,8 @@ import '../controller/webview/webview_binding.dart';
 import '../services/api_urls.dart';
 
 class Profile extends StatefulWidget {
-  bool isBackButton;
-  Profile({super.key, required this.isBackButton});
+  final bool isBackButton;
+  const Profile({super.key, required this.isBackButton});
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -304,14 +304,14 @@ class _ProfileState extends State<Profile> {
                             "title": "help_center".tr,
                             "url": ApiURL.sidebar_contact_us
                           };
-                          Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
+                          //Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
                         }),
                         _buildOptionTile(Icons.article, 'faq'.tr, () {
                           var item = {
                             "title": "faq".tr,
                             "url": ApiURL.sidebar_faq
                           };
-                          Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
+                          //Get.to(()=> WebviewView(), binding: WebviewBinding(), arguments: item, transition: Transition.rightToLeft);
                         }),
                       ],
                     ),
@@ -331,7 +331,7 @@ class _ProfileState extends State<Profile> {
                         SizedBox(height: 4),
                         Text("profile_logout".tr, style: TextStyle(color: AppColors().app_alert_extreme, fontWeight: FontWeight.w500)),
                         SizedBox(height: 4),
-                        Text("profile_logout_text".tr)
+                        Text("profile_logout_text".tr, textAlign: TextAlign.center,)
                       ],
                     )
                   ]

@@ -11,22 +11,22 @@ class SurveyPage extends StatelessWidget {
   void _showDeleteDialog(String id) {
     Get.dialog(
       AlertDialog(
-        title: const Text('Delete Survey !', style: TextStyle(color: Colors.red),),
+        title: Text('delete_survey'.tr, style: TextStyle(color: Colors.red),),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-            Text('Are you sure you want to delete this survey?'),
+            Text('delete_survey_msg'.tr),
           ],
         ),
         actions: [
           TextButton(
-            child: const Text('NO'),
+            child: Text('no'.tr),
             onPressed: () => Get.back(), // Close dialog, let user pick again
           ),
           TextButton(
-            child: const Text('YES'),
+            child: Text('yes'.tr),
             onPressed: () {
               controller.deleteSurvey(id);// Return location
               Get.back();
@@ -42,15 +42,15 @@ class SurveyPage extends StatelessWidget {
     final titleController = TextEditingController();
 
     Get.defaultDialog(
-      title: "Create Survey",
+      title: "create_survey".tr,
       content: Column(
         children: [
           TextField(
             controller: titleController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Title',
-              hintText: 'Enter title',
+              labelText: 'survey_title'.tr,
+              hintText: 'enter_title'.tr,
             ),
           ),
           const SizedBox(height: 20),
@@ -62,14 +62,14 @@ class SurveyPage extends StatelessWidget {
               if (title.isNotEmpty) {
                 controller.createSurvey(title);
               } else {
-                Get.snackbar("Validation", "Title is required",
+                Get.snackbar("validation".tr, "title_required".tr,
                     backgroundColor: AppColors().app_alert_severe,
                     colorText: AppColors().app_secondary);
               }
             },
             child: controller.isLoading.value
                 ? CircularProgressIndicator()
-                : Text("Create"),
+                : Text("create_btn".tr),
           )),
         ],
       ),
@@ -83,14 +83,14 @@ class SurveyPage extends StatelessWidget {
         controller.fetchSurveys();
       },
       child: Scaffold(
-        appBar: AppBar(title: Text("My Surveys"), backgroundColor: AppColors().app_primary_bg,),
+        appBar: AppBar(title: Text("my_survey".tr), backgroundColor: AppColors().app_primary_bg,),
         body: Obx(() {
           if (controller.isLoading.value) {
             return Center(child: CircularProgressIndicator());
           }
 
           if (controller.surveys.isEmpty) {
-            return Center(child: Text("No surveys yet."));
+            return Center(child: Text("no_surveys".tr));
           }
 
           return ListView.builder(
@@ -100,7 +100,7 @@ class SurveyPage extends StatelessWidget {
               return GestureDetector(
                   onTap: () async{
                     if(survey.status == 'complete') {
-                      Get.snackbar("Survey Status", "This survey is already completed",
+                      Get.snackbar("survey_status".tr, "survey_status_msg".tr,
                           backgroundColor: AppColors().app_alert_moderate,
                           colorText: AppColors().app_secondary);
                       return;

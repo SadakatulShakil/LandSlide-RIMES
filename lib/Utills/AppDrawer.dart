@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lanslide_report/page/report_data_list.dart';
 import 'package:lanslide_report/page/survey_page.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
 

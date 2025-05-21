@@ -30,7 +30,7 @@ class _LocationGatePageState extends State<LocationGatePage> {
                   body: Center(
                     child: Image.asset('assets/logo/bmd_logo.png', height: 96),
                   ))
-          : Get.offAll(() => Mobile(), transition: Transition.downToUp);// 🎯 go to main app only after success
+          : Get.offAll(() => Mobile(), transition: Transition.downToUp);//
     } catch (e) {
       // Already handled inside LocationService, just log
       print('Location error: $e');

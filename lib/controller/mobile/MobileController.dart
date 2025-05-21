@@ -40,7 +40,7 @@ class MobileController extends GetxController{
   }
 
   Future checkLogin() async {
-    print('shakil token: ${userPrefService.userToken}');
+    print('shakil token#1: ${userPrefService.userToken}');
     if(userPrefService.userToken != null && userPrefService.userToken!.isNotEmpty) {
       Get.offAll(NavigationView(), transition: Transition.downToUp, binding: NavigationBinding());
     }else {
