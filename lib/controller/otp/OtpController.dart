@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -86,12 +87,19 @@ class OtpController extends GetxController {
         decode['result']['photo']
     );
 
-    // FCM INSERT
+    ///FCM INSERT
     // var body = jsonEncode({
     //   "fcm": userService.fcmToken,
     //   "device": "android"
     // });
-    //await http.post(ApiURL.fcm, body: body, headers: { HttpHeaders.authorizationHeader: '${decode['token']}' } );
+    // await http.post(
+    //     ApiURL.fcm,
+    //     body: body,
+    //     headers:
+    //     {
+    //       HttpHeaders.authorizationHeader: '${decode['result']['token']}'
+    //     }
+    //     );
     Get.offAll(NavigationView(), transition: Transition.downToUp, binding: NavigationBinding());
   }
 
