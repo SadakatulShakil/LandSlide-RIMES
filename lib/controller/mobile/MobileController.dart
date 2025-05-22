@@ -32,7 +32,7 @@ class MobileController extends GetxController{
       return Get.defaultDialog(
           title: "Alert",
           middleText: decode['message'],
-          textCancel: 'Ok'
+          textCancel: 'Ok',
       );
     } else {
       Get.to(Otp(), arguments: {'mobile': mobile.value.text}, transition: Transition.leftToRight);

@@ -82,6 +82,9 @@ class LocalizationString extends Translations {
       'no': 'NO',
       'upload_failed': 'Upload failed',
       'upload_failed_msg': 'Image could\'nt upload. Image size more then 2 MB',
+      'notification': 'Notification',
+      'alert': 'Alert',
+      'normal': 'Normal',
     },
     'bn_BD': {
       'title': 'LandSlide Report',
@@ -161,6 +164,9 @@ class LocalizationString extends Translations {
       'no': 'না',
       'upload_failed': 'আপলোড ব্যর্থ',
       'upload_failed_msg': 'ছবি আপলোড করতে ব্যর্থ। ছবি সাইজ ২ এমবির বেশি',
+      'notification': 'নোটিফিকেশন',
+      'alert': 'সতর্কতা',
+      'normal': 'সাধারণ',
     }
   };
 }

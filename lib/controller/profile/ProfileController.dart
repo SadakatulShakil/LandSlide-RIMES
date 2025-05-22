@@ -166,6 +166,10 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       } else {
@@ -231,6 +235,10 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       } else {

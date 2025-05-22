@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../../Utills/AppColors.dart';
 import '../../models/survey_list_model.dart';
+import '../../page/Mobile.dart';
 import '../../services/user_pref_service.dart';
 
 class SurveyListController extends GetxController {
@@ -17,6 +18,7 @@ class SurveyListController extends GetxController {
   void onInit() {
     super.onInit();
     fetchSurveys();
+    print('check refresh token ${userPrefService.refreshToken}');
   }
 
   /// Call the Survey API for fetching created survey list
@@ -54,6 +56,10 @@ class SurveyListController extends GetxController {
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userPrefService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       } else {
@@ -111,6 +117,10 @@ class SurveyListController extends GetxController {
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userPrefService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       } else {
@@ -162,6 +172,10 @@ class SurveyListController extends GetxController {
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userPrefService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       } else {

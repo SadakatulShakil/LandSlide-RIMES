@@ -1,9 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
-import '../page/alert_page.dart';
+import '../page/alert_notification_list.dart';
 import '../page/notification_page.dart';
 import 'notification_service.dart';
 
@@ -44,10 +42,10 @@ class FirebaseService {
     final type = data['type'] ?? '';
 
     if (type == 'notification') {
-      Get.to(() => NotificationPage());
+      Get.to(() => NotificationPage(tabIndex: 0));
     } else if (type == 'alert') {
-      Get.to(() => AlertPage());
-    }else {
+      Get.to(() => NotificationPage(tabIndex: 1));
+    } else {
       Get.to(() => NotificationPage());
     }
   }

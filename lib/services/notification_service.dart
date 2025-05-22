@@ -2,7 +2,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-import '../page/alert_page.dart';
+import '../page/alert_notification_list.dart';
 import '../page/notification_page.dart';
 
 class NotificationService {
@@ -62,7 +62,7 @@ class NotificationService {
       title,
       body,
       notificationDetails,
-      payload: payload, // ✅ This is important!
+      payload: payload,
     );
 
   }
@@ -70,9 +70,9 @@ class NotificationService {
   void _handleNotificationTap(String? payload) {
     print('Tapped Notification Payload: $payload');
     if (payload == 'notification') {
-      Get.to(() => NotificationPage());
-    }else if (payload == 'alert') {
-      Get.to(() => AlertPage());
+      Get.to(() => NotificationPage(tabIndex: 0));
+    } else if (payload == 'alert') {
+      Get.to(() => NotificationPage(tabIndex: 1));
     } else {
       Get.to(() => NotificationPage());
     }

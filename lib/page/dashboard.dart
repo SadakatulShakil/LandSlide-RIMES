@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lanslide_report/Utills/AppColors.dart';
+import 'package:lanslide_report/page/notification_page.dart';
 
 import '../Utills/AppDrawer.dart';
 import '../controller/dashboard/DashboardController.dart';
@@ -53,9 +54,36 @@ class DashboardPage extends StatelessWidget {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.notifications_none, size: 28, color: AppColors().app_primary,),
+                    onPressed: () {
+                      Get.to(()=> NotificationPage(),transition: Transition.rightToLeft);
+                      // Handle notification icon press
+                    },
+                  ),
+                  Positioned(
+                    right: 8,
+                    top: 6,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
               child: CircleAvatar(
                   radius: 18,
-                  backgroundColor: AppColors().app_primary_bg,
+                  backgroundColor: Colors.teal.shade100,
                   child: Builder(
                     builder: (context) => IconButton(onPressed: (){ Scaffold.of(context).openDrawer();},
                       icon: Icon(Icons.menu), iconSize: 20, color: AppColors().app_primary,),

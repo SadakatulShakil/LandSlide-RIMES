@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../../page/Mobile.dart';
 import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
 
@@ -162,6 +163,10 @@ class DashboardController extends GetxController {
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       } else {

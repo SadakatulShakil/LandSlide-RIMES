@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 
 import '../../Utills/AppColors.dart';
 import '../../models/question_model.dart';
+import '../../page/Mobile.dart';
 import '../../services/api_urls.dart';
 import '../../services/user_pref_service.dart';
 
@@ -129,7 +130,8 @@ class SurveyController extends GetxController {
         } else {
           Get.snackbar('Session expired', 'Please log in again.',
               backgroundColor: AppColors().app_alert_moderate,
-              colorText: AppColors().app_secondary);
+              colorText: AppColors().app_secondary,
+          );
         }
       } else {
         throw Exception('Failed to load survey questions');
@@ -199,6 +201,10 @@ class SurveyController extends GetxController {
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userPrefService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       } else {
@@ -274,6 +280,10 @@ class SurveyController extends GetxController {
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userPrefService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       }
@@ -349,6 +359,10 @@ class SurveyController extends GetxController {
             title: "Session Expired",
             middleText: "Please log in again.",
             textCancel: 'Ok',
+            onCancel: () {
+              userPrefService.clearUserData();
+              Get.offAll(Mobile(), transition: Transition.downToUp);
+            },
           );
         }
       }
