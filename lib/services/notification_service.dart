@@ -2,6 +2,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../page/alert_page.dart';
 import '../page/notification_page.dart';
 
 class NotificationService {
@@ -61,15 +62,20 @@ class NotificationService {
       title,
       body,
       notificationDetails,
+      payload: payload, // ✅ This is important!
     );
+
   }
 
   void _handleNotificationTap(String? payload) {
-    Get.to(() => NotificationPage());
-    // if (payload == 'notification') {
-    //   Get.to(() => NotificationPage());
-    // }
-    // You can handle other payload types if needed
+    print('Tapped Notification Payload: $payload');
+    if (payload == 'notification') {
+      Get.to(() => NotificationPage());
+    }else if (payload == 'alert') {
+      Get.to(() => AlertPage());
+    } else {
+      Get.to(() => NotificationPage());
+    }
   }
 
   /// Show Custom Notification

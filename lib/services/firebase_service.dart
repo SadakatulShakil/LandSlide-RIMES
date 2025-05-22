@@ -43,13 +43,13 @@ class FirebaseService {
     final data = message.data;
     final type = data['type'] ?? '';
 
-    Get.to(() => NotificationPage());
-    // if (type == 'notification') {
-    //   Get.to(() => NotificationPage());
-    // } else if (type == 'alert') {
-    //   Get.to(() => AlertPage());
-    // }
-    // Add more types as needed
+    if (type == 'notification') {
+      Get.to(() => NotificationPage());
+    } else if (type == 'alert') {
+      Get.to(() => AlertPage());
+    }else {
+      Get.to(() => NotificationPage());
+    }
   }
 }
 
