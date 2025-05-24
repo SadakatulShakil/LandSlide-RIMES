@@ -99,7 +99,7 @@ class OtpController extends GetxController {
     //     {
     //       HttpHeaders.authorizationHeader: '${decode['result']['token']}'
     //     }
-    //     );
+    // );
     Get.offAll(NavigationView(), transition: Transition.downToUp, binding: NavigationBinding());
   }
 
