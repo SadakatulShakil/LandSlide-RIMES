@@ -41,7 +41,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAaJjzbcBfUu1niU0FCa7VRqUEGq73E9ns',
-    appId: '1:523768930449:android:185c309fa15e881823df30',
+    appId: '1:523768930449:ios:185c309fa15e881823df30',
     messagingSenderId: '523768930449',
     projectId: 'landslide-459607',
     storageBucket: 'landslide-459607.firebasestorage.app',

@@ -13,6 +13,7 @@ class FirebaseService {
     await _firebaseMessaging.requestPermission();
 
     ///Get Firebase Cloud Messaging Token
+    await Future.delayed(Duration(seconds: 1));
     final fcmToken = await _firebaseMessaging.getToken();
     print(fcmToken);
     /// Save the FCM token to user preferences

@@ -26,5 +26,7 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:523768930449:ios:fc563a159a6735b123df30</string>
+	<key>DATABASE_URL</key>
+	<string>https://landslide-459607-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>

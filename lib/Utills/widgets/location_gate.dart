@@ -28,7 +28,7 @@ class _LocationGatePageState extends State<LocationGatePage> {
       mobileController.isChecking.value?
       Scaffold(
                   body: Center(
-                    child: Image.asset('assets/logo/bmd_logo.png', height: 96),
+                    child: Image.asset('assets/logo/app_logo.png', height: 96),
                   ))
           : Get.offAll(() => Mobile(), transition: Transition.downToUp);//
     } catch (e) {
@@ -51,7 +51,7 @@ class _LocationGatePageState extends State<LocationGatePage> {
             ? Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/logo/bmd_logo.png', height: 96),
+            Image.asset('assets/logo/app_logo.png', height: 96),
             SizedBox(height: 12),
             Text("Powered by RIMES"),
           ],
