@@ -5,9 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lanslide_report/Utills/AppColors.dart';
 
+import '../controller/event/event_question_controller.dart';
 import '../controller/network/network_controller.dart';
-import '../controller/survey/event_question_controller.dart';
-import '../controller/survey/survey_question_controller.dart';
 import '../models/question_model.dart';
 import 'map_page.dart';
 

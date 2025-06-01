@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lanslide_report/Utills/AppColors.dart';
-import 'package:lanslide_report/controller/reportList/reportListController.dart';
 import 'package:lanslide_report/page/survey_question_page.dart';
-import '../controller/survey/surveylist_controller.dart';
+
+import '../controller/eventList/eventListController.dart';
 
 class SurveyPage extends StatelessWidget {
   final EventListController controller = Get.put(EventListController());

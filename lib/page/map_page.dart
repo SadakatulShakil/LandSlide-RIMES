@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:lanslide_report/controller/survey/survey_question_controller.dart';
 import 'package:lottie/lottie.dart' as lottie;
 
-import '../controller/survey/event_question_controller.dart';
+import '../controller/event/event_question_controller.dart';
+
 
 class MapPage extends StatefulWidget {
   final String lat, lon;

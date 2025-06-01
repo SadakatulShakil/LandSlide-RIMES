@@ -27,6 +27,121 @@ class DBService extends GetxService {
     return this;
   }
   final userPrefService = UserPrefService();
+
+
+  ///  ...................Survey and Questions Part.............................///
+
+  // Fetch survey questions from API
+  Future<void> fetchAndSaveMasterQuestions() async {
+    print('Fetching master questions from API...');
+    // Check if master questions already exist
+    final existing = await _database.surveyQuestionDao.getQuestionsBySurvey('master');
+    if (existing.isNotEmpty) return print('Master questions already exist, skipping fetch.');
+
+    // Fetch from API
+    final response = await http.get(
+      Uri.parse('https://landslide.bdservers.site/api/question'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': userPrefService.userToken ?? '',
+      },
+    );
+
+    print('Fetching master questions from API: ${response.statusCode}');
+    if (response.statusCode == 200) {
+      final decode = json.decode(response.body);
+      final List data = decode['result'];
+
+      print('Fetched master questions: ${data.length}');
+      print('Master questions data: $data');
+      final questions = data.map((item) => SurveyQuestion.fromJson(item)).toList();
+      final entities = questions.map((q) =>
+          SurveyQuestionEntity.fromModel(q, surveyId: 'master')
+      ).toList();
+
+      await _database.surveyQuestionDao.insertQuestions(entities);
+    } else {
+      throw Exception('Failed to fetch master questions'+
+          ' - Status: ${response.statusCode}, Body: ${response.body}');
+    }
+  }
+  //  Duplicate master questions for a new survey
+  Future<void> createSurveyQuestionSet(String surveyId) async {
+    final masterQuestions = await _database.surveyQuestionDao.getQuestionsBySurvey('master');
+
+    final duplicated = masterQuestions.map((e) {
+      return SurveyQuestionEntity(
+        uid: '${surveyId}_${e.id}',    // ✅ Unique per question per survey
+        id: e.id,
+        title: e.title,
+        type: e.type,
+        group: e.group,
+        required: e.required,
+        answer: e.answer,
+        surveyId: surveyId,
+        synced: 0,
+      );
+    }).toList();
+
+    await _database.surveyQuestionDao.insertQuestions(duplicated); // will replace duplicates
+  }
+
+  // Save survey questions for a given surveyId
+  Future<void> saveSurveyQuestions(List<SurveyQuestionEntity> entities) async {
+    //await _database.surveyQuestionDao.clearQuestionsBySurvey(); // optional: clear before insert
+    await _database.surveyQuestionDao.insertQuestions(entities);
+  }
+
+  //  Save/update answers for a given survey
+  Future<void> saveSurveyAnswers(String surveyId, entities) async {
+    await _database.surveyQuestionDao.insertQuestions(entities);
+  }
+
+  //  Get questions for a specific survey
+  Future<List<SurveyQuestion>> getQuestionsForSurvey(String surveyId) async {
+    final entities = await _database.surveyQuestionDao.getQuestionsBySurvey(surveyId);
+    return entities.map((e) => e.toModel()).toList();
+  }
+
+  //  Get unsynced answers for syncing
+  Future<List<SurveyQuestionEntity>> getUnsyncedQuestions() async {
+    return await _database.surveyQuestionDao.getUnsyncedQuestions();
+  }
+
+  //  Get unsynced questions for a specific survey
+  Future<List<SurveyQuestionEntity>> getUnsyncedQuestionsBySurvey(String surveyId) async {
+    return await _database.surveyQuestionDao.getUnsyncedQuestionsBySurvey(surveyId);
+  }
+
+  //  Save surveys
+  Future<void> saveSurvey(Survey survey) async {
+    await _database.surveyDao.insertSurvey(SurveyEntity.fromModel(survey));
+  }
+
+  //  Get all surveys
+  Future<List<Survey>> getSurveysOffline() async {
+    final entities = await _database.surveyDao.getAllSurveys();
+    return entities.map((e) => e.toModel()).toList();
+  }
+
+  //delete survey by id
+  Future<void> deleteSurveyLocally(String id) async {
+    await _database.surveyDao.deleteSurvey(id);
+  }
+
+  // marked Questions
+  Future<void> markQuestionAsSynced(String id) async {
+    await _database.surveyQuestionDao.markAsSynced(id);
+  }
+
+  // update survey status
+  Future<void> updateSurveyStatus(String surveyId, String status) async {
+    await _database.surveyDao.updateSurveyStatus(surveyId, status);
+  }
+
+
+  /// ...................Community Part.............................///
+
   // Post methods
   Future<List<CommunityPost>> getPosts() async {
     final entities = await _database.postDao.getAllPosts();
@@ -120,143 +235,5 @@ class DBService extends GetxService {
       createdAt: DateTime.fromMillisecondsSinceEpoch(entity.createdAt),
     );
   }
-
-
-
-  // Save survey questions for a given surveyId
-  Future<void> saveSurveyQuestions(List<SurveyQuestionEntity> entities) async {
-    //await _database.surveyQuestionDao.clearQuestionsBySurvey(); // optional: clear before insert
-    await _database.surveyQuestionDao.insertQuestions(entities);
-  }
-
-// Get all saved questions for a survey
-//   Future<List<SurveyQuestion>> getSurveyQuestions() async {
-//     final entities = await _database.surveyQuestionDao.getQuestionsBySurvey();
-//     return entities.map((e) => e.toModel()).toList();
-//   }
-
-// Save/Update answers for a survey (mark as unsynced)
-//   Future<void> updateSurveyAnswers(String surveyId, List<SurveyQuestion> updatedQuestions) async {
-//     final entities = updatedQuestions.map((q) =>
-//         SurveyQuestionEntity.fromModel(q, isSynced: false)
-//     ).toList();
-//     await _database.surveyQuestionDao.insertQuestions(entities);
-//   }
-
-// Get all unsynced survey answers
-  Future<List<SurveyQuestionEntity>> getUnsyncedQuestionsBySurvey(String surveyId) async {
-    return await _database.surveyQuestionDao.getUnsyncedQuestionsBySurvey(surveyId);
-  }
-
-// Mark survey answers as synced
-  Future<void> markAnswersAsSynced(List<String> ids) async {
-    for (final id in ids) {
-      await _database.surveyQuestionDao.markAsSynced(id);
-    }
-  }
-
-
-
-  Future<void> saveSurvey(Survey survey) async {
-    await _database.surveyDao.insertSurvey(SurveyEntity.fromModel(survey));
-  }
-
-  Future<void> deleteSurveyLocally(String id) async {
-    await _database.surveyDao.deleteSurvey(id);
-  }
-
-  Future<List<Survey>> getSurveysOffline() async {
-    final entities = await _database.surveyDao.getAllSurveys();
-    return entities.map((e) => e.toModel()).toList();
-  }
-
-
-
-
-
-  ///
-  // ⬇️ Duplicate master questions for a new survey
-
-  Future<void> createSurveyQuestionSet(String surveyId) async {
-    final masterQuestions = await _database.surveyQuestionDao.getQuestionsBySurvey('master');
-
-    final duplicated = masterQuestions.map((e) {
-      return SurveyQuestionEntity(
-        uid: '${surveyId}_${e.id}',    // ✅ Unique per question per survey
-        id: e.id,
-        title: e.title,
-        type: e.type,
-        group: e.group,
-        required: e.required,
-        answer: e.answer,
-        surveyId: surveyId,
-        synced: 0,
-      );
-    }).toList();
-
-    await _database.surveyQuestionDao.insertQuestions(duplicated); // will replace duplicates
-  }
-
-
-  // ⬇️ Save/update answers for a given survey
-  Future<void> saveSurveyAnswers(String surveyId, entities) async {
-    await _database.surveyQuestionDao.insertQuestions(entities);
-  }
-
-  // ⬇️ Get questions for a specific survey
-  Future<List<SurveyQuestion>> getQuestionsForSurvey(String surveyId) async {
-    final entities = await _database.surveyQuestionDao.getQuestionsBySurvey(surveyId);
-    return entities.map((e) => e.toModel()).toList();
-  }
-
-  // ⬇️ Get unsynced answers for syncing
-  Future<List<SurveyQuestionEntity>> getUnsyncedQuestions() async {
-    return await _database.surveyQuestionDao.getUnsyncedQuestions();
-  }
-
-  Future<void> markQuestionAsSynced(String id) async {
-    await _database.surveyQuestionDao.markAsSynced(id);
-  }
-
-
-  Future<void> updateSurveyStatus(String surveyId, String status) async {
-    await _database.surveyDao.updateSurveyStatus(surveyId, status);
-  }
-
-
-  Future<void> fetchAndSaveMasterQuestions() async {
-    print('Fetching master questions from API...');
-    // Check if master questions already exist
-    final existing = await _database.surveyQuestionDao.getQuestionsBySurvey('master');
-    if (existing.isNotEmpty) return print('Master questions already exist, skipping fetch.');
-
-    // Fetch from API
-    final response = await http.get(
-      Uri.parse('https://landslide.bdservers.site/api/question'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': userPrefService.userToken ?? '',
-      },
-    );
-
-    print('Fetching master questions from API: ${response.statusCode}');
-    if (response.statusCode == 200) {
-      final decode = json.decode(response.body);
-      final List data = decode['result'];
-
-      print('Fetched master questions: ${data.length}');
-      print('Master questions data: $data');
-      final questions = data.map((item) => SurveyQuestion.fromJson(item)).toList();
-      final entities = questions.map((q) =>
-          SurveyQuestionEntity.fromModel(q, surveyId: 'master')
-      ).toList();
-
-      await _database.surveyQuestionDao.insertQuestions(entities);
-    } else {
-      throw Exception('Failed to fetch master questions'+
-          ' - Status: ${response.statusCode}, Body: ${response.body}');
-    }
-  }
-
 
 }

@@ -4,11 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lanslide_report/page/mobile.dart';
 import 'package:lanslide_report/services/LocalizationString.dart';
 import 'package:lanslide_report/services/firebase_service.dart';
 import 'package:lanslide_report/services/location_service.dart';
-import 'package:lanslide_report/services/notification_service.dart';
 import 'package:lanslide_report/services/user_pref_service.dart';
 
 import 'Utills/firebase_option.dart';
@@ -16,7 +14,6 @@ import 'Utills/routes/app_pages.dart';
 import 'Utills/widgets/location_gate.dart';
 import 'controller/mobile/MobileController.dart';
 import 'controller/navigation/navigation_binding.dart';
-import 'controller/survey/event_question_controller.dart';
 import 'services/db_service.dart'; // Import your DBService
 
 void main() async {
