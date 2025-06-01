@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import '../../page/Mobile.dart';
 import '../../services/api_urls.dart';
+import '../../services/db_service.dart';
 import '../../services/user_pref_service.dart';
 
 class DashboardController extends GetxController {
@@ -50,7 +51,7 @@ class DashboardController extends GetxController {
   var cLocationUpazila = "".obs;
   var cLocationDistrict = "".obs;
   var isForecastLoading = false.obs;
-
+  final dbService = Get.find<DBService>();
 
   @override
   void onInit() {
@@ -90,6 +91,7 @@ class DashboardController extends GetxController {
   }
 
   Future getSharedPrefData() async {
+    await dbService.fetchAndSaveMasterQuestions();
     currentLocationId.value = userService.locationId ?? '';
     fullname.value = userService.userName ?? '';
     mobile.value = userService.userMobile ?? '';
@@ -114,6 +116,7 @@ class DashboardController extends GetxController {
     }
 
     getForecast(currentLocationId.value);
+    print("Current Location ID: ${currentLocationId.value}");
 
   }
 

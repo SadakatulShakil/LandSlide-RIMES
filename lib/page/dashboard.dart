@@ -7,11 +7,13 @@ import 'package:lanslide_report/page/notification_page.dart';
 
 import '../Utills/AppDrawer.dart';
 import '../controller/dashboard/DashboardController.dart';
+import '../controller/network/network_controller.dart';
 import '../services/api_urls.dart';
 
 class DashboardPage extends StatelessWidget {
   // Sample pie chart data for landslide types
   final controller = Get.put(DashboardController());
+  final NetworkController internetController = Get.put(NetworkController());
   final pieChartData = [
     PieChartSectionData(
       value: 40,
@@ -104,50 +106,10 @@ class DashboardPage extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text('today_weather'.tr, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
-                _buildWeatherCard(),
+                !internetController.isNetworkWorking.value
+                    ?_buildWeatherCardDemo()
+                    :_buildWeatherCard(),
                 SizedBox(height: 10),
-                // Container(
-                //   width: double.infinity,
-                //   height: 130,
-                //   child: ListView.builder(
-                //       scrollDirection: Axis.horizontal,
-                //       itemCount: controller.dashboardMenu.length,
-                //       itemBuilder: (BuildContext context, int index) {
-                //         return Container(
-                //           margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
-                //           child: Column(
-                //             children: [
-                //               GestureDetector(
-                //                 onTap: () => {
-                //                   //Get.toNamed(controller.dashboardMenu[index]['page']);
-                //                   controller.openModule(index)
-                //                 },
-                //                 child: Card(
-                //                   color: Colors.teal.shade50,
-                //                   child: Padding(
-                //                     padding: const EdgeInsets.all(16.0),
-                //                     // child: Image.network(controller.dashboardMenu[index]['image'], height: 48),
-                //                     child: Image.asset(
-                //                         'assets/module_icons/${controller.dashboardMenu[index]['image']}',
-                //                         height: 48, errorBuilder:
-                //                         (context, object, stackTrace) {
-                //                       return Image.asset(
-                //                           'assets/module_icons/ic_weather_forecast.png',
-                //                           height: 48);
-                //                     }),
-                //                   ),
-                //                 ),
-                //               ),
-                //               const SizedBox(height: 0),
-                //               Text(
-                //                 '${controller.dashboardMenu[index]['name']}'.tr,
-                //                 textAlign: TextAlign.center,
-                //               )
-                //             ],
-                //           ),
-                //         );
-                //       }),
-                // ),
                 const SizedBox(height: 10),
                 _buildLandslideBarChart(),
                 SizedBox(height: 10),
@@ -162,6 +124,114 @@ class DashboardPage extends StatelessWidget {
   }
 
   // Weather Card
+  Widget _buildWeatherCardDemo() {
+    return Card(
+      color: AppColors().app_primary_bg,
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.location_on_sharp, color: AppColors().app_primary),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Dhaka, Bangladesh", style: TextStyle(color: AppColors().black_font_color)),
+                                Text("Sunday, 1 June 2025", style: TextStyle(color: AppColors().black_font_color)),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              Image.asset('assets/weather/cloud.png', height: 48),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: "28°C",
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors().app_primary),
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                WidgetSpan(child: Icon(Icons.arrow_upward, size: 14, color: AppColors().app_primary)),
+                                TextSpan(text: "32°C", style: TextStyle(color: AppColors().app_primary)),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                WidgetSpan(child: Icon(Icons.arrow_downward, size: 14, color: AppColors().app_primary)),
+                                TextSpan(text: "25°C", style: TextStyle(color: AppColors().app_primary)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: 12),
+            Divider(height: 1, thickness: 1, color: AppColors().app_primary),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Column(
+                  children: [
+                    Icon(CupertinoIcons.cloud_heavyrain, color: AppColors().app_primary),
+                    Text("Rainfall", style: TextStyle(color: AppColors().black_font_color)),
+                    Text("12 mm", style: TextStyle(color: AppColors().app_primary, fontWeight: FontWeight.w500, fontSize: 16)),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Icon(CupertinoIcons.drop, color: AppColors().app_primary),
+                    Text("Humidity", style: TextStyle(color: AppColors().black_font_color)),
+                    Text("78 %", style: TextStyle(color: AppColors().app_primary, fontWeight: FontWeight.w500, fontSize: 16)),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Icon(CupertinoIcons.wind, color: AppColors().app_primary),
+                    Text("Wind", style: TextStyle(color: AppColors().black_font_color)),
+                    Text("15 km/h", style: TextStyle(color: AppColors().app_primary, fontWeight: FontWeight.w500, fontSize: 16)),
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildWeatherCard() {
     return Obx(()=> Card(
       color:  AppColors().app_primary_bg, //Colors.teal.shade50,

@@ -4,16 +4,22 @@ import '../database.dart';
 import '../entities/report_entities.dart';
 
 @dao
-abstract class LandslideReportDao {
+abstract class SurveyDao {
+  @Query('SELECT * FROM surveys')
+  Future<List<SurveyEntity>> getAllSurveys();
+
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertReport(LandslideReport report);
+  Future<void> insertSurvey(SurveyEntity survey);
 
-  @Query('SELECT * FROM landslide_reports WHERE isSynced = 0')
-  Future<List<LandslideReport>> getUnsyncedReports();
+  @Query('UPDATE surveys SET status = :status WHERE id = :surveyId')
+  Future<void> updateSurveyStatus(String surveyId, String status);
 
-  @Query('SELECT * FROM landslide_reports WHERE isSynced = 1')
-  Future<List<LandslideReport>> getSyncedReports();
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<void> insertSurveys(List<SurveyEntity> surveys);
 
-  @Query('UPDATE landslide_reports SET isSynced = 1 WHERE id = :id')
-  Future<void> markAsSynced(int id);
+  @Query('DELETE FROM surveys WHERE id = :id')
+  Future<void> deleteSurvey(String id);
+
+  @Query('SELECT * FROM surveys WHERE synced = 0')
+  Future<List<SurveyEntity>> getUnsyncedSurveys();
 }

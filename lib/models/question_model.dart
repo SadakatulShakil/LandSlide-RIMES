@@ -25,4 +25,15 @@ class SurveyQuestion {
       answer: json['answer'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'group': group,
+      'title': title,
+      'type': type,
+      'required': required,
+      'answer': answer,
+    };
+  }
 }

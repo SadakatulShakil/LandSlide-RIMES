@@ -5,35 +5,35 @@ import 'package:lanslide_report/page/mobile.dart';
 import 'package:lanslide_report/services/location_service.dart';
 
 import '../../controller/mobile/MobileController.dart';
+import '../../services/notification_service.dart';
 
-class LocationGatePage extends StatefulWidget {
+class NotificationGatePage extends StatefulWidget {
   @override
-  State<LocationGatePage> createState() => _LocationGatePageState();
+  State<NotificationGatePage> createState() => _NotificationGatePageState();
 }
 
-class _LocationGatePageState extends State<LocationGatePage> {
+class _NotificationGatePageState extends State<NotificationGatePage> {
   bool isLoading = true;
   final MobileController mobileController = Get.put(MobileController());
 
   @override
   void initState() {
     super.initState();
-    initLocation();
+    iniNotification();
   }
 
-  Future<void> initLocation() async {
+  Future<void> iniNotification() async {
     try {
-      await LocationService().getLocation(); // your real location + API call
+      //Ask for notification permission first
+      await NotificationService().init();
 
-      mobileController.isChecking.value?
-      Scaffold(
-                  body: Center(
-                    child: Image.asset('assets/logo/app_logo.png', height: 96),
-                  ))
-          : Get.offAll(() => Mobile(), transition: Transition.downToUp);//
+
+      //Proceed to main page if all ok
+      if (!mobileController.isChecking.value) {
+        Get.offAll(() => Mobile(), transition: Transition.downToUp);
+      }
     } catch (e) {
-      // Already handled inside LocationService, just log
-      print('Location error: $e');
+      print('Permission error: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -66,7 +66,7 @@ class _LocationGatePageState extends State<LocationGatePage> {
                 setState(() {
                   isLoading = true;
                 });
-                initLocation(); // Try again
+                iniNotification(); // Try again
               },
               child: Text("Try Again"),
             )

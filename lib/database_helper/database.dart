@@ -14,10 +14,10 @@ import 'entities/survey_questions_entities.dart';
 
 part 'database.g.dart';
 
-@Database(version: 1, entities: [LandslideReport, PostEntity, CommentEntity, SurveyQuestionEntity])
+@Database(version: 1, entities: [PostEntity, CommentEntity, SurveyQuestionEntity, SurveyEntity])
 abstract class AppDatabase extends FloorDatabase {
-  LandslideReportDao get landslideReportDao;
   PostDao get postDao;
   CommentDao get commentDao;
   SurveyQuestionDao get surveyQuestionDao;
+  SurveyDao get surveyDao;
 }

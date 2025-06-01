@@ -72,13 +72,13 @@ class _$AppDatabase extends AppDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  LandslideReportDao? _landslideReportDaoInstance;
-
   PostDao? _postDaoInstance;
 
   CommentDao? _commentDaoInstance;
 
   SurveyQuestionDao? _surveyQuestionDaoInstance;
+
+  SurveyDao? _surveyDaoInstance;
 
   Future<sqflite.Database> open(
     String path,
@@ -102,24 +102,18 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `landslide_reports` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `district` TEXT NOT NULL, `upazila` TEXT NOT NULL, `latitude` TEXT NOT NULL, `longitude` TEXT NOT NULL, `causeOfLandSlide` TEXT NOT NULL, `stateOfLandSlide` TEXT NOT NULL, `waterTableLevel` TEXT NOT NULL, `areaDisplacedMass` TEXT NOT NULL, `numberOfHouseholds` TEXT NOT NULL, `incomeLevel` TEXT NOT NULL, `injured` TEXT NOT NULL, `displaced` TEXT NOT NULL, `deaths` TEXT NOT NULL, `imagePaths` TEXT, `landslideSetting` TEXT NOT NULL, `classification` TEXT NOT NULL, `materialType` TEXT NOT NULL, `failureType` TEXT NOT NULL, `distributionStyle` TEXT NOT NULL, `landCoverType` TEXT NOT NULL, `landUseType` TEXT NOT NULL, `slopeAngle` TEXT NOT NULL, `rainfallData` TEXT NOT NULL, `soilMoistureContent` TEXT NOT NULL, `impactInfrastructure` TEXT NOT NULL, `damageRoads` TEXT NOT NULL, `damageBuildings` TEXT NOT NULL, `damageCriticalInfrastructure` TEXT NOT NULL, `damageUtilities` TEXT NOT NULL, `damageBridges` TEXT NOT NULL, `damImpact` TEXT NOT NULL, `soilImpact` TEXT NOT NULL, `vegetationImpact` TEXT NOT NULL, `waterwayImpact` TEXT NOT NULL, `economicImpact` TEXT NOT NULL, `distance1` TEXT NOT NULL, `distance2` TEXT NOT NULL, `isSynced` INTEGER NOT NULL)');
-        await database.execute(
             'CREATE TABLE IF NOT EXISTS `posts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `likes` INTEGER NOT NULL, `is_liked` INTEGER NOT NULL, `comment_count` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `comments` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `post_id` INTEGER NOT NULL, `content` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `survey_questions` (`id` TEXT NOT NULL, `surveyId` TEXT NOT NULL, `title` TEXT NOT NULL, `type` TEXT NOT NULL, `group` TEXT NOT NULL, `answer` TEXT, `required` TEXT NOT NULL, `synced` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `survey_questions` (`uid` TEXT NOT NULL, `id` TEXT NOT NULL, `surveyId` TEXT, `title` TEXT NOT NULL, `type` TEXT NOT NULL, `group` TEXT NOT NULL, `answer` TEXT, `required` TEXT NOT NULL, `synced` INTEGER NOT NULL, PRIMARY KEY (`uid`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `surveys` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `status` TEXT NOT NULL, `synced` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
     );
     return sqfliteDatabaseFactory.openDatabase(path, options: databaseOptions);
-  }
-
-  @override
-  LandslideReportDao get landslideReportDao {
-    return _landslideReportDaoInstance ??=
-        _$LandslideReportDao(database, changeListener);
   }
 
   @override
@@ -137,172 +131,10 @@ class _$AppDatabase extends AppDatabase {
     return _surveyQuestionDaoInstance ??=
         _$SurveyQuestionDao(database, changeListener);
   }
-}
-
-class _$LandslideReportDao extends LandslideReportDao {
-  _$LandslideReportDao(
-    this.database,
-    this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
-        _landslideReportInsertionAdapter = InsertionAdapter(
-            database,
-            'landslide_reports',
-            (LandslideReport item) => <String, Object?>{
-                  'id': item.id,
-                  'district': item.district,
-                  'upazila': item.upazila,
-                  'latitude': item.latitude,
-                  'longitude': item.longitude,
-                  'causeOfLandSlide': item.causeOfLandSlide,
-                  'stateOfLandSlide': item.stateOfLandSlide,
-                  'waterTableLevel': item.waterTableLevel,
-                  'areaDisplacedMass': item.areaDisplacedMass,
-                  'numberOfHouseholds': item.numberOfHouseholds,
-                  'incomeLevel': item.incomeLevel,
-                  'injured': item.injured,
-                  'displaced': item.displaced,
-                  'deaths': item.deaths,
-                  'imagePaths': item.imagePaths,
-                  'landslideSetting': item.landslideSetting,
-                  'classification': item.classification,
-                  'materialType': item.materialType,
-                  'failureType': item.failureType,
-                  'distributionStyle': item.distributionStyle,
-                  'landCoverType': item.landCoverType,
-                  'landUseType': item.landUseType,
-                  'slopeAngle': item.slopeAngle,
-                  'rainfallData': item.rainfallData,
-                  'soilMoistureContent': item.soilMoistureContent,
-                  'impactInfrastructure': item.impactInfrastructure,
-                  'damageRoads': item.damageRoads,
-                  'damageBuildings': item.damageBuildings,
-                  'damageCriticalInfrastructure':
-                      item.damageCriticalInfrastructure,
-                  'damageUtilities': item.damageUtilities,
-                  'damageBridges': item.damageBridges,
-                  'damImpact': item.damImpact,
-                  'soilImpact': item.soilImpact,
-                  'vegetationImpact': item.vegetationImpact,
-                  'waterwayImpact': item.waterwayImpact,
-                  'economicImpact': item.economicImpact,
-                  'distance1': item.distance1,
-                  'distance2': item.distance2,
-                  'isSynced': item.isSynced ? 1 : 0
-                });
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  final InsertionAdapter<LandslideReport> _landslideReportInsertionAdapter;
 
   @override
-  Future<List<LandslideReport>> getUnsyncedReports() async {
-    return _queryAdapter.queryList(
-        'SELECT * FROM landslide_reports WHERE isSynced = 0',
-        mapper: (Map<String, Object?> row) => LandslideReport(
-            id: row['id'] as int?,
-            district: row['district'] as String,
-            upazila: row['upazila'] as String,
-            latitude: row['latitude'] as String,
-            longitude: row['longitude'] as String,
-            causeOfLandSlide: row['causeOfLandSlide'] as String,
-            stateOfLandSlide: row['stateOfLandSlide'] as String,
-            waterTableLevel: row['waterTableLevel'] as String,
-            areaDisplacedMass: row['areaDisplacedMass'] as String,
-            numberOfHouseholds: row['numberOfHouseholds'] as String,
-            incomeLevel: row['incomeLevel'] as String,
-            injured: row['injured'] as String,
-            displaced: row['displaced'] as String,
-            deaths: row['deaths'] as String,
-            imagePaths: row['imagePaths'] as String?,
-            landslideSetting: row['landslideSetting'] as String,
-            classification: row['classification'] as String,
-            materialType: row['materialType'] as String,
-            failureType: row['failureType'] as String,
-            distributionStyle: row['distributionStyle'] as String,
-            landCoverType: row['landCoverType'] as String,
-            landUseType: row['landUseType'] as String,
-            slopeAngle: row['slopeAngle'] as String,
-            rainfallData: row['rainfallData'] as String,
-            soilMoistureContent: row['soilMoistureContent'] as String,
-            impactInfrastructure: row['impactInfrastructure'] as String,
-            damageRoads: row['damageRoads'] as String,
-            damageBuildings: row['damageBuildings'] as String,
-            damageCriticalInfrastructure:
-                row['damageCriticalInfrastructure'] as String,
-            damageUtilities: row['damageUtilities'] as String,
-            damageBridges: row['damageBridges'] as String,
-            damImpact: row['damImpact'] as String,
-            soilImpact: row['soilImpact'] as String,
-            vegetationImpact: row['vegetationImpact'] as String,
-            waterwayImpact: row['waterwayImpact'] as String,
-            economicImpact: row['economicImpact'] as String,
-            distance1: row['distance1'] as String,
-            distance2: row['distance2'] as String,
-            isSynced: (row['isSynced'] as int) != 0));
-  }
-
-  @override
-  Future<List<LandslideReport>> getSyncedReports() async {
-    return _queryAdapter.queryList(
-        'SELECT * FROM landslide_reports WHERE isSynced = 1',
-        mapper: (Map<String, Object?> row) => LandslideReport(
-            id: row['id'] as int?,
-            district: row['district'] as String,
-            upazila: row['upazila'] as String,
-            latitude: row['latitude'] as String,
-            longitude: row['longitude'] as String,
-            causeOfLandSlide: row['causeOfLandSlide'] as String,
-            stateOfLandSlide: row['stateOfLandSlide'] as String,
-            waterTableLevel: row['waterTableLevel'] as String,
-            areaDisplacedMass: row['areaDisplacedMass'] as String,
-            numberOfHouseholds: row['numberOfHouseholds'] as String,
-            incomeLevel: row['incomeLevel'] as String,
-            injured: row['injured'] as String,
-            displaced: row['displaced'] as String,
-            deaths: row['deaths'] as String,
-            imagePaths: row['imagePaths'] as String?,
-            landslideSetting: row['landslideSetting'] as String,
-            classification: row['classification'] as String,
-            materialType: row['materialType'] as String,
-            failureType: row['failureType'] as String,
-            distributionStyle: row['distributionStyle'] as String,
-            landCoverType: row['landCoverType'] as String,
-            landUseType: row['landUseType'] as String,
-            slopeAngle: row['slopeAngle'] as String,
-            rainfallData: row['rainfallData'] as String,
-            soilMoistureContent: row['soilMoistureContent'] as String,
-            impactInfrastructure: row['impactInfrastructure'] as String,
-            damageRoads: row['damageRoads'] as String,
-            damageBuildings: row['damageBuildings'] as String,
-            damageCriticalInfrastructure:
-                row['damageCriticalInfrastructure'] as String,
-            damageUtilities: row['damageUtilities'] as String,
-            damageBridges: row['damageBridges'] as String,
-            damImpact: row['damImpact'] as String,
-            soilImpact: row['soilImpact'] as String,
-            vegetationImpact: row['vegetationImpact'] as String,
-            waterwayImpact: row['waterwayImpact'] as String,
-            economicImpact: row['economicImpact'] as String,
-            distance1: row['distance1'] as String,
-            distance2: row['distance2'] as String,
-            isSynced: (row['isSynced'] as int) != 0));
-  }
-
-  @override
-  Future<void> markAsSynced(int id) async {
-    await _queryAdapter.queryNoReturn(
-        'UPDATE landslide_reports SET isSynced = 1 WHERE id = ?1',
-        arguments: [id]);
-  }
-
-  @override
-  Future<void> insertReport(LandslideReport report) async {
-    await _landslideReportInsertionAdapter.insert(
-        report, OnConflictStrategy.replace);
+  SurveyDao get surveyDao {
+    return _surveyDaoInstance ??= _$SurveyDao(database, changeListener);
   }
 }
 
@@ -471,6 +303,7 @@ class _$SurveyQuestionDao extends SurveyQuestionDao {
             database,
             'survey_questions',
             (SurveyQuestionEntity item) => <String, Object?>{
+                  'uid': item.uid,
                   'id': item.id,
                   'surveyId': item.surveyId,
                   'title': item.title,
@@ -478,7 +311,7 @@ class _$SurveyQuestionDao extends SurveyQuestionDao {
                   'group': item.group,
                   'answer': item.answer,
                   'required': item.required,
-                  'synced': item.synced ? 1 : 0
+                  'synced': item.synced
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -491,37 +324,44 @@ class _$SurveyQuestionDao extends SurveyQuestionDao {
       _surveyQuestionEntityInsertionAdapter;
 
   @override
-  Future<List<SurveyQuestionEntity>> getQuestionsBySurveyId(
-      int surveyId) async {
+  Future<List<SurveyQuestionEntity>> getMasterQuestions() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM survey_questions WHERE surveyId = ?1',
+        'SELECT * FROM survey_questions WHERE surveyId IS NULL',
         mapper: (Map<String, Object?> row) => SurveyQuestionEntity(
+            uid: row['uid'] as String,
             id: row['id'] as String,
-            surveyId: row['surveyId'] as String,
+            surveyId: row['surveyId'] as String?,
             title: row['title'] as String,
             type: row['type'] as String,
             group: row['group'] as String,
             answer: row['answer'] as String?,
             required: row['required'] as String,
-            synced: (row['synced'] as int) != 0),
+            synced: row['synced'] as int));
+  }
+
+  @override
+  Future<List<SurveyQuestionEntity>> getQuestionsBySurvey(
+      String surveyId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM survey_questions WHERE surveyId = ?1',
+        mapper: (Map<String, Object?> row) => SurveyQuestionEntity(
+            uid: row['uid'] as String,
+            id: row['id'] as String,
+            surveyId: row['surveyId'] as String?,
+            title: row['title'] as String,
+            type: row['type'] as String,
+            group: row['group'] as String,
+            answer: row['answer'] as String?,
+            required: row['required'] as String,
+            synced: row['synced'] as int),
         arguments: [surveyId]);
   }
 
   @override
-  Future<void> deleteBySurveyId(int surveyId) async {
+  Future<void> deleteSurveyQuestions(String surveyId) async {
     await _queryAdapter.queryNoReturn(
         'DELETE FROM survey_questions WHERE surveyId = ?1',
         arguments: [surveyId]);
-  }
-
-  @override
-  Future<void> updateAnswerById(
-    String id,
-    String answer,
-  ) async {
-    await _queryAdapter.queryNoReturn(
-        'UPDATE SurveyQuestionEntity SET answer = ?2 WHERE id = ?1',
-        arguments: [id, answer]);
   }
 
   @override
@@ -529,19 +369,124 @@ class _$SurveyQuestionDao extends SurveyQuestionDao {
     return _queryAdapter.queryList(
         'SELECT * FROM survey_questions WHERE synced = 0',
         mapper: (Map<String, Object?> row) => SurveyQuestionEntity(
+            uid: row['uid'] as String,
             id: row['id'] as String,
-            surveyId: row['surveyId'] as String,
+            surveyId: row['surveyId'] as String?,
             title: row['title'] as String,
             type: row['type'] as String,
             group: row['group'] as String,
             answer: row['answer'] as String?,
             required: row['required'] as String,
+            synced: row['synced'] as int));
+  }
+
+  @override
+  Future<List<SurveyQuestionEntity>> getUnsyncedQuestionsBySurvey(
+      String surveyId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM survey_questions WHERE synced = 0 AND surveyId = ?1',
+        mapper: (Map<String, Object?> row) => SurveyQuestionEntity(
+            uid: row['uid'] as String,
+            id: row['id'] as String,
+            surveyId: row['surveyId'] as String?,
+            title: row['title'] as String,
+            type: row['type'] as String,
+            group: row['group'] as String,
+            answer: row['answer'] as String?,
+            required: row['required'] as String,
+            synced: row['synced'] as int),
+        arguments: [surveyId]);
+  }
+
+  @override
+  Future<void> markAsSynced(String uid) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE survey_questions SET synced = 1 WHERE uid = ?1',
+        arguments: [uid]);
+  }
+
+  @override
+  Future<void> clearQuestionsBySurvey(String surveyId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM survey_questions WHERE surveyId = ?1',
+        arguments: [surveyId]);
+  }
+
+  @override
+  Future<void> insertQuestions(List<SurveyQuestionEntity> questions) async {
+    await _surveyQuestionEntityInsertionAdapter.insertList(
+        questions, OnConflictStrategy.replace);
+  }
+}
+
+class _$SurveyDao extends SurveyDao {
+  _$SurveyDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _surveyEntityInsertionAdapter = InsertionAdapter(
+            database,
+            'surveys',
+            (SurveyEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'title': item.title,
+                  'status': item.status,
+                  'synced': item.synced ? 1 : 0
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<SurveyEntity> _surveyEntityInsertionAdapter;
+
+  @override
+  Future<List<SurveyEntity>> getAllSurveys() async {
+    return _queryAdapter.queryList('SELECT * FROM surveys',
+        mapper: (Map<String, Object?> row) => SurveyEntity(
+            id: row['id'] as String,
+            title: row['title'] as String,
+            status: row['status'] as String,
             synced: (row['synced'] as int) != 0));
   }
 
   @override
-  Future<void> insertAllQuestions(List<SurveyQuestionEntity> questions) async {
-    await _surveyQuestionEntityInsertionAdapter.insertList(
-        questions, OnConflictStrategy.replace);
+  Future<void> updateSurveyStatus(
+    String surveyId,
+    String status,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE surveys SET status = ?2 WHERE id = ?1',
+        arguments: [surveyId, status]);
+  }
+
+  @override
+  Future<void> deleteSurvey(String id) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM surveys WHERE id = ?1', arguments: [id]);
+  }
+
+  @override
+  Future<List<SurveyEntity>> getUnsyncedSurveys() async {
+    return _queryAdapter.queryList('SELECT * FROM surveys WHERE synced = 0',
+        mapper: (Map<String, Object?> row) => SurveyEntity(
+            id: row['id'] as String,
+            title: row['title'] as String,
+            status: row['status'] as String,
+            synced: (row['synced'] as int) != 0));
+  }
+
+  @override
+  Future<void> insertSurvey(SurveyEntity survey) async {
+    await _surveyEntityInsertionAdapter.insert(
+        survey, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> insertSurveys(List<SurveyEntity> surveys) async {
+    await _surveyEntityInsertionAdapter.insertList(
+        surveys, OnConflictStrategy.replace);
   }
 }

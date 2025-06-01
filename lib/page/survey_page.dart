@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lanslide_report/Utills/AppColors.dart';
+import 'package:lanslide_report/controller/reportList/reportListController.dart';
 import 'package:lanslide_report/page/survey_question_page.dart';
-
 import '../controller/survey/surveylist_controller.dart';
 
 class SurveyPage extends StatelessWidget {
-  final SurveyListController controller = Get.put(SurveyListController());
+  final EventListController controller = Get.put(EventListController());
 
   void _showDeleteDialog(String id) {
     Get.dialog(
@@ -23,12 +23,12 @@ class SurveyPage extends StatelessWidget {
         actions: [
           TextButton(
             child: Text('no'.tr),
-            onPressed: () => Get.back(), // Close dialog, let user pick again
+            onPressed: () => Get.back(),
           ),
           TextButton(
             child: Text('yes'.tr),
             onPressed: () {
-              controller.deleteSurvey(id);// Return location
+              controller.deleteSurvey(id);
               Get.back();
             },
           ),
@@ -37,6 +37,65 @@ class SurveyPage extends StatelessWidget {
       barrierDismissible: false,
     );
   }
+
+  void _showSyncDialog(String id, String title) {
+    final isSyncing = false.obs;
+    final resultMessage = ''.obs;
+
+    Get.dialog(
+      Obx(() => AlertDialog(
+        title: Text('Sync Survey', style: TextStyle(color: Colors.blue)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (isSyncing.value)
+              Row(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 16),
+                  Text('Syncing in progress...'),
+                ],
+              )
+            else if (resultMessage.value.isNotEmpty)
+              Text(resultMessage.value)
+            else
+              Text('Check your internet connection before syncing survey data.'),
+          ],
+        ),
+        actions: [
+          if (!isSyncing.value && resultMessage.value.isEmpty)
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Get.back(),
+            ),
+          if (!isSyncing.value && resultMessage.value.isEmpty)
+            TextButton(
+              child: Text('Confirm'),
+              onPressed: () async {
+                isSyncing.value = true;
+                try {
+                  await controller.syncSurvey(id, title);
+                  resultMessage.value = "✅ Survey synced successfully!";
+                  await controller.fetchSurveys();
+                } catch (e) {
+                  resultMessage.value = "❌ Sync failed: $e";
+                } finally {
+                  isSyncing.value = false;
+                }
+              },
+            ),
+          if (resultMessage.value.isNotEmpty)
+            TextButton(
+              child: Text('Close'),
+              onPressed: () => Get.back(),
+            ),
+        ],
+      )),
+      barrierDismissible: false,
+    );
+  }
+
 
   void _showCreateDialog(BuildContext context) {
     final titleController = TextEditingController();
@@ -98,19 +157,19 @@ class SurveyPage extends StatelessWidget {
             itemBuilder: (context, index) {
               final survey = controller.surveys[index];
               return GestureDetector(
-                  onTap: () async{
-                    if(survey.status == 'complete') {
-                      Get.snackbar("survey_status".tr, "survey_status_msg".tr,
-                          backgroundColor: AppColors().app_alert_moderate,
-                          colorText: AppColors().app_secondary);
-                      return;
-                    }
-                    var result = await Get.to(() => SurveyQuestionPage(),
-                        arguments: {'surveyId': survey.id});
-                    if (result == 'refresh') {
-                      controller.fetchSurveys();
-                    }
-                  },
+                onTap: () async{
+                  if(survey.status == 'complete') {
+                    Get.snackbar("survey_status".tr, "survey_status_msg".tr,
+                        backgroundColor: AppColors().app_alert_moderate,
+                        colorText: AppColors().app_secondary);
+                    return;
+                  }
+                  var result = await Get.to(() => SurveyQuestionPage(),
+                      arguments: {'surveyId': survey.id});
+                  if (result == 'refresh') {
+                    controller.fetchSurveys();
+                  }
+                },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
                   child: Container(
@@ -123,7 +182,6 @@ class SurveyPage extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Number Box with Background Color (dynamic size)
                         Container(
                           height: 85,
                           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
@@ -146,8 +204,6 @@ class SurveyPage extends StatelessWidget {
                             ),
                           ),
                         ),
-
-                        // Title and Subtitle
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
@@ -172,19 +228,36 @@ class SurveyPage extends StatelessWidget {
                             ),
                           ),
                         ),
-
-                        // Delete Icon
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0, top: 8.0),
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor: Colors.red.shade100,
-                            child: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                              onPressed: () => _showDeleteDialog(survey.id),
-                              tooltip: 'Delete',
+                        Column(
+                          children: [
+                            Visibility(
+                              visible: survey.status != 'complete',
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0, top: 8.0),
+                                child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: Colors.blue.shade100,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.sync, color: Colors.blueAccent, size: 15),
+                                    onPressed: () => _showSyncDialog(survey.id, survey.title),
+                                    tooltip: 'Sync',
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0, top: 8.0),
+                              child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: Colors.red.shade100,
+                                child: IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red, size: 15),
+                                  onPressed: () => _showDeleteDialog(survey.id),
+                                  tooltip: 'Delete',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

@@ -6,6 +6,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:lanslide_report/controller/survey/survey_question_controller.dart';
 import 'package:lottie/lottie.dart' as lottie;
 
+import '../controller/survey/event_question_controller.dart';
+
 class MapPage extends StatefulWidget {
   final String lat, lon;
 
@@ -17,7 +19,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
-  final controller = Get.find<SurveyController>();
+  final controller = Get.find<SurveyQController>();
 
   late LatLng initialLocation;
   late LatLng selectedLocation;

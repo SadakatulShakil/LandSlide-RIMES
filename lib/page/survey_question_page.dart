@@ -5,6 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lanslide_report/Utills/AppColors.dart';
 
+import '../controller/network/network_controller.dart';
+import '../controller/survey/event_question_controller.dart';
 import '../controller/survey/survey_question_controller.dart';
 import '../models/question_model.dart';
 import 'map_page.dart';
@@ -15,7 +17,8 @@ class SurveyQuestionPage extends StatefulWidget {
 }
 
 class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
-  final controller = Get.put(SurveyController());
+  final controller = Get.put(SurveyQController());
+  final NetworkController internetController = Get.put(NetworkController());
 
   final ImagePicker _picker = ImagePicker();
 
@@ -213,7 +216,9 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     : null,
               ),
               cursorColor: AppColors().app_primary,
-              readOnly: controller.isReadOnlyField(question.title),
+              readOnly: internetController.isNetworkWorking.value
+                  ?controller.isReadOnlyFieldOnline(question.title)
+                  :controller.isReadOnlyFieldOffline(question.title),
               textInputAction: TextInputAction.next,
               controller: TextEditingController(text: question.answer.toString() == 'null'?'':
     question.answer.toString()),
@@ -365,17 +370,13 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
   Widget _imagePicker(SurveyQuestion question) {
     List<String> images = [];
 
-    /// Convert answer with compatible
-    if (question.answer == null || question.answer == 'null') {
-      images = [];
-    } else if (question.answer is String) {
+    // Properly parse answer string to List<String>
+    if (question.answer != null && question.answer != 'null') {
       images = (question.answer as String)
           .split(',')
           .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
+          .where((e) => e.isNotEmpty) // ✅ FIXED
           .toList();
-    } else if (question.answer is List) {
-      images = List<String>.from(question.answer);
     }
 
     return Column(
@@ -395,7 +396,10 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
         Wrap(
           spacing: 8,
           children: [
-            ...images.map((url) {
+            ...images.map((path) {
+              final file = File(path);
+              final exists = file.existsSync();
+
               return Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -406,24 +410,25 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        url,
+                      child: exists
+                          ? Image.file(
+                        file,
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[300],
-                          child: Icon(Icons.broken_image, size: 30),
-                        ),
+                      )
+                          : Container(
+                        width: 80,
+                        height: 80,
+                        color: Colors.grey[300],
+                        child: Icon(Icons.broken_image, size: 30),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          images.remove(url);
-                          question.answer = images;
+                          images.remove(path);
+                          question.answer = images.join(','); // update as string
                         });
                       },
                       child: Container(
@@ -439,27 +444,28 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                 ),
               );
             }).toList(),
+
+            /// Add button
             if (images.length < 3)
               GestureDetector(
                 onTap: () async {
                   final XFile? picked =
-                      await _picker.pickImage(source: ImageSource.gallery);
+                  await _picker.pickImage(source: ImageSource.gallery);
                   if (picked != null) {
-                    Get.snackbar("Uploading", "Please wait...",
+                    Get.snackbar("Uploading", "Saving image locally...",
                         showProgressIndicator: true);
 
-                    final uploadedUrl =
-                        await controller.uploadImage(File(picked.path));
+                    final savedPath = await controller.saveImageOffline(File(picked.path));
 
                     Get.closeAllSnackbars();
 
-                    if (uploadedUrl != null) {
+                    if (savedPath != null) {
                       setState(() {
-                        images.add(uploadedUrl);
-                        question.answer = images;
+                        images.add(savedPath);
+                        question.answer = images.join(','); // update as CSV
                       });
                     } else {
-                      Get.snackbar("upload_failed".tr, "upload_failed_msg".tr,
+                      Get.snackbar("Upload Failed", "Could not save image.",
                           backgroundColor: AppColors().app_alert_extreme,
                           colorText: AppColors().app_secondary);
                     }
@@ -472,8 +478,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     borderRadius: BorderRadius.circular(8),
                     color: AppColors().app_primary_bg,
                   ),
-                  child:
-                      Icon(Icons.add_a_photo, color: AppColors().app_primary),
+                  child: Icon(Icons.add_a_photo, color: AppColors().app_primary),
                 ),
               ),
           ],
@@ -491,4 +496,5 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
       ],
     );
   }
+
 }
