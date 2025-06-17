@@ -106,18 +106,18 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
   Future<ImageSource> _showImagePickerDialog() async {
     return await Get.dialog(
       AlertDialog(
-        title: Text("Select Image"),
+        title: Text("select_image".tr),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: Icon(Icons.camera),
-              title: Text("Camera"),
+              title: Text("camera".tr),
               onTap: () => Get.back(result: ImageSource.camera),
             ),
             ListTile(
               leading: Icon(Icons.photo),
-              title: Text("Gallery"),
+              title: Text("gallery".tr),
               onTap: () => Get.back(result: ImageSource.gallery),
             ),
           ],
@@ -151,9 +151,9 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
         isConfirmVisible.value = false;
 
         return Get.defaultDialog(
-          title: "Success",
+          title: "success".tr,
           middleText: decoded['message'],
-          textCancel: 'Ok',
+          textCancel: 'ok'.tr,
         );
       } else if (response.statusCode == 401) {
         print('Unauthorized! Possible expired token.');
@@ -221,9 +221,9 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
         );
 
         return Get.defaultDialog(
-          title: "Success",
+          title: "success".tr,
           middleText: decode['message'],
-          textCancel: 'Ok',
+          textCancel: 'ok'.tr,
         );
       } else if (response.statusCode == 401 && decode['code'] == 'token_expired') {
         // Handle token expiration — try refreshing

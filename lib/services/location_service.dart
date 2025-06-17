@@ -16,7 +16,7 @@ class LocationService {
     if (!serviceEnabled) {
       await Get.defaultDialog(
         title: "Location Disabled",
-        content: const Text("Please enable location services."),
+        content: Text("Please enable location services."),
         textConfirm: "Open Settings",
         textCancel: "Cancel",
         onConfirm: () async {

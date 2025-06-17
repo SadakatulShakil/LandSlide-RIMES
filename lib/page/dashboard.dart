@@ -106,9 +106,11 @@ class DashboardPage extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text('today_weather'.tr, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
-                !internetController.isNetworkWorking.value
-                    ?_buildWeatherCardDemo()
-                    :_buildWeatherCard(),
+                Obx(() {
+                  return internetController.isNetworkWorking.value
+                      ? _buildWeatherCard()
+                      : _buildWeatherCardDemo();
+                }),
                 SizedBox(height: 10),
                 const SizedBox(height: 10),
                 _buildLandslideBarChart(),

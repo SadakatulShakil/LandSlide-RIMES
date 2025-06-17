@@ -23,6 +23,8 @@ class EventListController extends GetxController {
   final dbService = Get.find<DBService>();
   var surveys = <Survey>[].obs;
   var isLoading = false.obs;
+  var isSyncing = false.obs;
+  var syncResultMessage = ''.obs;
   final NetworkController internetController = Get.put(NetworkController());
 
   final String baseUrl = 'https://landslide.bdservers.site/api/question';
@@ -107,7 +109,7 @@ class EventListController extends GetxController {
     final offlineSurvey = Survey(
       id: now.hashCode.toString(),
       title: title,
-      status: 'incomplete',
+      status: 'draft',
     );
     surveys.insert(0, offlineSurvey);
     await dbService.saveSurvey(offlineSurvey);
@@ -127,28 +129,24 @@ class EventListController extends GetxController {
   }
 
   Future<void> syncSurvey(String surveyId, String title) async {
+    isSyncing.value = true;
+    syncResultMessage.value = "";
+
     print('Syncing survey: $surveyId');
     try {
       final isConnected = internetController.isNetworkWorking.value;
-      print('Internet connected: $isConnected');
       if (!isConnected) {
-        Get.snackbar("Offline", "Please connect to internet to sync data",
-            backgroundColor: AppColors().app_alert_moderate,
-            colorText: AppColors().app_secondary);
+        syncResultMessage.value = "❌ No internet connection.";
         return;
       }
 
       final unsyncedQuestions = await dbService.getUnsyncedQuestionsBySurvey(surveyId);
-
-      print('Unsynced Questions: ${unsyncedQuestions}');
       if (unsyncedQuestions.isEmpty) {
-        Get.snackbar("Synced", "All data already synced.",
-            backgroundColor: AppColors().app_alert_normal,
-            colorText: AppColors().app_secondary);
+        syncResultMessage.value = "✅ All data already synced.";
         return;
       }
 
-      // Handle image upload
+      // Upload images if needed
       for (var q in unsyncedQuestions) {
         if (q.type == 'Array' && q.answer != null && q.answer!.contains('/')) {
           final localPaths = q.answer!.split(',').map((e) => e.trim()).toList();
@@ -164,11 +162,10 @@ class EventListController extends GetxController {
           }
 
           q.answer = uploadedUrls.join(',');
-          print('Uploaded URLs: ${q.answer}');
         }
       }
+
       final timestamp = DateTime.now().toIso8601String();
-      // Submit updated answers
       final payload = {
         "survey": {
           "id": surveyId,
@@ -182,8 +179,8 @@ class EventListController extends GetxController {
         }).toList()
       };
 
-      final response = await http.post( //  You must use POST, not PUT here based on the structure
-        Uri.parse('https://landslide.bdservers.site/api/question/offline'), // Adjust endpoint accordingly
+      final response = await http.post(
+        Uri.parse('https://landslide.bdservers.site/api/question/offline'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": userPrefService.userToken ?? '',
@@ -191,29 +188,22 @@ class EventListController extends GetxController {
         body: jsonEncode(payload),
       );
 
-      print('Response: ${response.statusCode} ${response.body}');
       if (response.statusCode == 200) {
-        // Mark all as synced locally
         for (var q in unsyncedQuestions) {
           await dbService.markQuestionAsSynced(q.uid);
         }
 
         await completeSurvey(surveyId);
+        await fetchSurveys();
 
-        Get.snackbar("Success", "Survey synced successfully",
-            backgroundColor: AppColors().app_alert_normal,
-            colorText: AppColors().app_secondary);
+        syncResultMessage.value = "✅ Survey synced successfully!";
       } else {
-        print(' Sync failed: ${response.statusCode} ${response.body}');
-        Get.snackbar("Error", "Survey sync failed",
-            backgroundColor: AppColors().app_alert_extreme,
-            colorText: AppColors().app_secondary);
+        syncResultMessage.value = "❌ Sync failed. Try again.";
       }
     } catch (e) {
-      print(' Sync Error: $e');
-      Get.snackbar("Error", "Failed to sync survey: $e",
-          backgroundColor: AppColors().app_alert_extreme,
-          colorText: AppColors().app_secondary);
+      syncResultMessage.value = "❌ Sync error: $e";
+    } finally {
+      isSyncing.value = false;
     }
   }
 

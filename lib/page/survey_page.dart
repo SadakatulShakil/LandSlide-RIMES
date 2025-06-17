@@ -39,55 +39,46 @@ class SurveyPage extends StatelessWidget {
   }
 
   void _showSyncDialog(String id, String title) {
-    final isSyncing = false.obs;
-    final resultMessage = ''.obs;
+    controller.isSyncing.value = false;
+    controller.syncResultMessage.value = '';
 
     Get.dialog(
       Obx(() => AlertDialog(
-        title: Text('Sync Survey', style: TextStyle(color: Colors.blue)),
+        title: Text('sync_survey'.tr, style: TextStyle(color: Colors.blue)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (isSyncing.value)
+            if (controller.isSyncing.value)
               Row(
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(width: 16),
-                  Text('Syncing in progress...'),
+                  Text('sync_progress'.tr),
                 ],
               )
-            else if (resultMessage.value.isNotEmpty)
-              Text(resultMessage.value)
+            else if (controller.syncResultMessage.value.isNotEmpty)
+              Text(controller.syncResultMessage.value)
             else
-              Text('Check your internet connection before syncing survey data.'),
+              Text('sync_alert'.tr),
           ],
         ),
         actions: [
-          if (!isSyncing.value && resultMessage.value.isEmpty)
+          if (!controller.isSyncing.value && controller.syncResultMessage.value.isEmpty)
             TextButton(
-              child: Text('Cancel'),
+              child: Text('cancel_btn'.tr),
               onPressed: () => Get.back(),
             ),
-          if (!isSyncing.value && resultMessage.value.isEmpty)
+          if (!controller.isSyncing.value && controller.syncResultMessage.value.isEmpty)
             TextButton(
-              child: Text('Confirm'),
+              child: Text('confirm_btn'.tr),
               onPressed: () async {
-                isSyncing.value = true;
-                try {
-                  await controller.syncSurvey(id, title);
-                  resultMessage.value = "✅ Survey synced successfully!";
-                  await controller.fetchSurveys();
-                } catch (e) {
-                  resultMessage.value = "❌ Sync failed: $e";
-                } finally {
-                  isSyncing.value = false;
-                }
+                await controller.syncSurvey(id, title);
               },
             ),
-          if (resultMessage.value.isNotEmpty)
+          if (controller.syncResultMessage.value.isNotEmpty)
             TextButton(
-              child: Text('Close'),
+              child: Text('ok'.tr),
               onPressed: () => Get.back(),
             ),
         ],
@@ -218,7 +209,7 @@ class SurveyPage extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  survey.status,
+                                  survey.status.tr,
                                   style: TextStyle(
                                     color: survey.status == 'complete' ? Colors.green : Colors.blue,
                                     fontWeight: FontWeight.bold,
@@ -232,15 +223,39 @@ class SurveyPage extends StatelessWidget {
                           children: [
                             Visibility(
                               visible: survey.status != 'complete',
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8.0, top: 8.0),
-                                child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: Colors.blue.shade100,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.sync, color: Colors.blueAccent, size: 15),
-                                    onPressed: () => _showSyncDialog(survey.id, survey.title),
-                                    tooltip: 'Sync',
+                              child: GestureDetector(
+                                onTap: () => _showSyncDialog(survey.id, survey.title),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.shade50,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: Colors.blue,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.sync,
+                                          color: Colors.blue,
+                                          size: 16,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'sync_now'.tr,
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

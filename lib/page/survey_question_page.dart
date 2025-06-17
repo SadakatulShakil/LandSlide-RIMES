@@ -119,7 +119,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                       if (controller.currentStep.value > 0)
                         ElevatedButton(
                           onPressed: controller.prevStep,
-                          child: const Text("Previous"),
+                          child: Text("previous".tr),
                         ),
                       if (controller.currentStep.value < groupKeys.length - 1)
                         ElevatedButton(
@@ -127,14 +127,14 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                             _validateAndMoveNext(questions);
                             controller.isLocationUpdated.value = false;
                           },
-                          child: const Text("Next"),
+                          child: Text("next".tr),
                         )
                       else
                         ElevatedButton(
                           onPressed: () {
                             _validateAndSubmit(questions);
                           },
-                          child: const Text("Submit"),
+                          child: Text("submit".tr),
                         ),
                     ],
                   ),
@@ -211,7 +211,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                         question.required == '1' &&
                         (question.answer == null
                             || question.answer == 'null')
-                    ? 'This field is required'
+                    ? 'required_field'.tr
                     : null,
               ),
               cursorColor: AppColors().app_primary,
@@ -237,7 +237,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                     question.required == '1' &&
                     (question.answer == null
                         || question.answer == 'null')
-                ? 'This field is required'
+                ? 'required_field'.tr
                 : null,
           ),
           cursorColor: AppColors().app_primary,
@@ -291,7 +291,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
           ),
           subtitle: Text(
             (question.answer == null || question.answer == 'null')
-                ? "Select date"
+                ? "select_date".tr
                 : question.answer,
             style: TextStyle(color: AppColors().black_font_color),
           ),
@@ -314,7 +314,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
           Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 4.0),
             child: Text(
-              'This date is required',
+              'required_field'.tr,
               style: TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),
@@ -337,7 +337,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
           ),
           subtitle: Text(
             (question.answer == null || question.answer == 'null')
-                ? "Select time"
+                ? "select_time".tr
                 : question.answer,
             style: TextStyle(color: AppColors().black_font_color),
           ),
@@ -358,7 +358,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
           Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 4.0),
             child: Text(
-              'This time is required',
+              'required_field'.tr,
               style: TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),
@@ -444,14 +444,13 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
               );
             }).toList(),
 
-            /// Add button
             if (images.length < 3)
               GestureDetector(
                 onTap: () async {
                   final XFile? picked =
                   await _picker.pickImage(source: ImageSource.gallery);
                   if (picked != null) {
-                    Get.snackbar("Uploading", "Saving image locally...",
+                    Get.snackbar("uploading".tr, "uploading_msg".tr,
                         showProgressIndicator: true);
 
                     final savedPath = await controller.saveImageOffline(File(picked.path));
@@ -464,7 +463,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
                         question.answer = images.join(','); // update as CSV
                       });
                     } else {
-                      Get.snackbar("Upload Failed", "Could not save image.",
+                      Get.snackbar("uploading_failed".tr, "uploading_failed_msg".tr,
                           backgroundColor: AppColors().app_alert_extreme,
                           colorText: AppColors().app_secondary);
                     }
@@ -488,7 +487,7 @@ class _SurveyQuestionPageState extends State<SurveyQuestionPage> {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              'This field is required',
+              'required_field'.tr,
               style: TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),

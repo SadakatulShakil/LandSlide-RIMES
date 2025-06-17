@@ -27,8 +27,8 @@ class _MobileState extends State<Mobile> {
             children: [
               Image.asset( 'assets/logo/bmd_logo.png', height: 96 ),
               SizedBox(height: 16),
-              Text("LOGIN TO Landslide Report", style: TextStyle( fontSize: 20, fontWeight: FontWeight.w500, ) ),
-              Text("Please Enter the mobile number to login" ),
+              Text("welcome_speech".tr, style: TextStyle( fontSize: 20, fontWeight: FontWeight.w500, ) ),
+              Text("login_speech".tr ),
               SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.only(left: 30, top: 0, right: 30, bottom: 0),
@@ -36,7 +36,7 @@ class _MobileState extends State<Mobile> {
                   controller: controller.mobile,
                   decoration: InputDecoration(
                       hintText: "01xxxxxxxxx",
-                      label: Text("Enter Mobile Number", style: TextStyle(color: AppColors().app_primary),),
+                      label: Text("mobile_title".tr, style: TextStyle(color: AppColors().app_primary),),
                     border: OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
@@ -61,7 +61,7 @@ class _MobileState extends State<Mobile> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    child: Text("Login", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text("login_btn".tr, style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
               ),
