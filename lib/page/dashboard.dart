@@ -43,6 +43,7 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.onRefresh();
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(

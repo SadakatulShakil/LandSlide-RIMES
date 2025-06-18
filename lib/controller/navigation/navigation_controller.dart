@@ -18,10 +18,16 @@ class NavigationController extends GetxController {
 
   final count = 0.obs;
   var currentTab = 0.obs;
-  final List<Widget> screen = [
-    DashboardPage(),
-    Profile(isBackButton: false,),
-  ];
+  Widget get currentScreen {
+    switch (currentTab.value) {
+      case 0:
+        return DashboardPage();
+      case 1:
+        return Profile(isBackButton: false,);
+      default:
+        return DashboardPage();
+    }
+  }
   final userPrefService = UserPrefService();
 
   @override
